@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html class="no-js" lang="fr-FR">
+
+<!-- Mirrored from localhost/wordpress/2017/04/11/linked-list-reverse-compare-merge/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 13 Feb 2019 14:47:00 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<title>Linked List : Reverse, Compare, Merge &#8211; CoderCocoon</title>
+<link rel='dns-prefetch' href='http://fonts.googleapis.com/' />
+<link rel='dns-prefetch' href='http://s.w.org/' />
+<link rel="alternate" type="application/rss+xml" title="CoderCocoon &raquo; Flux" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="CoderCocoon &raquo; Flux des commentaires" href="../../../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="CoderCocoon &raquo; Linked List : Reverse, Compare, Merge Flux des commentaires" href="feed/index.html" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/localhost\/wordpress\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.0.3"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='wp-block-library-css'  href='../../../../wp-includes/css/dist/block-library/style.minaead.css?ver=5.0.3' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-google-fonts-css'  href='https://fonts.googleapis.com/css?family=Oswald:400,700,300|PT+Serif:400,400italic,700,700italic' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-font-awesome-css'  href='../../../../wp-content/themes/mh-newsdesk-lite/includes/font-awesome.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-style-css'  href='../../../../wp-content/themes/mh-newsdesk-lite/styleaead.css?ver=5.0.3' type='text/css' media='all' />
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jqueryb8ff.js?ver=1.12.4'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jquery-migrate.min330a.js?ver=1.4.1'></script>
+<script type='text/javascript' src='../../../../wp-content/themes/mh-newsdesk-lite/js/scriptsaead.js?ver=5.0.3'></script>
+<link rel='https://api.w.org/' href='../../../../wp-json/index.html' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="../../../../xmlrpc0db0.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="../../../../wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Linked List : Insert at first, at last, at Nth position, Delete Nth position' href='../linked-list-insert-at-first-at-last-delete/index.html' />
+<link rel='next' title='Linked List : Get node, Remove duplicates values, Cycle detection' href='../linked-list-get-remove-cycle-detection/index.html' />
+<meta name="generator" content="WordPress 5.0.3" />
+<link rel="canonical" href="index.html" />
+<link rel='shortlink' href='../../../../index1a93.html?p=249' />
+<link rel="alternate" type="application/json+oembed" href="../../../../wp-json/oembed/1.0/embedc2fa.json?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2017%2F04%2F11%2Flinked-list-reverse-compare-merge%2F" />
+<link rel="alternate" type="text/xml+oembed" href="../../../../wp-json/oembed/1.0/embedb08e?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2017%2F04%2F11%2Flinked-list-reverse-compare-merge%2F&amp;format=xml" />
+<!--[if lt IE 9]>
+<script src="http://localhost/wordpress/wp-content/themes/mh-newsdesk-lite/js/css3-mediaqueries.js"></script>
+<![endif]-->
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+</head>
+<body class="post-template-default single single-post postid-249 single-format-standard mh-right-sb">
+<div id="mh-wrapper">
+<header class="mh-header">
+	<div class="header-wrap mh-clearfix">
+		<a href="../../../../index.html" title="CoderCocoon" rel="home">
+<div class="logo-wrap" role="banner">
+<div class="logo">
+<h1 class="logo-title">CoderCocoon</h1>
+</div>
+</div>
+</a>
+	</div>
+	<div class="header-menu mh-clearfix">
+		<nav class="main-nav mh-clearfix">
+			<div class="menu-home-container"><ul id="menu-home" class="menu"><li id="menu-item-389" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-389"><a href="../../../../category/data-structures/index.html">Data structures</a></li>
+<li id="menu-item-390" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-390"><a href="../../../../category/hibernate/index.html">Hibernate</a></li>
+<li id="menu-item-391" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-391"><a href="../../../../category/java/index.html">Java</a>
+<ul class="sub-menu">
+	<li id="menu-item-392" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-392"><a href="../../../../category/java/thread/index.html">Thread</a></li>
+</ul>
+</li>
+<li id="menu-item-393" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-393"><a href="../../../../category/spring/index.html">Spring</a>
+<ul class="sub-menu">
+	<li id="menu-item-396" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-396"><a href="../../../../category/spring/dependency-injection/index.html">Dependency Injection</a></li>
+</ul>
+</li>
+<li id="menu-item-394" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-394"><a href="../../../../category/hackerrank/index.html">Hackerrank</a>
+<ul class="sub-menu">
+	<li id="menu-item-395" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-395"><a href="../../../../category/hackerrank/java-domain/index.html">Java domain</a></li>
+</ul>
+</li>
+</ul></div>		</nav>
+	</div>
+</header><div class="mh-section mh-group">
+	<div id="main-content" class="mh-content"><article id="post-249" class="post-249 post type-post status-publish format-standard has-post-thumbnail hentry category-data-structures tag-data-structures tag-linked-list">
+	<header class="entry-header mh-clearfix">
+		<h1 class="entry-title">Linked List : Reverse, Compare, Merge</h1>
+		<div class="entry-tags mh-clearfix"><span>TOPICS:</span><a href="../../../../tag/data-structures/index.html" rel="tag">Data structures</a><a href="../../../../tag/linked-list/index.html" rel="tag">linked list</a></div>	</header>
+	
+<figure class="entry-thumbnail">
+<img width="300" height="120" src="../../../../wp-content/uploads/2017/04/linkedlist-e1491907413897.gif" class="attachment-content-single size-content-single wp-post-image" alt="linked list (Source : www.codeproject.com)" /><figcaption class="wp-caption-text">linked list (Source : www.codeproject.com)</figcaption>
+</figure>
+	<p class="entry-meta">
+<span class="entry-meta-author vcard author">Posted By: <a class="fn" href="../../../../author/admin/index.html">admin</a></span>
+<span class="entry-meta-date updated">avril 11, 2017</span>
+</p>
+	<div class="entry-content mh-clearfix">
+		<p><span id="more-249"></span><br />
+This example presents the basic concept of linked lists :<br />
+Reverse a linked list.<br />
+Compare two sorted linked lists.<br />
+Merge two sorted linked lists.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/LinkedListReverseCompareMerge.git" target="_blank">https://github.com/codercocoon/LinkedListReverseCompareMerge.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/LinkedListReverseCompareMerge/archive/master.zip" target="_blank">https://github.com/codercocoon/LinkedListReverseCompareMerge/archive/master.zip</a></p>
+<pre class="brush: java; title: Node.java; toolbar: true; notranslate" title="Node.java">
+package com.codercocoon.LinkedList;
+
+public class Node {
+	int data;
+	Node next;
+
+	Node(int _data) {
+		data = _data;
+		next = null;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7,25,53,54,84,108]; title: ReverseCompareMerge.java; toolbar: true; notranslate" title="ReverseCompareMerge.java">
+package com.codercocoon.LinkedList;
+
+/**
+ * This class represents some operations about linked lists, especially how to
+ * reverse a linked list, compare and merge two sorted linked lists.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class ReverseCompareMerge {
+
+	public Node insertAtLast(Node head, int _data) {
+		if (head == null)
+			head = new Node(_data);
+		else {
+			Node current = head;
+			while (current.next != null)
+				current = current.next;
+			current.next = new Node(_data);
+		}
+		return head;
+	}
+
+	/**
+	 * This method reverses a linked list.
+	 * 
+	 * @param head
+	 *            : the linked list which will be reversed.
+	 * @return the linked list reversed.
+	 */
+	public Node reverse(Node head) {
+
+		System.out.print(&quot;Input : &quot;);
+		print(head);
+
+		Node previous = null;
+		Node current = head;
+		Node next = null;
+
+		while (current != null) {
+			next = current.next;
+			current.next = previous;
+			previous = current;
+			current = next;
+		}
+		System.out.print(&quot;Ouput : &quot;);
+		print(previous);
+
+		return previous;
+	}
+
+	/**
+	 * This method check if two linked lists are the same :same elements in the
+	 * same order.
+	 * 
+	 * @param headA
+	 *            : the head of the 1st linked list.
+	 * @param headB
+	 *            : the head of the 2nd linked list.
+	 * @return &quot;1&quot; if the linked lists are the same, &quot;0&quot; if not.
+	 */
+	int compareLists(Node headA, Node headB) {
+		int result = 0;
+		if (headA == headB)
+			result = 1;
+		else {
+			Node currentA = headA;
+			Node currentB = headB;
+			while (currentA != null &amp;&amp; currentB != null) {
+				if (currentA.data != currentB.data) {
+					break;
+				} else {
+					currentA = currentA.next;
+					currentB = currentB.next;
+				}
+			}
+			if (currentA == currentB)
+				result = 1;
+		}
+		return result;
+	}
+
+	/**
+	 * This methods merges two sorted linked lists.
+	 * 
+	 * @param headA
+	 *            : the head of the 1st linked list.
+	 * @param headB
+	 *            : the head of the 2nd linked list.
+	 * @return the two linked lists merged.
+	 */
+	public Node mergeLists(Node headA, Node headB) {
+		if (headA == null)
+			return headB;
+		if (headB == null)
+			return headA;
+
+		if (headA.data &lt; headB.data) {
+			headA.next = mergeLists(headA.next, headB);
+			return headA;
+		} else {
+			headB.next = mergeLists(headB.next, headA);
+			return headB;
+		}
+	}
+
+	/**
+	 * This method prints the elements of a linked list.
+	 * 
+	 * @param head:head
+	 *            of the linked list
+	 */
+	void print(Node head) {
+		if (head == null)
+			System.out.println(head);
+		else {
+			Node current = head;
+			while (current != null) {
+				System.out.print(current.data + &quot;-&gt;&quot;);
+				current = current.next;
+				System.out.print((current == null) ? &quot;NULL&quot; : &quot;&quot;);
+			}
+			System.out.println();
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [14,24,36]; title: TestReverseCompareMerge.java; toolbar: true; notranslate" title="TestReverseCompareMerge.java">
+package com.codercocoon.LinkedList;
+
+import java.util.Scanner;
+
+public class TestReverseCompareMerge {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		Node head = null;
+		Node second = null;
+		int size = 0;
+		ReverseCompareMerge ll = new ReverseCompareMerge();
+
+		System.out.println(&quot;##### Reverse a linked list. #####&quot;);
+		System.out.print(&quot;Enter the linked list size : &quot;);
+		size = sc.nextInt();
+		System.out.println(&quot;Enter the linked list elements : &quot;);
+		while (size &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			size--;
+		}
+		head = ll.reverse(head);
+
+		System.out.println(&quot;##### Compare two linked lists. #####&quot;);
+		System.out.print(&quot;The first linked list : &quot;);
+		ll.print(head);
+		System.out.print(&quot;Enter the second linked list size : &quot;);
+		size = sc.nextInt();
+		System.out.println(&quot;Enter the second linked list elements : &quot;);
+		while (size &gt; 0) {
+			second = ll.insertAtLast(second, sc.nextInt());
+			size--;
+		}
+		System.out.println(&quot;Result of comparing (1:OK, 0:KO) : &quot; + ll.compareLists(head, second));
+
+		System.out.println(&quot;##### Merge two sorted linked lists. #####&quot;);
+		head = null;
+		second = null;
+		System.out.print(&quot;Enter the size of the sorted Linked list A : &quot;);
+		size = sc.nextInt();
+		System.out.print(&quot;Enter the elements of the sorted Linked list A : &quot;);
+		while (size &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			size--;
+		}
+		System.out.print(&quot;Enter the size of the sorted Linked list B : &quot;);
+		size = sc.nextInt();
+		System.out.print(&quot;Enter the elements of the sorted Linked list B : &quot;);
+		while (size &gt; 0) {
+			second = ll.insertAtLast(second, sc.nextInt());
+			size--;
+		}
+		ll.print(ll.mergeLists(head, second));
+
+	}
+}
+</pre>
+	</div>
+</article><nav class="post-nav-wrap" role="navigation">
+<ul class="post-nav mh-clearfix">
+<li class="post-nav-prev">
+<a href="../linked-list-insert-at-first-at-last-delete/index.html" rel="prev"><i class="fa fa-chevron-left"></i>Previous post</a></li>
+<li class="post-nav-next">
+<a href="../linked-list-get-remove-cycle-detection/index.html" rel="next">Next post<i class="fa fa-chevron-right"></i></a></li>
+</ul>
+</nav>
+<div class="comments-wrap">
+<h4 class="comment-section-title"><span class="comment-count">Be the first to comment</span> <span class="comment-count-more">on "Linked List : Reverse, Compare, Merge"</span></h4>
+</div>
+	<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a comment <small><a rel="nofollow" id="cancel-comment-reply-link" href="index.html#respond" style="display:none;">Annuler la réponse</a></small></h3>			<form action="http://localhost/wordpress/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+				<p class="comment-notes">Your email address will not be published.</p><p class="comment-form-comment"><label for="comment">Comment</label><br/><textarea id="comment" name="comment" cols="45" rows="5" aria-required="true"></textarea></p><p class="comment-form-author"><label for="author">Name </label><span class="required">*</span><br/><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email </label><span class="required">*</span><br/><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><br/><input id="url" name="url" type="text" value="" size="30" /></p>
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" /><label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Laisser un commentaire" /> <input type='hidden' name='comment_post_ID' value='249' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p>			</form>
+			</div><!-- #respond -->
+		</div>
+	<aside class="mh-sidebar">
+	<div id="mh_newsdesk_lite_recent_posts-3" class="sb-widget mh-clearfix mh_newsdesk_lite_recent_posts">		<ul class="mh-rp-widget widget-list">				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-annotation-based-autowiring/index.html" title="Example Spring 4 – Annotation Based Autowiring" rel="bookmark">Example Spring 4 – Annotation Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-java-based-autowiring/index.html" title="Example Spring 4 – Java Based Autowiring" rel="bookmark">Example Spring 4 – Java Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-xml-based-autowiring/index.html" title="Example Spring 4 – Xml Based Autowiring" rel="bookmark">Example Spring 4 – Xml Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/29/example-spring-4-annotation-based-configuration/index.html" title="Example Spring 4 – Annotation Based Configuration" rel="bookmark">Example Spring 4 – Annotation Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/26/example-spring-4-java-based-configuration/index.html" title="Example Spring 4 – Java Based Configuration" rel="bookmark">Example Spring 4 – Java Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/23/example-spring-4-xml-based-configuration/index.html" title="Example Spring 4 – XML Based Configuration" rel="bookmark">Example Spring 4 – XML Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../27/hackerrank-java-domain-bignumber/index.html" title="Hackerrank [Java domain] : BigNumber" rel="bookmark">Hackerrank [Java domain] : BigNumber</a></li>				<li class="rp-widget-item"><a href="../../26/hackerrank-java-domain-strings/index.html" title="Hackerrank [Java domain] : Strings" rel="bookmark">Hackerrank [Java domain] : Strings</a></li>				<li class="rp-widget-item"><a href="../../26/hackerrank-java-domain-introduction/index.html" title="Hackerrank [Java domain] : Introduction" rel="bookmark">Hackerrank [Java domain] : Introduction</a></li>				<li class="rp-widget-item"><a href="../../20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/index.html" title="Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »" rel="bookmark">Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »</a></li>		</ul></div></aside></div>
+</div>
+<footer class="mh-footer">
+	<div class="wrapper-inner">
+		<p class="copyright">Copyright 2019 | MH Newsdesk lite by <a href="https://www.mhthemes.com/" rel="nofollow">MH Themes</a></p>
+	</div>
+</footer>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJava09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore09b1.css?ver=3.0.9b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeEclipse09b1.css?ver=3.0.9b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['auto-links'] = false;
+	SyntaxHighlighter.defaults['light'] = true;
+	SyntaxHighlighter.defaults['pad-line-numbers'] = true;
+	SyntaxHighlighter.all();
+
+	// Infinite scroll support
+	if ( typeof( jQuery ) !== 'undefined' ) {
+		jQuery( function( $ ) {
+			$( document.body ).on( 'post-load', function() {
+				SyntaxHighlighter.highlight();
+			} );
+		} );
+	}
+</script>
+<script type='text/javascript' src='../../../../wp-includes/js/comment-reply.minaead.js?ver=5.0.3'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/wp-embed.minaead.js?ver=5.0.3'></script>
+</body>
+
+<!-- Mirrored from localhost/wordpress/2017/04/11/linked-list-reverse-compare-merge/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 13 Feb 2019 14:47:03 GMT -->
+</html>

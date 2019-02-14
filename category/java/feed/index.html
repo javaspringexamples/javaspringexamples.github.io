@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Java &#8211; CoderCocoon</title>
+	<atom:link href="http://localhost/wordpress/category/java/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Fri, 07 Dec 2018 16:33:52 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.3</generator>
+	<item>
+		<title>Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »</title>
+		<link>http://localhost/wordpress/2017/04/20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/</link>
+		<comments>http://localhost/wordpress/2017/04/20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/#respond</comments>
+		<pubDate>Thu, 20 Apr 2017 14:11:59 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Thread]]></category>
+		<category><![CDATA[thread]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=311</guid>
+		<description><![CDATA[This example presents how to handle a pool of threads using : ExecutorService, Executors, Callable and ForkJoinPool, RecursiveTask.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-311"></span><br />
+This example presents how to handle a pool of threads using : ExecutorService, Executors, Callable and ForkJoinPool, RecursiveTask.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/ThreadHandlePool.git" target="_blank">https://github.com/codercocoon/ThreadHandlePool.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/ThreadHandlePool/archive/master.zip" target="_blank">https://github.com/codercocoon/ThreadHandlePool/archive/master.zip</a></p>
+<pre class="brush: java; highlight: [13,14,16,28,40,53,58,60]; title: ListInitializerCallable.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.IntStream;
+
+/**
+ * This example represents how to create a pool of threads using ExecutorService
+ * and Callable interfaces.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ListInitializerCallable implements Callable&lt;List&lt;Integer&gt;&gt; {
+
+	int[] data;
+
+	public ListInitializerCallable(int[] data) {
+		this.data = data;
+	}
+
+	/**
+	 * Method call() to override for Callable objects.
+	 */
+	@Override
+	public List&lt;Integer&gt; call() throws Exception {
+		ArrayList&lt;Integer&gt; l = new ArrayList&lt;&gt;();
+		for (int i = 0; i &lt; data.length; i++) {
+			l.add(data[i] % 2);
+		}
+		return l;
+	}
+
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
+
+		int lenght = 10000;
+
+		ListInitializerCallable li1 = new ListInitializerCallable(IntStream.range(0, lenght / 2).toArray());
+		ListInitializerCallable li2 = new ListInitializerCallable(IntStream.range((lenght / 2), lenght).toArray());
+
+		// Fixing the pool to 2 threads
+		ExecutorService es = Executors.newFixedThreadPool(2);
+		Future&lt;List&lt;Integer&gt;&gt; f1 = es.submit(li1);
+		Future&lt;List&lt;Integer&gt;&gt; f2 = es.submit(li2);
+
+		// Getting the list returned of the 1st thread.
+		List&lt;Integer&gt; l1 = f1.get();
+		// Getting the list returned of the 2nd thread.
+		List&lt;Integer&gt; l2 = f2.get();
+		// Merging the two lists.
+		l1.addAll(l2);
+
+		System.out.println(l1.size());
+		System.out.println(l1);
+
+		// Shutting down the ExecutorService
+		es.shutdown();
+	}
+
+}
+</pre>
+<pre class="brush: java; highlight: [11,12,14,30,31,40,42,43,53,65,67]; title: ListInitializerRecursiveTask.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
+import java.util.stream.IntStream;
+
+/**
+ * This example represents how to create a pool of threads using ForkJoinPool
+ * and extending the RecursiveTask class.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ListInitializerRecursiveTask extends RecursiveTask&lt;List&lt;Integer&gt;&gt; {
+
+	private int[] data;
+	private int begin;
+	private int end;
+
+	public ListInitializerRecursiveTask(int[] data, int _begin, int _end) {
+		this.data = data;
+		begin = _begin;
+		end = _end;
+	}
+
+	/**
+	 * Method compute() to override for RecursiveTask objects, we initiate the
+	 * list recursively.
+	 */
+	@Override
+	protected List&lt;Integer&gt; compute() {
+		List&lt;Integer&gt; l = new ArrayList&lt;&gt;();
+
+		int middle = (end - begin) / 2;
+		if (middle &gt; 500) {
+			ListInitializerRecursiveTask li1 = new ListInitializerRecursiveTask(data, begin, (begin + middle));
+			li1.fork();
+			ListInitializerRecursiveTask li2 = new ListInitializerRecursiveTask(data, (begin + middle), end);
+			l = li2.compute();
+			l.addAll(li1.join());
+		} else {
+			for (int i = begin; i &lt; end; i++) {
+				l.add(data[i] % 2);
+			}
+		}
+		return l;
+	}
+
+	/**
+	 * The main method.
+	 * 
+	 * @param args
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 */
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
+
+		int lenght = 10000;
+		ListInitializerRecursiveTask li1 = new ListInitializerRecursiveTask(IntStream.range(0, lenght).toArray(), 0,
+				lenght);
+
+		// Initiating the ForkJoinPool
+		ForkJoinPool fjp = new ForkJoinPool();
+		// Getting the list initiated recursively
+		List&lt;Integer&gt; l = fjp.invoke(li1);
+
+		System.out.println(l.size());
+		System.out.println(l);
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Thread : How to use wait() and notify() methods to handle synchronisation between threads</title>
+		<link>http://localhost/wordpress/2017/04/19/thread-methods-wait-notify/</link>
+		<comments>http://localhost/wordpress/2017/04/19/thread-methods-wait-notify/#respond</comments>
+		<pubDate>Wed, 19 Apr 2017 10:21:17 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Thread]]></category>
+		<category><![CDATA[thread]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=301</guid>
+		<description><![CDATA[This example shows how to use notify() and wait() methods of Thread class, to handle synchronisation between multiples threads.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-301"></span><br />
+This example shows how to use notify() and wait() methods of Thread class.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/ThreadNotifyWait.git" target="_blank">https://github.com/codercocoon/ThreadNotifyWait.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/ThreadNotifyWait/archive/master.zip" target="_blank">https://github.com/codercocoon/ThreadNotifyWait/archive/master.zip</a></p>
+<pre class="brush: plain; title: Example of an obtained output in my local environment :; notranslate">
+Thread-1 is waiting...
+Thread-0: Says the field soccer is no more available.P1 please gets in my player and have fun.
+Thread-3 is waiting...
+P1 shoots ball 1
+Thread-2 is waiting...
+P1 shoots ball 2
+P1 shoots ball 3
+P1 shoots ball 4
+P1 shoots ball 5
+P1 shoots ball 6
+P1 shoots ball 7
+P1 shoots ball 8
+P1 shoots ball 9
+P1 shoots ball 10
+Thread-0: Says the field soccer is available.
+Dear threads get notified...!
+Thread-1 is notified...
+Thread-1: Says the field soccer is no more available.P2 please gets in my player and have fun.
+P2 shoots ball 1
+P2 shoots ball 2
+P2 shoots ball 3
+P2 shoots ball 4
+P2 shoots ball 5
+P2 shoots ball 6
+P2 shoots ball 7
+P2 shoots ball 8
+P2 shoots ball 9
+P2 shoots ball 10
+Thread-1: Says the field soccer is available.
+Dear threads get notified...!
+Thread-3 is notified...
+Thread-3: Says the field soccer is no more available.P4 please gets in my player and have fun.
+P4 shoots ball 1
+P4 shoots ball 2
+P4 shoots ball 3
+P4 shoots ball 4
+P4 shoots ball 5
+P4 shoots ball 6
+P4 shoots ball 7
+P4 shoots ball 8
+P4 shoots ball 9
+P4 shoots ball 10
+Thread-3: Says the field soccer is available.
+Dear threads get notified...!
+Thread-2 is notified...
+Thread-2: Says the field soccer is no more available.P3 please gets in my player and have fun.
+P3 shoots ball 1
+P3 shoots ball 2
+P3 shoots ball 3
+P3 shoots ball 4
+P3 shoots ball 5
+P3 shoots ball 6
+P3 shoots ball 7
+P3 shoots ball 8
+P3 shoots ball 9
+P3 shoots ball 10
+Thread-2: Says the field soccer is available.
+Dear threads get notified...!
+All balls shooted.
+</pre>
+<pre class="brush: java; highlight: [4,6,20,24,25,28,39,51,56]; title: Player.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This example shows how to use notify() and wait() methods of Thread class.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class Player extends Thread {
+
+	private String name;
+	private SoccerField sf;
+
+	public Player(String _name, SoccerField _sf) {
+		name = _name;
+		sf = _sf;
+	}
+
+	/**
+	 * If the soccer field is available, then the player gets in to shoot balls.
+	 */
+	public void shootBalls() {
+		sf.setAvailable(false);
+		System.out.println(getName() + &quot;: Says the field soccer is no more available.&quot; + name
+				+ &quot; please gets in my player and have fun.&quot;);
+		for (int i = 1; i &lt;= 10; i++)
+			System.out.println(name + &quot; shoots ball &quot; + i);
+		System.out.println(getName() + &quot;: Says the field soccer is available.&quot;);
+		sf.setAvailable(true);
+	}
+
+	@Override
+	public void run() {
+		sf.getSoccerField();
+		shootBalls();
+	}
+
+	/**
+	 * The main method.
+	 */
+	public static void main(String[] args) throws InterruptedException {
+		SoccerField sf = new SoccerField();
+		Player p1 = new Player(&quot;P1&quot;, sf);
+		Player p2 = new Player(&quot;P2&quot;, sf);
+		Player p3 = new Player(&quot;P3&quot;, sf);
+		Player p4 = new Player(&quot;P4&quot;, sf);
+		p1.start();
+		p2.start();
+		p3.start();
+		p4.start();
+		// Waiting for threads terminating their jobs.
+		p1.join();
+		p2.join();
+		p3.join();
+		p4.join();
+		System.out.println(&quot;All balls shooted.&quot;);
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,6,13,14,19,20,21,23,30,31,37,38]; title: SoccerField.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This example shows how to use notify() and wait() methods of Thread class.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class SoccerField {
+	private boolean available = true;
+
+	/**
+	 * If the soccer field is not available, then the thread will wait until
+	 * being notified that the soccer field is available again.
+	 */
+	public synchronized void getSoccerField() {
+		if (!available) {
+			try {
+				System.out.println(Thread.currentThread().getName() + &quot; is waiting...&quot;);
+				wait();
+				System.out.println(Thread.currentThread().getName() + &quot; is notified...&quot;);
+			} catch (InterruptedException e) {
+				// Do something to handle the InterruptedException
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * When the soccer field is available, the other threads are notified to
+	 * continue doing their jobs.
+	 * 
+	 */
+	public synchronized void setAvailable(boolean a) {
+		available = a;
+		if (a) {
+			notify();
+			System.out.println(&quot;Dear threads get notified...!&quot;);
+		}
+	}
+
+	public boolean isAvailable() {
+		return available;
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/19/thread-methods-wait-notify/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Thread methods : getId, getName, isAlive, sleep, interrupt</title>
+		<link>http://localhost/wordpress/2017/04/18/thread-getid-getname-isalive-sleep-interrupt/</link>
+		<comments>http://localhost/wordpress/2017/04/18/thread-getid-getname-isalive-sleep-interrupt/#respond</comments>
+		<pubDate>Tue, 18 Apr 2017 10:07:59 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Thread]]></category>
+		<category><![CDATA[runnable]]></category>
+		<category><![CDATA[thread]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=297</guid>
+		<description><![CDATA[This example presents some popular methods about Thread, especially : getId, getName, isAlive, sleep, interrupt.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-297"></span><br />
+This example presents some popular methods about Thread, especially: getId, getName, isAlive, sleep, interrupt.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/ThreadPopularMethods.git" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadPopularMethods.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/ThreadPopularMethods/archive/master.zip" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadPopularMethods/archive/master.zip</a></p>
+<pre class="brush: java; highlight: [4,5,7,20,23]; title: ThreadByExtension.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by extending the Thread class,
+ * and using sleep method.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByExtension extends Thread {
+
+	public ThreadByExtension(String name) {
+		super(name);
+	}
+
+	@Override
+	public void run() {
+		System.out.println(&quot;Running &quot; + getName());
+		try {
+			// Using sleep method.
+			sleep(1000);
+		} catch (InterruptedException e) {
+			// ...Do something to handle the exception.
+			System.out.println(getName() + &quot; is interrupted&quot;);
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7,16,18]; title: ThreadByImplementation.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by implementing the Runnable
+ * interface, and using sleep method.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByImplementation implements Runnable {
+
+	@Override
+	public void run() {
+		try {
+			System.out.println(&quot;Running &quot; + this.getClass().getName());
+			Thread.sleep(6000);
+		} catch (InterruptedException e) {
+			// ...Do something to handle the exception.
+			System.out.println(Thread.currentThread().getName() + &quot; is interrupted&quot;);
+		}
+
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7,14,19,22,25,35,36,41,44,47]; title: TestThread.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents some popular methods about threads, especially : getId,
+ * getName, isAlive, sleep, interrupt.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class TestThread {
+
+	public static void main(String[] args) throws InterruptedException {
+
+		// Thread by extending the Thread class.
+		ThreadByExtension t1 = new ThreadByExtension(&quot;t1&quot;);
+		t1.start();
+		System.out.println(&quot;t1 isAlive=&quot; + t1.isAlive());
+
+		// Thread by implementing the Runnable interface.
+		Thread t2 = new Thread(new ThreadByImplementation(), &quot;t2&quot;);
+		t2.start();
+		// Interrupting t2
+		t2.interrupt();
+
+		// Thread by implementing the Runnable interface anonymously.
+		Runnable r1 = new Runnable() {
+			@Override
+			public void run() {
+				System.out.println(&quot;Running Anonymous object runnable.&quot;);
+			}
+		};
+		Thread t3 = new Thread(r1);
+		t3.start();
+
+		// Thread by implementing the Runnable interface anonymously using
+		// lambda expression.
+		Runnable r2 = () -&gt; System.out.println(&quot;Running runnable object using lambda expression Runnable.&quot;);
+		Thread t4 = new Thread(r2);
+		t4.start();
+
+		// Waiting for the t1 to be terminated.
+		t1.join();
+
+		// t1.is Alive will be always false, because t1 is terminated.
+		System.out.println(t1.getId() + &quot; &quot; + t1.getName() + &quot; &quot; + t1.getPriority() + &quot; isAlive=&quot; + t1.isAlive());
+		System.out.println(t2.getId() + &quot; &quot; + t2.getName() + &quot; &quot; + t2.getPriority());
+		// The threads names are generated by the JVM, they begin by &quot;Thread-&quot;
+		System.out.println(t3.getId() + &quot; &quot; + t3.getName() + &quot; &quot; + t3.getPriority());
+		System.out.println(t4.getId() + &quot; &quot; + t4.getName() + &quot; &quot; + t4.getPriority());
+
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/18/thread-getid-getname-isalive-sleep-interrupt/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Thread : creation threads by extending Thread class, and implementing Runnable interface</title>
+		<link>http://localhost/wordpress/2017/04/17/thread-creation-extending-thread-implementing-runnable-interface/</link>
+		<comments>http://localhost/wordpress/2017/04/17/thread-creation-extending-thread-implementing-runnable-interface/#respond</comments>
+		<pubDate>Mon, 17 Apr 2017 14:56:06 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Thread]]></category>
+		<category><![CDATA[runnable]]></category>
+		<category><![CDATA[thread]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=291</guid>
+		<description><![CDATA[This class presents the different ways to implement threads : extending the Thread class, implementing the Runnable interface anonymously and using lambda expression.]]></description>
+				<content:encoded><![CDATA[<h4><span id="more-291"></span><br />
+This class presents the different ways to implement threads : extending the Thread class, implementing the Runnable interface anonymously and using lambda expression.</h4>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/ThreadCreationExamples.git" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadCreationExamples.git</a>.</p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/ThreadCreationExamples/archive/master.zip" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadCreationExamples/archive/master.zip</a>.</p>
+<pre class="brush: java; highlight: [4,6]; title: ThreadByExtension.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by extending the Thread class.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByExtension extends Thread {
+
+	@Override
+	public void run() {
+		System.out.println(&quot;Running &quot; + this.getClass());
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7]; title: ThreadByImplementation.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by implementing the Runnable
+ * interface.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByImplementation implements Runnable {
+
+	@Override
+	public void run() {
+		System.out.println(&quot;Running &quot; + this.getClass().getName());
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,6,13,17,21,31,32]; title: TestThread.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents the different ways to implement threads.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class TestThread {
+
+	public static void main(String[] args) {
+
+		// Thread by extending the Thread class.
+		ThreadByExtension t1 = new ThreadByExtension();
+		t1.start();
+
+		// Thread by implementing the Runnable interface.
+		Thread t2 = new Thread(new ThreadByImplementation());
+		t2.start();
+
+		// Thread by implementing the Runnable interface anonymously.
+		Runnable r1 = new Runnable() {
+			@Override
+			public void run() {
+				System.out.println(&quot;Running Anonymous object runnable.&quot;);
+			}
+		};
+		Thread t3 = new Thread(r1);
+		t3.start();
+
+		// Thread by implementing the Runnable interface anonymously using
+		// lambda expression.
+		Runnable r2 = () -&gt; System.out.println(&quot;Running runnable object using lambda expression Runnable.&quot;);
+		Thread t4 = new Thread(r2);
+		t4.start();
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/17/thread-creation-extending-thread-implementing-runnable-interface/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+	</channel>
+</rss>

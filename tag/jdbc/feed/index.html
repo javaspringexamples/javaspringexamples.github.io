@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>jdbc &#8211; CoderCocoon</title>
+	<atom:link href="http://localhost/wordpress/tag/jdbc/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Fri, 07 Dec 2018 16:33:52 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.3</generator>
+	<item>
+		<title>Example Spring 4 &#8211; JdbcDaoSupport</title>
+		<link>http://localhost/wordpress/2017/02/10/spring-jdbcdaosupport/</link>
+		<comments>http://localhost/wordpress/2017/02/10/spring-jdbcdaosupport/#respond</comments>
+		<pubDate>Fri, 10 Feb 2017 13:52:01 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring]]></category>
+		<category><![CDATA[jdbc]]></category>
+		<category><![CDATA[spring]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=206</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring JdbcDaoSupport. The technologies used are : Spring 4.3.4, Junit 4.12, JDK 1.8, Maven 3.3.9.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-206"></span><br />
+This example presents the basic concept of using in Spring JdbcDaoSupport.</p>
+<p>The technologies used are :</p>
+<ul>
+<li>Spring 4.3.4</li>
+<li>Junit 4.12</li>
+<li>JDK 1.8</li>
+<li>Maven 3.3.9</li>
+</ul>
+<p>You can convert this example to an eclipse project by going to folder where the pom.xml is, and use the following command :</p>
+<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Here the project files :</p>
+<div id="attachment_207" style="width: 362px" class="wp-caption alignnone"><img class="wp-image-207 " src="http://localhost/wordpress/wp-content/uploads/2017/02/Example-Spring-4-JdbcDaoSupport-300x287.png" alt="Example Spring 4 - JdbcDaoSupport" width="352" height="337" srcset="http://localhost/wordpress/wp-content/uploads/2017/02/Example-Spring-4-JdbcDaoSupport-300x287.png 300w, http://localhost/wordpress/wp-content/uploads/2017/02/Example-Spring-4-JdbcDaoSupport.png 457w" sizes="(max-width: 352px) 100vw, 352px" /><p class="wp-caption-text">Example Spring 4 &#8211; JdbcDaoSupport</p></div>
+<pre class="brush: java; highlight: [6,7,9]; title: Example.java; toolbar: true; notranslate">
+package com.codercocoon.springJdbcDaoSupport;
+
+import java.util.Date;
+
+/**
+ * Example class : we suppose that an example has : id, title, description and a
+ * publication date.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class Example {
+
+	private int id;
+	private String title;
+	private String description;
+	private Date publicationDate;
+
+	public Example() {
+	}
+
+	public Example(String title, String description) {
+		this.title = title;
+		this.description = description;
+	}
+
+	public int getExampleId() {
+		return id;
+	}
+
+	public void setExampleId(int id) {
+		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Date getPublicationDate() {
+		return publicationDate;
+	}
+
+	public void setPublicationDate(Date publicationDate) {
+		this.publicationDate = publicationDate;
+	}
+
+	public String toString() {
+		return id + &quot; - &quot; + title + &quot; - &quot; + description;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [6,8]; title: ExampleDao.java; toolbar: true; notranslate">
+package com.codercocoon.springJdbcDaoSupport;
+
+import java.util.List;
+
+/**
+ * The DAO Interface.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public interface ExampleDao {
+
+	/**
+	 * Gets all examples in the database.
+	 * 
+	 * @return a list of examples.
+	 */
+	List&lt;Example&gt; getAllExamples();
+
+	/**
+	 * Gets an example by its title.
+	 * 
+	 * @param title
+	 *            : is unique constraint.
+	 * @return the example having the title parameter.
+	 */
+	Example getExampleByTitle(String title);
+
+	/**
+	 * Saves the example passed in the parameter.
+	 * 
+	 * @param ex
+	 */
+	void saveExample(Example ex);
+
+	/**
+	 * Updates the example passed in the parameter.
+	 * 
+	 * @param ex
+	 */
+	void updateExample(Example ex);
+
+	/**
+	 * Deletes the example which has the ID passed in the parameter.
+	 * 
+	 * @param id_ex
+	 */
+	void deleteExample(int id_ex);
+}
+</pre>
+<pre class="brush: java; highlight: [10,12,18,29,30,31,42,43,52,61,70]; title: ExampleDaoImpl.java; toolbar: true; notranslate">
+package com.codercocoon.springJdbcDaoSupport;
+
+import java.util.List;
+
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
+/**
+ * The DAO implementation.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ExampleDaoImpl extends JdbcDaoSupport implements ExampleDao {
+
+	/**
+	 * This method selects all examples from the database.
+	 */
+	@Override
+	public List&lt;Example&gt; getAllExamples() {
+		String sql = &quot;SELECT * FROM EXAMPLE&quot;;
+		List&lt;Example&gt; examples = getJdbcTemplate().queryForList(sql, null,
+				new BeanPropertyRowMapper&lt;Example&gt;(Example.class));
+		return examples;
+	}
+
+	/**
+	 * This method gets an example from the database by its title.
+	 * BeanPropertyRowMapper is just magic stuff that he maps fields from the
+	 * database table to the target object.
+	 */
+	@Override
+	public Example getExampleByTitle(String title) {
+		String sql = &quot;SELECT * FROM EXAMPLE WHERE TITLE = ?&quot;;
+		Object[] params = new Object[] { title };
+		Example ex = null;
+		try {
+			ex = (Example) getJdbcTemplate().queryForObject(sql, params,
+					new BeanPropertyRowMapper&lt;Example&gt;(Example.class));
+		} /*
+			 * If no rows found, Spring throws an exception, so we catch the
+			 * exception to return null.
+			 */
+		catch (EmptyResultDataAccessException e) {
+			return ex;
+		}
+		return ex;
+	}
+
+	/**
+	 * This method inserts an example in the database.
+	 */
+	@Override
+	public void saveExample(Example ex) {
+		String sql = &quot;INSERT INTO EXAMPLE (TITLE, DESCRIPTION) VALUES (?, ?)&quot;;
+		getJdbcTemplate().update(sql, new Object[] { ex.getTitle(), ex.getDescription() });
+	}
+
+	/**
+	 * This method updates an example in the database by its ID.
+	 */
+	@Override
+	public void updateExample(Example ex) {
+		String sql = &quot;UPDATE EXAMPLE SET TITLE = ?, DESCRIPTION = ? WHERE EXAMPLE_ID = ?&quot;;
+		getJdbcTemplate().update(sql, new Object[] { ex.getTitle(), ex.getDescription(), ex.getExampleId() });
+	}
+
+	/**
+	 * This method deletes an example from the database by its ID.
+	 */
+	@Override
+	public void deleteExample(int id_ex) {
+		String sql = &quot;DELETE FROM EXAMPLE WHERE EXAMPLE_ID = ?&quot;;
+		getJdbcTemplate().update(sql, new Object[] { id_ex });
+	}
+}
+</pre>
+<pre class="brush: xml; highlight: [9,12,21]; title: applicationContext.xml; toolbar: true; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:c=&quot;http://www.springframework.org/schema/c&quot;
+	xmlns:jdbc=&quot;http://www.springframework.org/schema/jdbc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd&quot;&gt;
+
+	&lt;!-- Properties of the JDBC connection. --&gt;
+	&lt;context:property-placeholder location=&quot;jdbc.properties&quot; /&gt;
+
+	&lt;!-- the dataSource bean is setted to JdbcDaoSupport object automatically. --&gt;
+	&lt;bean id=&quot;dataSource&quot;
+		class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;
+		&lt;property name=&quot;driverClassName&quot; value=&quot;${jdbc.driverClassName}&quot; /&gt;
+		&lt;property name=&quot;url&quot; value=&quot;${jdbc.url}&quot; /&gt;
+		&lt;property name=&quot;username&quot; value=&quot;${jdbc.username}&quot; /&gt;
+		&lt;property name=&quot;password&quot; value=&quot;${jdbc.password}&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;!-- Initializing the database --&gt;
+	&lt;jdbc:initialize-database data-source=&quot;dataSource&quot;&gt;
+		&lt;jdbc:script location=&quot;classpath:db-schema.sql&quot; /&gt;
+	&lt;/jdbc:initialize-database&gt;
+
+	&lt;bean id=&quot;example&quot; class=&quot;com.codercocoon.springJdbcDaoSupport.Example&quot;
+		c:_0=&quot;example title&quot; c:_1=&quot;This the example description&quot; /&gt;
+
+	&lt;bean id=&quot;exampleDao&quot; class=&quot;com.codercocoon.springJdbcDaoSupport.ExampleDaoImpl&quot;&gt;
+		&lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: sql; highlight: [1,4,8,17]; title: db-schema.sql; toolbar: true; notranslate">
+--Drop the database :  `example_jdbc`
+DROP DATABASE IF EXISTS `example_jdbc`;
+
+--Create the database :  `example_jdbc`
+CREATE DATABASE IF NOT EXISTS `example_jdbc` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `example_jdbc`;
+
+--Create the Example table.
+CREATE TABLE IF NOT EXISTS `example` (
+  `example_id` int(6) NOT NULL AUTO_INCREMENT,
+  `title` varchar(60) NOT NULL,
+  `description` varchar(250) NOT NULL,
+  PRIMARY KEY (`example_id`),
+  UNIQUE KEY `title` (`title`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--Insert some examples in the database.
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 1', 'example description 1');
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 2', 'example description 2');
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 3', 'example description 3');
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 4', 'example description 4');
+</pre>
+<pre class="brush: plain; highlight: [3]; title: jdbc.properties; toolbar: true; notranslate">
+jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/example_jdbc
+#Don't forget to configure your login and password to connect to your MySQL server. 
+jdbc.username=root
+jdbc.password=
+</pre>
+<pre class="brush: java; highlight: [16,18,35,44,45,46,58,69,70]; title: ApplicationXMLConfigTest.java; toolbar: true; notranslate">
+package com.codercocoon.test.springJdbcDaoSupport;
+
+import java.util.Date;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.codercocoon.springJdbcDaoSupport.Example;
+import com.codercocoon.springJdbcDaoSupport.ExampleDao;
+
+/**
+ * Test class instead XML-based config.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
+public class ApplicationXMLConfigTest {
+
+	@Autowired
+	ExampleDao exampleDao;
+
+	@Autowired
+	Example example;
+
+	final String TITLE = &quot;example title&quot;;	
+	
+	/**
+	 * This test checks if the example is well inserted.
+	 */
+	@Test
+	public void testInsertExample() {
+		exampleDao.saveExample(example);
+		Assert.assertTrue(example.getTitle().equals(exampleDao.getExampleByTitle(TITLE).getTitle()));
+	}
+
+	/**
+	 * This test checks if the example is well updated, the modification of
+	 * title which is unique, we concatenate it with the date with seconds, to
+	 * allow running the test many times.
+	 */
+	@Test
+	public void testUpdateExample() {
+		Example ex = getExample(TITLE);
+		ex.setTitle(&quot;title modified &quot;.concat(new Date().toString()));
+		exampleDao.updateExample(ex);
+		ex = exampleDao.getExampleByTitle(TITLE);
+		Assert.assertNull(ex);
+	}
+
+	/**
+	 * This test checks if the example is well deleted.
+	 */
+	@Test
+	public void testDeleteExample() {
+		Example ex = getExample(TITLE);
+		exampleDao.deleteExample(ex.getExampleId());
+		ex = exampleDao.getExampleByTitle(TITLE);
+		Assert.assertNull(ex);
+	}
+
+	/**
+	 * This method insert the example if not exist in the database, the object
+	 * inserted is the bean &quot;example&quot; which is autowired.
+	 */
+	private Example getExample(String title) {
+		Example ex = exampleDao.getExampleByTitle(title);
+		if (ex == null) {
+			exampleDao.saveExample(example);
+			ex = exampleDao.getExampleByTitle(title);
+		}
+		return ex;
+	}
+}
+</pre>
+<p><a href="https://github.com/codercocoon/springJdbcDaoSupport.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/codercocoon/springJdbcDaoSupport/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/02/10/spring-jdbcdaosupport/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+	</channel>
+</rss>

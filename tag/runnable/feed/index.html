@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>runnable &#8211; CoderCocoon</title>
+	<atom:link href="http://localhost/wordpress/tag/runnable/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Fri, 07 Dec 2018 16:33:52 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.3</generator>
+	<item>
+		<title>Thread methods : getId, getName, isAlive, sleep, interrupt</title>
+		<link>http://localhost/wordpress/2017/04/18/thread-getid-getname-isalive-sleep-interrupt/</link>
+		<comments>http://localhost/wordpress/2017/04/18/thread-getid-getname-isalive-sleep-interrupt/#respond</comments>
+		<pubDate>Tue, 18 Apr 2017 10:07:59 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Thread]]></category>
+		<category><![CDATA[runnable]]></category>
+		<category><![CDATA[thread]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=297</guid>
+		<description><![CDATA[This example presents some popular methods about Thread, especially : getId, getName, isAlive, sleep, interrupt.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-297"></span><br />
+This example presents some popular methods about Thread, especially: getId, getName, isAlive, sleep, interrupt.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/ThreadPopularMethods.git" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadPopularMethods.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/ThreadPopularMethods/archive/master.zip" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadPopularMethods/archive/master.zip</a></p>
+<pre class="brush: java; highlight: [4,5,7,20,23]; title: ThreadByExtension.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by extending the Thread class,
+ * and using sleep method.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByExtension extends Thread {
+
+	public ThreadByExtension(String name) {
+		super(name);
+	}
+
+	@Override
+	public void run() {
+		System.out.println(&quot;Running &quot; + getName());
+		try {
+			// Using sleep method.
+			sleep(1000);
+		} catch (InterruptedException e) {
+			// ...Do something to handle the exception.
+			System.out.println(getName() + &quot; is interrupted&quot;);
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7,16,18]; title: ThreadByImplementation.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by implementing the Runnable
+ * interface, and using sleep method.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByImplementation implements Runnable {
+
+	@Override
+	public void run() {
+		try {
+			System.out.println(&quot;Running &quot; + this.getClass().getName());
+			Thread.sleep(6000);
+		} catch (InterruptedException e) {
+			// ...Do something to handle the exception.
+			System.out.println(Thread.currentThread().getName() + &quot; is interrupted&quot;);
+		}
+
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7,14,19,22,25,35,36,41,44,47]; title: TestThread.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents some popular methods about threads, especially : getId,
+ * getName, isAlive, sleep, interrupt.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class TestThread {
+
+	public static void main(String[] args) throws InterruptedException {
+
+		// Thread by extending the Thread class.
+		ThreadByExtension t1 = new ThreadByExtension(&quot;t1&quot;);
+		t1.start();
+		System.out.println(&quot;t1 isAlive=&quot; + t1.isAlive());
+
+		// Thread by implementing the Runnable interface.
+		Thread t2 = new Thread(new ThreadByImplementation(), &quot;t2&quot;);
+		t2.start();
+		// Interrupting t2
+		t2.interrupt();
+
+		// Thread by implementing the Runnable interface anonymously.
+		Runnable r1 = new Runnable() {
+			@Override
+			public void run() {
+				System.out.println(&quot;Running Anonymous object runnable.&quot;);
+			}
+		};
+		Thread t3 = new Thread(r1);
+		t3.start();
+
+		// Thread by implementing the Runnable interface anonymously using
+		// lambda expression.
+		Runnable r2 = () -&gt; System.out.println(&quot;Running runnable object using lambda expression Runnable.&quot;);
+		Thread t4 = new Thread(r2);
+		t4.start();
+
+		// Waiting for the t1 to be terminated.
+		t1.join();
+
+		// t1.is Alive will be always false, because t1 is terminated.
+		System.out.println(t1.getId() + &quot; &quot; + t1.getName() + &quot; &quot; + t1.getPriority() + &quot; isAlive=&quot; + t1.isAlive());
+		System.out.println(t2.getId() + &quot; &quot; + t2.getName() + &quot; &quot; + t2.getPriority());
+		// The threads names are generated by the JVM, they begin by &quot;Thread-&quot;
+		System.out.println(t3.getId() + &quot; &quot; + t3.getName() + &quot; &quot; + t3.getPriority());
+		System.out.println(t4.getId() + &quot; &quot; + t4.getName() + &quot; &quot; + t4.getPriority());
+
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/18/thread-getid-getname-isalive-sleep-interrupt/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Thread : creation threads by extending Thread class, and implementing Runnable interface</title>
+		<link>http://localhost/wordpress/2017/04/17/thread-creation-extending-thread-implementing-runnable-interface/</link>
+		<comments>http://localhost/wordpress/2017/04/17/thread-creation-extending-thread-implementing-runnable-interface/#respond</comments>
+		<pubDate>Mon, 17 Apr 2017 14:56:06 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Thread]]></category>
+		<category><![CDATA[runnable]]></category>
+		<category><![CDATA[thread]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=291</guid>
+		<description><![CDATA[This class presents the different ways to implement threads : extending the Thread class, implementing the Runnable interface anonymously and using lambda expression.]]></description>
+				<content:encoded><![CDATA[<h4><span id="more-291"></span><br />
+This class presents the different ways to implement threads : extending the Thread class, implementing the Runnable interface anonymously and using lambda expression.</h4>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/ThreadCreationExamples.git" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadCreationExamples.git</a>.</p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/ThreadCreationExamples/archive/master.zip" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/ThreadCreationExamples/archive/master.zip</a>.</p>
+<pre class="brush: java; highlight: [4,6]; title: ThreadByExtension.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by extending the Thread class.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByExtension extends Thread {
+
+	@Override
+	public void run() {
+		System.out.println(&quot;Running &quot; + this.getClass());
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7]; title: ThreadByImplementation.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents how to implement a thread by implementing the Runnable
+ * interface.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class ThreadByImplementation implements Runnable {
+
+	@Override
+	public void run() {
+		System.out.println(&quot;Running &quot; + this.getClass().getName());
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,6,13,17,21,31,32]; title: TestThread.java; toolbar: true; notranslate">
+package com.codercocoon.ThreadExamples;
+
+/**
+ * This class presents the different ways to implement threads.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class TestThread {
+
+	public static void main(String[] args) {
+
+		// Thread by extending the Thread class.
+		ThreadByExtension t1 = new ThreadByExtension();
+		t1.start();
+
+		// Thread by implementing the Runnable interface.
+		Thread t2 = new Thread(new ThreadByImplementation());
+		t2.start();
+
+		// Thread by implementing the Runnable interface anonymously.
+		Runnable r1 = new Runnable() {
+			@Override
+			public void run() {
+				System.out.println(&quot;Running Anonymous object runnable.&quot;);
+			}
+		};
+		Thread t3 = new Thread(r1);
+		t3.start();
+
+		// Thread by implementing the Runnable interface anonymously using
+		// lambda expression.
+		Runnable r2 = () -&gt; System.out.println(&quot;Running runnable object using lambda expression Runnable.&quot;);
+		Thread t4 = new Thread(r2);
+		t4.start();
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/17/thread-creation-extending-thread-implementing-runnable-interface/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+	</channel>
+</rss>

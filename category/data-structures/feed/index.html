@@ -1,0 +1,1572 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Data structures &#8211; CoderCocoon</title>
+	<atom:link href="http://localhost/wordpress/category/data-structures/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Fri, 07 Dec 2018 16:33:52 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.3</generator>
+	<item>
+		<title>Binary Search Tree : Height, Insert, Search, Lowest Common Ancestor</title>
+		<link>http://localhost/wordpress/2017/04/13/binary-search-tree/</link>
+		<comments>http://localhost/wordpress/2017/04/13/binary-search-tree/#respond</comments>
+		<pubDate>Thu, 13 Apr 2017 21:15:38 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Data structures]]></category>
+		<category><![CDATA[tree]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=277</guid>
+		<description><![CDATA[This example represents some operations about binary search tree, especially how to calculate the height, inserting an searching a value,
+finding the lowest common ancestor.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-277"></span> This example represents some operations about binary search tree, especially how to calculate the height, inserting an searching a value,<br />
+finding the lowest common ancestor.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/BinarySearchTree.git" target="_blank">https://github.com/codercocoon/BinarySearchTree.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/BinarySearchTree/archive/master.zip" target="_blank">https://github.com/codercocoon/BinarySearchTree/archive/master.zip</a></p>
+<pre class="brush: java; highlight: [13,24]; title: Node.java; toolbar: true; notranslate">
+package com.codercocoon.Tree;
+
+public class Node {
+	int data;
+	Node left;
+	Node right;
+
+	Node(int _data) {
+		data = _data;
+	}
+
+	/**
+	 * Creates the right child node.
+	 * 
+	 * @param _data
+	 * @return the right child node created.
+	 */
+	public Node setRight(int _data) {
+		right = new Node(_data);
+		return right;
+	}
+
+	/**
+	 * Creates the left child node.
+	 * 
+	 * @param _data
+	 * @return the left child node created.
+	 */
+	public Node setLeft(int _data) {
+		left = new Node(_data);
+		return left;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,6,8,14,28,47,65,84]; title: BinarySearchTree.java; toolbar: true; notranslate">
+package com.codercocoon.Tree;
+
+/**
+ * This class represents some operations about binary search trees, especially
+ * how to calculate the height, inserting an searching a value, finding the
+ * lowest common ancestor.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class BinarySearchTree {
+
+	/**
+	 * Postorder traversal.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public void postOrder(Node root) {
+		if (root == null)
+			return;
+		postOrder(root.left);
+		postOrder(root.right);
+		System.out.print(root.data + &quot; &quot;);
+	}
+
+	/**
+	 * Calculating the height of the tree.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public int height(Node root) {
+		if (root == null)
+			return 0;
+
+		int heightL = height(root.left);
+		int heightR = height(root.right);
+
+		if (heightL &amp;amp;amp;amp;amp;gt; heightR)
+			return heightL + 1;
+		else
+			return heightR + 1;
+	}
+
+	/**
+	 * Inserting value in a binary search tree.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public Node insert(Node root, int _value) {
+
+		if (root == null)
+			return new Node(_value);
+
+		if (_value &amp;amp;amp;amp;amp;lt; root.data) { root.left = insert(root.left, _value); } if (_value &amp;amp;amp;amp;amp;gt; root.data) {
+			root.right = insert(root.right, _value);
+		}
+
+		return root;
+	}
+
+	/**
+	 * Searching a value in a binary search tree.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public boolean search(Node root, int _value) {
+		boolean found = false;
+
+		if (root == null)
+			found = false;
+		else if (root.data == _value)
+			found = true;
+		else if (_value &amp;amp;amp;amp;amp;lt; root.data) found = search(root.left, _value); else if (_value &amp;amp;amp;amp;amp;gt; root.data)
+			found = search(root.right, _value);
+
+		return found;
+	}
+
+	/**
+	 * Finding the lowest common ancestor in a binary search tree.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public Node findLCA(Node root, int v1, int v2) {
+		if (root == null)
+			return null;
+
+		if (root.data == v1 || root.data == v2)
+			return root;
+		Node left = findLCA(root.left, v1, v2);
+		Node right = findLCA(root.right, v1, v2);
+
+		if (left != null &amp;amp;amp;amp;amp;amp;&amp;amp;amp;amp;amp;amp; right != null)
+			return root;
+
+		return (left != null) ? left : right;
+	}
+}
+</pre>
+<div id="attachment_283" style="width: 273px" class="wp-caption aligncenter"><img class="size-full wp-image-283" src="http://localhost/wordpress/wp-content/uploads/2017/04/binary-search-tree.png" alt="binary search tree" width="263" height="204" /><p class="wp-caption-text">This is the binary search tree for the test.</p></div>
+<pre class="brush: java; highlight: [17,20,23,25,28,31]; title: TestHeightSearchInsertionLowestCommonAncestor.java; toolbar: true; notranslate">
+package com.codercocoon.Tree;
+
+public class TestHeightSearchInsertionLowestCommonAncestor {
+
+	public static void main(String[] args) {
+
+		// Create the binary search tree
+		Node root = new Node(10);
+		Node node_5 = root.setLeft(9).setLeft(5);
+		node_5.setLeft(4);
+		node_5.setRight(6);
+		Node node_30 = root.setRight(20).setRight(30);
+		node_30.setLeft(25);
+		node_30.setRight(40);
+
+		BinarySearchTree bt = new BinarySearchTree();
+		System.out.println(&quot;Height of the tree : (must be 4)&quot;);
+		System.out.println(bt.height(root));
+
+		System.out.println(&quot;Insertion the value 3 :&quot;);
+		bt.postOrder(bt.insert(root, 3));
+
+		System.out.println(&quot;Searching the value 25 :&quot;);
+		System.out.println(bt.search(root, 25));
+		System.out.println(&quot;Searching the value 99 :&quot;);
+		System.out.println(bt.search(root, 99));
+
+		System.out.println(&quot;Finding the lowest common ancestor of 4 and 25 : (must be 10)&quot;);
+		System.out.println(bt.findLCA(root, 4, 25).data);
+
+		System.out.println(&quot;Finding the lowest common ancestor of 5 and 6 : (must be 5)&quot;);
+		System.out.println(bt.findLCA(root, 5, 6).data);
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/13/binary-search-tree/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Binary Tree Traversals : preOrder, postOrder, inOrder, top view and level order</title>
+		<link>http://localhost/wordpress/2017/04/13/binary-tree-traversals-preorder-postorder-inorder-top-view-level-order/</link>
+		<comments>http://localhost/wordpress/2017/04/13/binary-tree-traversals-preorder-postorder-inorder-top-view-level-order/#respond</comments>
+		<pubDate>Thu, 13 Apr 2017 17:50:20 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Data structures]]></category>
+		<category><![CDATA[tree]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=271</guid>
+		<description><![CDATA[This example presents the basic concept of binary tree traversals : preOrder, postOrder, inOrder, top view and level order traversal.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-271"></span><br />
+This example presents the basic concept of binary tree traversals : preOrder, postOrder, inOrder, top view and level order traversal.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/BinaryTreeTraversals.git" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/BinaryTreeTraversals.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/BinaryTreeTraversals/archive/master.zip" target="_blank" rel="noopener noreferrer">https://github.com/codercocoon/BinaryTreeTraversals/archive/master.zip</a></p>
+<pre class="brush: java; title: Node.java; toolbar: true; notranslate">
+package com.codercocoon.Tree;
+
+public class Node {
+	int data;
+	Node left;
+	Node right;
+
+	Node(int _data) {
+		data = _data;
+	}
+
+	/**
+	 * Creates the right child node.
+	 * 
+	 * @param _data
+	 * @return the right child node created.
+	 */
+	public Node setRight(int _data) {
+		right = new Node(_data);
+		return right;
+	}
+
+	/**
+	 * Creates the left child node.
+	 * 
+	 * @param _data
+	 * @return the left child node created.
+	 */
+	public Node setLeft(int _data) {
+		left = new Node(_data);
+		return left;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [8,9,10,12,18,32,46,60,85,110]; title: BinaryTree.java; toolbar: true; notranslate">
+package com.codercocoon.Tree;
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+/**
+ * This class represents some operations about Trees, especially how to
+ * traversal a tree in different ways : preOrder, postOrder, inOrder, top view
+ * and level order.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class BinaryTree {
+
+	/**
+	 * Preorder traversal.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public void preOrder(Node root) {
+		if (root == null)
+			return;
+		System.out.print(root.data + &quot; &quot;);
+		preOrder(root.left);
+		preOrder(root.right);
+	}
+
+	/**
+	 * Postorder traversal.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public void postOrder(Node root) {
+		if (root == null)
+			return;
+		postOrder(root.left);
+		postOrder(root.right);
+		System.out.print(root.data + &quot; &quot;);
+	}
+
+	/**
+	 * Inorder traversal.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public void inOrder(Node root) {
+		if (root == null)
+			return;
+		inOrder(root.left);
+		System.out.print(root.data + &quot; &quot;);
+		inOrder(root.right);
+	}
+
+	/**
+	 * Top view in iterative way.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public void topView(Node root) {
+		Node current = root;
+
+		Stack&amp;lt;Node&amp;gt; s = new Stack&amp;lt;&amp;gt;();
+		while (current != null) {
+			s.push(current);
+			current = current.left;
+		}
+		while (!s.isEmpty()) {
+			System.out.print(s.pop().data + &quot; &quot;);
+		}
+
+		current = root.right;
+		while (current != null) {
+			System.out.print(current.data + &quot; &quot;);
+			current = current.right;
+		}
+	}
+
+	/**
+	 * Top view recursively way.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public void topViewRecursive(Node root) {
+		topViewLeft(root);
+		topViewRight(root.right);
+	}
+
+	private void topViewLeft(Node root) {
+		if (root != null) {
+			topViewLeft(root.left);
+			System.out.print(root.data + &quot; &quot;);
+		}
+	}
+
+	private void topViewRight(Node root) {
+		if (root != null) {
+			System.out.print(root.data + &quot; &quot;);
+			topViewRight(root.right);
+		}
+	}
+
+	/**
+	 * Level order traversal.
+	 * 
+	 * @param root
+	 *            : root of the tree.
+	 */
+	public void levelOrderTraversal(Node root) {
+		Queue&amp;lt;Node&amp;gt; q = new LinkedList&amp;lt;&amp;gt;();
+		q.add(root);
+		while (!q.isEmpty()) {
+			Node n = q.poll();
+			System.out.print(n.data + &quot; &quot;);
+			if (n.left != null)
+				q.add(n.left);
+			if (n.right != null)
+				q.add(n.right);
+		}
+	}
+}
+</pre>
+<div id="attachment_284" style="width: 273px" class="wp-caption aligncenter"><img class="size-full wp-image-284" src="http://localhost/wordpress/wp-content/uploads/2017/04/binary-tree.png" alt="binary tree" width="263" height="204" /><p class="wp-caption-text">This is the binary tree for the test.</p></div>
+<pre class="brush: java; highlight: [7,18,22,26,30,33,37]; title: TestTraversalAndTopView.java; toolbar: true; notranslate">
+package com.codercocoon.Tree;
+
+public class TestTraversalAndTopView {
+
+	public static void main(String[] args) {
+
+		// Create the binary tree
+		Node root = new Node(10);
+		Node node_9 = root.setLeft(6).setLeft(9);
+		node_9.setLeft(1);
+		node_9.setRight(8);
+		Node node_30 = root.setRight(3).setRight(30);
+		node_30.setLeft(19);
+		node_30.setRight(20);
+
+		BinaryTree bt = new BinaryTree();
+		// Preorder : 10 6 9 1 8 3 30 19 20
+		System.out.println(&quot;Preorder Traversal : (must be 10 6 9 1 8 3 30 19 20)&quot;);
+		bt.preOrder(root);
+		System.out.println();
+		// Postorder : 1 8 9 6 19 20 30 3 10
+		System.out.println(&quot;Postorder Traversal : (must be 1 8 9 6 19 20 30 3 10)&quot;);
+		bt.postOrder(root);
+		System.out.println();
+		// Inorder : 1 9 8 6 10 3 19 30 20
+		System.out.println(&quot;Inorder Traversal : (must be 1 9 8 6 10 3 19 30 20)&quot;);
+		bt.inOrder(root);
+		System.out.println();
+		// Top view : 1 9 6 10 3 30 20
+		System.out.println(&quot;Top view (recursively way) : (must be 1 9 6 10 3 30 20)&quot;);
+		bt.topViewRecursive(root);
+		System.out.println();
+		System.out.println(&quot;Top view (iterative way) : (must be 1 9 6 10 3 30 20)&quot;);
+		bt.topView(root);
+		System.out.println();
+		// Level Order Traversal : 10 6 3 9 30 1 8 19 20
+		System.out.println(&quot;Level Order Traversal : (must be 10 6 3 9 30 1 8 19 20)&quot;);
+		bt.levelOrderTraversal(root);
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/13/binary-tree-traversals-preorder-postorder-inorder-top-view-level-order/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Doubly Linked List : Reverse, Compare, Merge</title>
+		<link>http://localhost/wordpress/2017/04/12/doubly-linked-list-reverse-compare-merge/</link>
+		<comments>http://localhost/wordpress/2017/04/12/doubly-linked-list-reverse-compare-merge/#respond</comments>
+		<pubDate>Wed, 12 Apr 2017 17:06:51 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Data structures]]></category>
+		<category><![CDATA[doubly linked list]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=269</guid>
+		<description><![CDATA[This example presents the basic concept of doubly linked lists : Reverse a doubly linked list, Compare two sorted doubly linked lists, Merge two sorted doubly linked lists.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-269"></span><br />
+This example presents the basic concept of doubly linked lists :<br />
+Reverse a doubly linked list.<br />
+Compare two sorted doubly linked lists.<br />
+Merge two sorted doubly linked lists.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/DoublyLinkedListReverseCompareMerge.git" target="_blank">https://github.com/codercocoon/DoublyLinkedListReverseCompareMerge.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/DoublyLinkedListReverseCompareMerge/archive/master.zip" target="_blank">https://github.com/codercocoon/DoublyLinkedListReverseCompareMerge/archive/master.zip</a></p>
+<pre class="brush: java; title: Node.java; toolbar: true; notranslate">
+package com.codercocoon.DoublyLinkedList;
+
+public class Node {
+	Node previous;
+	int data;
+	Node next;
+
+	Node(int _data) {
+		previous = null;
+		next = null;
+		data = _data;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,6,8,14,32,59,88,89,119,147]; title: ReverseCompareMerge.java; toolbar: true; notranslate">
+package com.codercocoon.DoublyLinkedList;
+
+/**
+ * This class represents some operations about doubly linked lists, especially
+ * how to reverse a doubly linked list, compare and merge two sorted doubly
+ * linked lists.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class ReverseCompareMerge {
+
+	/**
+	 * This method inserts element at first of the doubly linked list.
+	 * 
+	 * @param head
+	 *            : head of the doubly linked list.
+	 * @param _data
+	 *            : the element to insert.
+	 * @return
+	 */
+	public Node insertAtFirst(Node head, int _data) {
+		Node node = new Node(_data);
+		node.next = head;
+		head.previous = node;
+
+		print(node);
+		return node;
+	}
+
+	/**
+	 * This method inserts element at last of the doubly linked list.
+	 * 
+	 * @param head:
+	 *            head of the doubly linked list.
+	 * @param _data:
+	 *            the element to insert.
+	 * @return
+	 */
+	public Node insertAtLast(Node head, int _data) {
+		if (head == null)
+			head = new Node(_data);
+		else {
+			Node current = head;
+			Node prev = head.previous;
+			while (current != null) {
+				prev = current;
+				current = current.next;
+			}
+			Node node = new Node(_data);
+			node.previous = prev;
+			node.next = null;
+			prev.next = node;
+		}
+		return head;
+	}
+
+	/**
+	 * This method reverses a doubly linked list.
+	 * 
+	 * @param head
+	 *            : the linked list which will be reversed.
+	 * @return the linked list reversed.
+	 */
+	public Node reverse(Node head) {
+		System.out.print(&quot;Input : &quot;);
+		print(head);
+
+		Node current = head;
+		Node prev = head.previous;
+		Node next = null;
+		while (current != null) {
+			next = current.next;
+
+			current.next = prev;
+			current.previous = next;
+
+			prev = current;
+			current = next;
+		}
+		System.out.print(&quot;Ouput : &quot;);
+		print(prev);
+
+		return prev;
+	}
+
+	/**
+	 * This method checks if two doubly linked lists are the same :same elements
+	 * in the same order.
+	 * 
+	 * @param headA
+	 *            : the head of the 1st doubly linked list.
+	 * @param headB
+	 *            : the head of the 2nd doubly linked list.
+	 * @return &quot;1&quot; if the linked lists are the same, &quot;0&quot; if not.
+	 */
+	int compareLists(Node headA, Node headB) {
+		int result = 0;
+		if (headA == headB)
+			result = 1;
+		else {
+			Node currentA = headA;
+			Node currentB = headB;
+			while (currentA != null &amp;&amp; currentB != null) {
+				if (currentA.data != currentB.data) {
+					break;
+				} else {
+					currentA = currentA.next;
+					currentB = currentB.next;
+				}
+			}
+			if (currentA == currentB)
+				result = 1;
+		}
+		return result;
+	}
+
+	/**
+	 * This methods merges two sorted doubly linked lists.
+	 * 
+	 * @param headA
+	 *            : the head of the 1st doubly linked list.
+	 * @param headB
+	 *            : the head of the 2nd doubly linked list.
+	 * @return the two doubly linked lists merged.
+	 */
+	public Node mergeLists(Node headA, Node headB) {
+		if (headA == null)
+			return headB;
+		if (headB == null)
+			return headA;
+
+		if (headA.data &lt; headB.data) {
+			headA.next = mergeLists(headA.next, headB);
+			headA.next.previous = headA;
+			headA.previous = null;
+			return headA;
+		} else {
+			headB.next = mergeLists(headB.next, headA);
+			headB.next.previous = headA;
+			headB.previous = null;
+			return headB;
+		}
+	}
+
+	/**
+	 * This method prints the elements of a doubly linked list.
+	 * 
+	 * @param head:head
+	 *            of the doubly linked list
+	 */
+	void print(Node head) {
+		if (head == null)
+			System.out.println(head);
+		else {
+			Node current = head;
+			while (current != null) {
+				System.out.print(current.data + (current.next != null ? &quot;&lt;&quot; : &quot;&quot;) + &quot;-&gt;&quot;);
+				current = current.next;
+				System.out.print((current == null) ? &quot;NULL&quot; : &quot;&quot;);
+			}
+			System.out.println();
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [14,24,36]; title: TestReverseCompareMerge.java; toolbar: true; notranslate">
+package com.codercocoon.DoublyLinkedList;
+
+import java.util.Scanner;
+
+public class TestReverseCompareMerge {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		Node head = null;
+		Node second = null;
+		int size = 0;
+		ReverseCompareMerge ll = new ReverseCompareMerge();
+
+		System.out.println(&quot;##### Reverse a doubly linked list. #####&quot;);
+		System.out.print(&quot;Enter the doubly linked list size : &quot;);
+		size = sc.nextInt();
+		System.out.println(&quot;Enter the doubly linked list elements : &quot;);
+		while (size &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			size--;
+		}
+		head = ll.reverse(head);
+
+		System.out.println(&quot;##### Compare two doubly linked lists. #####&quot;);
+		System.out.print(&quot;The first doubly linked list : &quot;);
+		ll.print(head);
+		System.out.print(&quot;Enter the second doubly linked list size : &quot;);
+		size = sc.nextInt();
+		System.out.println(&quot;Enter the second doubly linked list elements : &quot;);
+		while (size &gt; 0) {
+			second = ll.insertAtLast(second, sc.nextInt());
+			size--;
+		}
+		System.out.println(&quot;Result of comparing (1:OK, 0:KO) : &quot; + ll.compareLists(head, second));
+
+		System.out.println(&quot;##### Merge two sorted doubly linked lists. #####&quot;);
+		head = null;
+		second = null;
+		System.out.print(&quot;Enter the size of the sorted doubly linked list A : &quot;);
+		size = sc.nextInt();
+		System.out.print(&quot;Enter the elements of the sorted doubly linked list A : &quot;);
+		while (size &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			size--;
+		}
+		System.out.print(&quot;Enter the size of the sorted doubly linked list B : &quot;);
+		size = sc.nextInt();
+		System.out.print(&quot;Enter the elements of the sorted doubly linked list B : &quot;);
+		while (size &gt; 0) {
+			second = ll.insertAtLast(second, sc.nextInt());
+			size--;
+		}
+		ll.print(ll.mergeLists(head, second));
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/12/doubly-linked-list-reverse-compare-merge/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Doubly Linked List : Insert at first, at last, at Nth position, Delete Nth position</title>
+		<link>http://localhost/wordpress/2017/04/11/doubly-linked-list-insert-first-last-nth-position-delete-nth-position/</link>
+		<comments>http://localhost/wordpress/2017/04/11/doubly-linked-list-insert-first-last-nth-position-delete-nth-position/#respond</comments>
+		<pubDate>Tue, 11 Apr 2017 18:09:02 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Data structures]]></category>
+		<category><![CDATA[doubly linked list]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=263</guid>
+		<description><![CDATA[This example presents the basic concept of insert/delete a node of a doubly linked list : Insert an element at first of doubly linked list, Insert an element at last of doubly linked list, Insert an element at Nth position of doubly linked list, Delete an element from Nth position of doubly linked list.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-263"></span><br />
+This example presents the basic concept of insert/delete a node of a doubly linked list :</p>
+<p>Insert an element at first of doubly linked list.<br />
+Insert an element at last of doubly linked list.<br />
+Insert an element at Nth position of doubly linked list.<br />
+Delete an element from Nth position of doubly linked list.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/DoublyLinkedListInsertDelete.git" target="_blank">https://github.com/codercocoon/DoublyLinkedListInsertDelete.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/DoublyLinkedListInsertDelete/archive/master.zip" target="_blank">https://github.com/codercocoon/DoublyLinkedListInsertDelete/archive/master.zip</a></p>
+<pre class="brush: java; title: Node.java; toolbar: true; notranslate">
+package com.codercocoon.DoublyLinkedList;
+
+public class Node {
+	Node previous;
+	int data;
+	Node next;
+
+	Node(int _data) {
+		previous = null;
+		next = null;
+		data = _data;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,6,8,14,32,59,60,98,99,133]; title: InsertDeleteANode.java; toolbar: true; notranslate">
+package com.codercocoon.DoublyLinkedList;
+
+/**
+ * This class represents some operations about doubly linked lists, especially
+ * how you can Insert at first, at last, at Nth position, and delete from Nth
+ * position.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class InsertDeleteANode {
+
+	/**
+	 * This method inserts element at first of the doubly linked list.
+	 * 
+	 * @param head
+	 *            : head of the doubly linked list.
+	 * @param _data
+	 *            : the element to insert.
+	 * @return
+	 */
+	public Node insertAtFirst(Node head, int _data) {
+		Node node = new Node(_data);
+		node.next = head;
+		head.previous = node;
+
+		print(node);
+		return node;
+	}
+
+	/**
+	 * This method inserts element at last of the doubly linked list.
+	 * 
+	 * @param head:
+	 *            head of the doubly linked list.
+	 * @param _data:
+	 *            the element to insert.
+	 * @return
+	 */
+	public Node insertAtLast(Node head, int _data) {
+		if (head == null)
+			head = new Node(_data);
+		else {
+			Node current = head;
+			Node prev = head.previous;
+			while (current != null) {
+				prev = current;
+				current = current.next;
+			}
+			Node node = new Node(_data);
+			node.previous = prev;
+			node.next = null;
+			prev.next = node;
+		}
+		return head;
+	}
+
+	/**
+	 * This method inserts element at the Nth position of the doubly linked
+	 * list.
+	 * 
+	 * @param head:head
+	 *            of the doubly linked list.
+	 * @param data:the
+	 *            element to insert.
+	 * @param position:
+	 *            the Nth position.
+	 * @return
+	 */
+	Node InsertNth(Node head, int data, int position) {
+		Node current = head;
+		Node previous = null;
+
+		int i = 1;
+		while (i &lt; position) {
+			previous = current;
+			current = current.next;
+			i++;
+		}
+
+		Node node = new Node(data);
+		node.next = current;
+		node.previous = previous;
+		current.previous = node;
+
+		if (previous != null) {
+			previous.next = node;
+		}
+
+		if (i == 1)
+			head = node;
+
+		print(head);
+		return head;
+	}
+
+	/**
+	 * This method deletes element at the Nth position from the doubly linked
+	 * list.
+	 * 
+	 * @param head:head
+	 *            of the doubly linked list.
+	 * @param position:the
+	 *            Nth position.
+	 * @return
+	 */
+	public Node delete(Node head, int position) {
+		Node current = head;
+		Node previous = null;
+
+		int i = 1;
+		while (i &lt; position) {
+			previous = current;
+			current = current.next;
+			i++;
+		}
+
+		if (previous != null) {
+			previous.next = current.next;
+			if (current.next != null)
+				current.next.previous = previous;
+		} else {
+			head = current.next;
+			head.previous = null;
+		}
+
+		System.out.print(&quot;Output : &quot;);
+		print(head);
+		return head;
+	}
+
+	/**
+	 * This method prints the elements of a doubly linked list.
+	 * 
+	 * @param head:head
+	 *            of the doubly linked list
+	 */
+	void print(Node head) {
+		if (head == null)
+			System.out.println(head);
+		else {
+			Node current = head;
+			while (current != null) {
+				System.out.print(current.data + (current.next != null ? &quot;&lt;&quot; : &quot;&quot;) + &quot;-&gt;&quot;);
+				current = current.next;
+				System.out.print((current == null) ? &quot;NULL&quot; : &quot;&quot;);
+			}
+			System.out.println();
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [15,24,28,32]; title: TestInsertDeleteANode.java; toolbar: true; notranslate">
+package com.codercocoon.DoublyLinkedList;
+
+import java.util.Scanner;
+
+public class TestInsertDeleteANode {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		Node head = null;
+		InsertDeleteANode ll = new InsertDeleteANode();
+
+		System.out.print(&quot;Enter the doubly linked list size : &quot;);
+		int size = sc.nextInt();
+
+		System.out.println(&quot;##### Insert at last of the doubly linked list. #####&quot;);
+		int tmp = size;
+		System.out.println(&quot;Enter the doubly linked list elements : &quot;);
+		while (tmp &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			tmp--;
+		}
+		ll.print(head);
+		
+		System.out.println(&quot;##### Insert at first of the doubly linked list. #####&quot;);
+		System.out.println(&quot;Enter the element to insert at first : &quot;);
+		head = ll.insertAtFirst(head, sc.nextInt());
+		
+		System.out.println(&quot;##### Insert at Nth position of the doubly linked list. #####&quot;);
+		System.out.println(&quot;Enter the element to insert and the position : &quot;);
+		head = ll.InsertNth(head, sc.nextInt(), sc.nextInt());
+
+		System.out.println(&quot;##### Delete element from the doubly linked list. #####&quot;);
+		System.out.println(&quot;Enter the position to delete : &quot;);
+		head = ll.delete(head, sc.nextInt());
+		
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/11/doubly-linked-list-insert-first-last-nth-position-delete-nth-position/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Linked List : Get node, Remove duplicates values, Cycle detection</title>
+		<link>http://localhost/wordpress/2017/04/11/linked-list-get-remove-cycle-detection/</link>
+		<comments>http://localhost/wordpress/2017/04/11/linked-list-get-remove-cycle-detection/#respond</comments>
+		<pubDate>Tue, 11 Apr 2017 13:15:02 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Data structures]]></category>
+		<category><![CDATA[linked list]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=256</guid>
+		<description><![CDATA[This example presents some basic concept of linked lists : Get a value of a node in the Nth position from the tail of the linked list, Remove duplicates values in the linked list, Detecting if the linked list contains a cycle.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-256"></span></p>
+<p>This example presents some basic concept of linked lists :</p>
+<p>Get a value of a node in the Nth position from the tail of the linked list.<br />
+Remove duplicates values in the linked list.<br />
+Detecting if the linked list contains a cycle.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/LinkedListGetValueCycleDetection.git" target="_blank">https://github.com/codercocoon/LinkedListGetValueCycleDetection.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/LinkedListGetValueCycleDetection/archive/master.zip" target="_blank">https://github.com/codercocoon/LinkedListGetValueCycleDetection/archive/master.zip</a></p>
+<pre class="brush: java; title: Node.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+public class Node {
+	int data;
+	Node next;
+
+	Node(int _data) {
+		data = _data;
+		next = null;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [8,9,10,12,42,66,90,114]; title: GetValueCycleDetection.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+/**
+ * This class represents some operations about linked lists, especially how to
+ * get a node at the Nth position from the tail of a linked list, get
+ * duplicate-value nodes, cycle detection.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class GetValueCycleDetection {
+
+	public Node insertAtLast(Node head, int _data) {
+		if (head == null)
+			head = new Node(_data);
+		else {
+			Node current = head;
+			while (current.next != null)
+				current = current.next;
+			current.next = new Node(_data);
+		}
+		return head;
+	}
+
+	public Node insertAtLast(Node head, Node _node) {
+		if (head == null)
+			head = _node;
+		else {
+			Node current = head;
+			while (current.next != null)
+				current = current.next;
+			current.next = _node;
+		}
+		return head;
+	}
+
+	/**
+	 * This method gets the Nth value from the tail of a linked list.
+	 * 
+	 * @param head
+	 *            : the head of the linked list.
+	 * @param n
+	 *            : the Nth position from the tail of the linked list.
+	 * @return the linked list reversed.
+	 */
+	public int getNode(Node head, int n) {
+		Stack&lt;Node&gt; s = new Stack&lt;&gt;();
+		Node current = head;
+		while (current != null) {
+			s.add(current);
+			current = current.next;
+		}
+		int i = 0;
+		while (i &lt; n) {
+			s.pop();
+			i++;
+		}
+		return s.pop().data;
+	}
+
+	/**
+	 * This method removes duplicates values from a sorted linked list.
+	 * 
+	 * @param head:
+	 *            head of the linked list.
+	 * 
+	 * @return the linked list without duplicates values.
+	 */
+	public Node removeDuplicates(Node head) {
+		Node previous = head;
+		Node current = head.next;
+
+		while (current != null) {
+			if (previous.data == current.data) {
+				previous.next = null;
+				previous.next = current.next;
+			} else {
+				previous = previous.next;
+			}
+			current = current.next;
+		}
+		return head;
+	}
+
+	/**
+	 * This method detects if the linked list contains a cycle.
+	 * 
+	 * @param head
+	 *            : the head of the linked list.
+	 * @return True if there is a cycle ine the linked list, false if not.
+	 */
+	public boolean hasCycle(Node head) {
+		Node current = head;
+		boolean cycle = false;
+
+		Map&lt;Node, Node&gt; map = new HashMap&lt;&gt;();
+		while (current != null) {
+			if (!map.containsKey(current)) {
+				map.put(current, current);
+			} else {
+				cycle = true;
+				break;
+			}
+			current = current.next;
+		}
+		return cycle;
+	}
+
+	/**
+	 * This method prints the elements of a linked list.
+	 * 
+	 * @param head:head
+	 *            of the linked list
+	 */
+	public void print(Node head) {
+		if (head == null)
+			System.out.println(head);
+		else {
+			Node current = head;
+			while (current != null) {
+				System.out.print(current.data + &quot;-&gt;&quot;);
+				current = current.next;
+				System.out.print((current == null) ? &quot;NULL&quot; : &quot;&quot;);
+			}
+			System.out.println();
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [20,23,25]; title: TestGetValueCycleDetection.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+import java.util.Scanner;
+
+public class TestGetValueCycleDetection {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		Node head = null;
+		int size = 0;
+		GetValueCycleDetection ll = new GetValueCycleDetection();
+
+		System.out.print(&quot;Enter the linked list size : &quot;);
+		size = sc.nextInt();
+		System.out.println(&quot;Enter the sorted linked list elements : &quot;);
+		while (size &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			size--;
+		}
+		System.out.print(&quot;Node value at the position : &quot;);
+		int position = sc.nextInt();
+		System.out.println(ll.getNode(head, position));
+		System.out.print(&quot;Removing duplicates values : &quot;);
+		ll.print(ll.removeDuplicates(head));
+		System.out.print(&quot;the linked list has a cycle ? &quot; + ll.hasCycle(head));
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/11/linked-list-get-remove-cycle-detection/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Linked List : Reverse, Compare, Merge</title>
+		<link>http://localhost/wordpress/2017/04/11/linked-list-reverse-compare-merge/</link>
+		<comments>http://localhost/wordpress/2017/04/11/linked-list-reverse-compare-merge/#respond</comments>
+		<pubDate>Tue, 11 Apr 2017 11:01:34 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Data structures]]></category>
+		<category><![CDATA[linked list]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=249</guid>
+		<description><![CDATA[This example presents the basic concept of linked lists : Reverse a linked list, Compare two sorted linked lists, Merge two sorted linked lists.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-249"></span><br />
+This example presents the basic concept of linked lists :<br />
+Reverse a linked list.<br />
+Compare two sorted linked lists.<br />
+Merge two sorted linked lists.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/LinkedListReverseCompareMerge.git" target="_blank">https://github.com/codercocoon/LinkedListReverseCompareMerge.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/LinkedListReverseCompareMerge/archive/master.zip" target="_blank">https://github.com/codercocoon/LinkedListReverseCompareMerge/archive/master.zip</a></p>
+<pre class="brush: java; title: Node.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+public class Node {
+	int data;
+	Node next;
+
+	Node(int _data) {
+		data = _data;
+		next = null;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7,25,53,54,84,108]; title: ReverseCompareMerge.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+/**
+ * This class represents some operations about linked lists, especially how to
+ * reverse a linked list, compare and merge two sorted linked lists.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class ReverseCompareMerge {
+
+	public Node insertAtLast(Node head, int _data) {
+		if (head == null)
+			head = new Node(_data);
+		else {
+			Node current = head;
+			while (current.next != null)
+				current = current.next;
+			current.next = new Node(_data);
+		}
+		return head;
+	}
+
+	/**
+	 * This method reverses a linked list.
+	 * 
+	 * @param head
+	 *            : the linked list which will be reversed.
+	 * @return the linked list reversed.
+	 */
+	public Node reverse(Node head) {
+
+		System.out.print(&quot;Input : &quot;);
+		print(head);
+
+		Node previous = null;
+		Node current = head;
+		Node next = null;
+
+		while (current != null) {
+			next = current.next;
+			current.next = previous;
+			previous = current;
+			current = next;
+		}
+		System.out.print(&quot;Ouput : &quot;);
+		print(previous);
+
+		return previous;
+	}
+
+	/**
+	 * This method check if two linked lists are the same :same elements in the
+	 * same order.
+	 * 
+	 * @param headA
+	 *            : the head of the 1st linked list.
+	 * @param headB
+	 *            : the head of the 2nd linked list.
+	 * @return &quot;1&quot; if the linked lists are the same, &quot;0&quot; if not.
+	 */
+	int compareLists(Node headA, Node headB) {
+		int result = 0;
+		if (headA == headB)
+			result = 1;
+		else {
+			Node currentA = headA;
+			Node currentB = headB;
+			while (currentA != null &amp;&amp; currentB != null) {
+				if (currentA.data != currentB.data) {
+					break;
+				} else {
+					currentA = currentA.next;
+					currentB = currentB.next;
+				}
+			}
+			if (currentA == currentB)
+				result = 1;
+		}
+		return result;
+	}
+
+	/**
+	 * This methods merges two sorted linked lists.
+	 * 
+	 * @param headA
+	 *            : the head of the 1st linked list.
+	 * @param headB
+	 *            : the head of the 2nd linked list.
+	 * @return the two linked lists merged.
+	 */
+	public Node mergeLists(Node headA, Node headB) {
+		if (headA == null)
+			return headB;
+		if (headB == null)
+			return headA;
+
+		if (headA.data &lt; headB.data) {
+			headA.next = mergeLists(headA.next, headB);
+			return headA;
+		} else {
+			headB.next = mergeLists(headB.next, headA);
+			return headB;
+		}
+	}
+
+	/**
+	 * This method prints the elements of a linked list.
+	 * 
+	 * @param head:head
+	 *            of the linked list
+	 */
+	void print(Node head) {
+		if (head == null)
+			System.out.println(head);
+		else {
+			Node current = head;
+			while (current != null) {
+				System.out.print(current.data + &quot;-&gt;&quot;);
+				current = current.next;
+				System.out.print((current == null) ? &quot;NULL&quot; : &quot;&quot;);
+			}
+			System.out.println();
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [14,24,36]; title: TestReverseCompareMerge.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+import java.util.Scanner;
+
+public class TestReverseCompareMerge {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		Node head = null;
+		Node second = null;
+		int size = 0;
+		ReverseCompareMerge ll = new ReverseCompareMerge();
+
+		System.out.println(&quot;##### Reverse a linked list. #####&quot;);
+		System.out.print(&quot;Enter the linked list size : &quot;);
+		size = sc.nextInt();
+		System.out.println(&quot;Enter the linked list elements : &quot;);
+		while (size &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			size--;
+		}
+		head = ll.reverse(head);
+
+		System.out.println(&quot;##### Compare two linked lists. #####&quot;);
+		System.out.print(&quot;The first linked list : &quot;);
+		ll.print(head);
+		System.out.print(&quot;Enter the second linked list size : &quot;);
+		size = sc.nextInt();
+		System.out.println(&quot;Enter the second linked list elements : &quot;);
+		while (size &gt; 0) {
+			second = ll.insertAtLast(second, sc.nextInt());
+			size--;
+		}
+		System.out.println(&quot;Result of comparing (1:OK, 0:KO) : &quot; + ll.compareLists(head, second));
+
+		System.out.println(&quot;##### Merge two sorted linked lists. #####&quot;);
+		head = null;
+		second = null;
+		System.out.print(&quot;Enter the size of the sorted Linked list A : &quot;);
+		size = sc.nextInt();
+		System.out.print(&quot;Enter the elements of the sorted Linked list A : &quot;);
+		while (size &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			size--;
+		}
+		System.out.print(&quot;Enter the size of the sorted Linked list B : &quot;);
+		size = sc.nextInt();
+		System.out.print(&quot;Enter the elements of the sorted Linked list B : &quot;);
+		while (size &gt; 0) {
+			second = ll.insertAtLast(second, sc.nextInt());
+			size--;
+		}
+		ll.print(ll.mergeLists(head, second));
+
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/11/linked-list-reverse-compare-merge/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Linked List : Insert at first, at last, at Nth position, Delete Nth position</title>
+		<link>http://localhost/wordpress/2017/04/11/linked-list-insert-at-first-at-last-delete/</link>
+		<comments>http://localhost/wordpress/2017/04/11/linked-list-insert-at-first-at-last-delete/#respond</comments>
+		<pubDate>Tue, 11 Apr 2017 10:26:11 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Data structures]]></category>
+		<category><![CDATA[linked list]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=240</guid>
+		<description><![CDATA[This example presents the basic concept of insert/delete a node of a linked list : Insert an element at first of linked list, Insert an element at last of linked list, Insert an element at Nth position of linked list, Delete an element from Nth position of linked list.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-240"></span><br />
+This example presents the basic concept of insert/delete a node of a linked list.</p>
+<p>The cases presented are :</p>
+<p>Insert an element at first of linked list.<br />
+Insert an element at last of linked list.<br />
+Insert an element at Nth position of linked list.<br />
+Delete an element from Nth position of linked list.</p>
+<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/codercocoon/LinkedListInsertDelete.git" target="_blank">https://github.com/codercocoon/LinkedListInsertDelete.git</a></p>
+<p>Or Download a .zip file : <a href="https://github.com/codercocoon/LinkedListInsertDelete/archive/master.zip" target="_blank">https://github.com/codercocoon/LinkedListInsertDelete/archive/master.zip</a></p>
+<pre class="brush: java; title: Node.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+public class Node {
+	int data;
+	Node next;
+
+	Node(int _data) {
+		data = _data;
+		next = null;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [4,5,7,13,34,59,94,123]; title: InsertDeleteANode.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+/**
+ * This class represents some operations about linked lists, especially how you
+ * can Insert at first, at last, at Nth position, and delete from Nth position.
+ * 
+ * @author contact@codercocoon.com.
+ *
+ */
+public class InsertDeleteANode {
+
+	/**
+	 * This method inserts element at first of the linked list.
+	 * 
+	 * @param head
+	 *            : head of the linked list.
+	 * @param _data
+	 *            : the element to insert.
+	 * @return
+	 */
+	public Node insertAtFirst(Node head, int _data) {
+		System.out.print(&quot;Input : &quot;);
+		print(head);
+
+		Node node = new Node(_data);
+		node.next = head;
+
+		System.out.print(&quot;Output : &quot;);
+		print(node);
+		return node;
+	}
+
+	/**
+	 * This method inserts element at last of the linked list.
+	 * 
+	 * @param head:
+	 *            head of the linked list.
+	 * @param _data:
+	 *            the element to insert.
+	 * @return
+	 */
+	public Node insertAtLast(Node head, int _data) {
+		// System.out.print(&quot;Input : &quot;);
+		// print(head);
+		if (head == null)
+			head = new Node(_data);
+		else {
+			Node current = head;
+			while (current.next != null)
+				current = current.next;
+			current.next = new Node(_data);
+		}
+		// System.out.print(&quot;Output : &quot;);
+		// print(head);
+		return head;
+	}
+
+	/**
+	 * This method inserts element at the Nth position of the linked list.
+	 * 
+	 * @param head:head
+	 *            of the linked list.
+	 * @param data:the
+	 *            element to insert.
+	 * @param position:
+	 *            the Nth position.
+	 * @return
+	 */
+	Node InsertNth(Node head, int data, int position) {
+		System.out.print(&quot;Input : &quot;);
+		print(head);
+
+		Node current = head;
+		Node previous = null;
+		int i = 1;
+		while (i &lt; position) {
+			previous = current;
+			current = current.next;
+			i++;
+		}
+		Node node = new Node(data);
+		node.next = current;
+		if (previous == null)
+			head = node;
+		else
+			previous.next = node;
+
+		System.out.print(&quot;Output : &quot;);
+		print(head);
+		return head;
+	}
+
+	/**
+	 * This method deletes element at the Nth position from the linked list.
+	 * 
+	 * @param head:head
+	 *            of the linked list.
+	 * @param position:the
+	 *            Nth position.
+	 * @return
+	 */
+	public Node delete(Node head, int position) {
+		Node current = head;
+		Node previous = null;
+
+		int i = 1;
+		while (i &lt; position) {
+			previous = current;
+			current = current.next;
+			i++;
+		}
+		if (previous != null)
+			previous.next = current.next;
+		else
+			head = current.next;
+
+		System.out.print(&quot;Output : &quot;);
+		print(head);
+		return head;
+	}
+
+	/**
+	 * This method prints the elements of a linked list.
+	 * 
+	 * @param head:head
+	 *            of the linked list
+	 */
+	void print(Node head) {
+		if (head == null)
+			System.out.println(head);
+		else {
+			Node current = head;
+			while (current != null) {
+				System.out.print(current.data + &quot;-&gt;&quot;);
+				current = current.next;
+				System.out.print((current == null) ? &quot;NULL&quot; : &quot;&quot;);
+			}
+			System.out.println();
+		}
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [19,24,28,32]; title: TestInsertDeleteANode.java; toolbar: true; notranslate">
+package com.codercocoon.LinkedList;
+
+import java.util.Scanner;
+
+public class TestInsertDeleteANode {
+
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		Node head = null;
+		InsertDeleteANode ll = new InsertDeleteANode();
+
+		System.out.print(&quot;Enter the linked list size : &quot;);
+		int size = sc.nextInt();
+
+		System.out.println(&quot;##### Insert at last of the linked list. #####&quot;);
+		int tmp = size;
+		System.out.println(&quot;Enter the linked list elements : &quot;);
+		while (tmp &gt; 0) {
+			head = ll.insertAtLast(head, sc.nextInt());
+			tmp--;
+		}
+		ll.print(head);
+		
+		System.out.println(&quot;##### Insert at first of the linked list. #####&quot;);
+		System.out.println(&quot;Enter the element to insert at first : &quot;);
+		head = ll.insertAtFirst(head, sc.nextInt());
+
+		System.out.println(&quot;##### Insert at Nth position of the linked list. #####&quot;);
+		System.out.println(&quot;Enter the element to insert and the position : &quot;);
+		head = ll.InsertNth(head, sc.nextInt(), sc.nextInt());
+
+		System.out.println(&quot;##### Delete element from the linked list. #####&quot;);
+		System.out.println(&quot;Enter the position to delete : &quot;);
+		head = ll.delete(head, sc.nextInt());
+	}
+}
+</pre>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/04/11/linked-list-insert-at-first-at-last-delete/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+	</channel>
+</rss>

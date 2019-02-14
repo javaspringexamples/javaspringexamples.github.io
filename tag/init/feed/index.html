@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>init &#8211; CoderCocoon</title>
+	<atom:link href="http://localhost/wordpress/tag/init/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Fri, 07 Dec 2018 16:33:52 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.3</generator>
+	<item>
+		<title>Example Spring 4 &#8211; Init Destroy methods with XML-based configuration</title>
+		<link>http://localhost/wordpress/2017/01/27/spring-init-destroy/</link>
+		<comments>http://localhost/wordpress/2017/01/27/spring-init-destroy/#respond</comments>
+		<pubDate>Fri, 27 Jan 2017 11:05:08 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring]]></category>
+		<category><![CDATA[destroy]]></category>
+		<category><![CDATA[init]]></category>
+		<category><![CDATA[spring]]></category>
+		<category><![CDATA[xml]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=102</guid>
+		<description><![CDATA[This example presents the basic concept of the Init and Destroy of a bean by using Spring Annotation.
+The technologies used are : Spring 4.3.4, Junit 4.12, JDK 1.8, Maven 3.3.9.]]></description>
+				<content:encoded><![CDATA[<p><span id="more-102"></span><br />
+This example presents the basic concept of the Init and Destroy of a bean by using Spring Annotation.</p>
+<p>The technologies used are :</p>
+<ul>
+<li>Spring 4.3.4</li>
+<li>Junit 4.12</li>
+<li>JDK 1.8</li>
+<li>Maven 3.3.9</li>
+</ul>
+<p>You can convert this example to an eclipse project by going to folder where is the pom.xml is, and use the following command :</p>
+<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Here the project files :</p>
+<div id="attachment_98" style="width: 330px" class="wp-caption alignnone"><img class="wp-image-98 " src="http://localhost/wordpress/wp-content/uploads/2017/01/Example-Spring-4-Init-Destroy-by-XML-300x278.png" alt="Example Spring 4 - Init Destroy by XML" width="320" height="296" srcset="http://localhost/wordpress/wp-content/uploads/2017/01/Example-Spring-4-Init-Destroy-by-XML-300x278.png 300w, http://localhost/wordpress/wp-content/uploads/2017/01/Example-Spring-4-Init-Destroy-by-XML.png 412w" sizes="(max-width: 320px) 100vw, 320px" /><p class="wp-caption-text">Example Spring 4 &#8211; Init Destroy by XML</p></div>
+<pre class="brush: java; highlight: [9,10,27,28,31,36,37,40]; title: Example.java; toolbar: true; notranslate">
+package com.codercocoon.springcoreInitDestroyXml;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.stereotype.Component;
+
+/**
+ * Example class : this is the example class containing methods which will be
+ * invoked in the bean loading into and unloading from the container.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+public class Example {
+
+	private boolean init;
+	private boolean destroy;
+
+	private String title = &quot;I'm an example !&quot;;
+
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * init() method will be invoked when the bean is loaded in the container,
+	 * it set the attribute &quot;init&quot; at True when invoked.
+	 * 
+	 */
+	public void init() {
+		init = true;
+	}
+
+	/**
+	 * destroy() method will be invoked when the bean is unloaded from the
+	 * container, it set the attribute &quot;destroy&quot; at True when invoked.
+	 * 
+	 */
+	public void destroy() {
+		destroy = true;
+	}
+
+	/**
+	 * Getter of the init attribute.
+	 * 
+	 */
+	public boolean isInit() {
+		return init;
+	}
+
+	/**
+	 * Getter of the destroy attribute.
+	 * 
+	 */
+	public boolean isDestroy() {
+		return destroy;
+	}
+}
+</pre>
+<pre class="brush: xml; highlight: [7]; title: ApplicationContext.xml; toolbar: true; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd&quot;&gt;
+
+	&lt;!-- Example bean with parameterized init- and destroy method --&gt;
+	&lt;bean id=&quot;example&quot; class=&quot;com.codercocoon.springcoreInitDestroyXml.Example&quot; init-method=&quot;init&quot; destroy-method=&quot;destroy&quot; /&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; highlight: [15]; title: ApplicationXMLConfigTest.java; toolbar: true; notranslate">
+package com.codercocoon.test.springcoreInitDestroyXml;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.codercocoon.springcoreInitDestroyXml.Example;
+
+/**
+ * Test class instead XML-based config.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
+public class ApplicationXMLConfigTest {
+
+	@Autowired
+	private ApplicationContext contextXMLConfig;
+
+	/**
+	 * This test case checks if the init-method and destroy method are invoked
+	 * in loading and unloading the bean into and from the container.
+	 *
+	 */
+	@Test
+	public void testExample() {
+		Example example = contextXMLConfig.getBean(Example.class);
+		Assert.assertTrue(example.isInit());
+		Assert.assertFalse(example.isDestroy());
+
+		((ConfigurableApplicationContext) contextXMLConfig).close();
+		Assert.assertTrue(example.isDestroy());
+	}
+}
+</pre>
+<pre class="brush: xml; highlight: [13,14,44]; title: pom.xml; toolbar: true; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;com.codercocoon.springcore&lt;/groupId&gt;
+	&lt;artifactId&gt;example-InitDestroy-by-Xml&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;name&gt;Example Spring 4 - Init Destroy by Xml&lt;/name&gt;
+
+	&lt;properties&gt;
+		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
+		&lt;junit.version&gt;4.12&lt;/junit.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;junit&lt;/groupId&gt;
+			&lt;artifactId&gt;junit&lt;/artifactId&gt;
+			&lt;version&gt;${junit.version}&lt;/version&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+				&lt;version&gt;3.6.0&lt;/version&gt;
+				&lt;configuration&gt;
+					&lt;source&gt;1.8&lt;/source&gt;
+					&lt;target&gt;1.8&lt;/target&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+&lt;/project&gt;
+</pre>
+<p><a href="https://github.com/codercocoon/springcoreInitDestroyXml.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/codercocoon/springcoreInitDestroyXml/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/01/27/spring-init-destroy/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Example Spring 4 &#8211; @PostConstruct and @PreDestroy Annotation</title>
+		<link>http://localhost/wordpress/2017/01/27/spring-postconstruct-predestroy/</link>
+		<comments>http://localhost/wordpress/2017/01/27/spring-postconstruct-predestroy/#respond</comments>
+		<pubDate>Fri, 27 Jan 2017 11:04:07 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring]]></category>
+		<category><![CDATA[destroy]]></category>
+		<category><![CDATA[init]]></category>
+		<category><![CDATA[spring]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=96</guid>
+		<description><![CDATA[This example presents the basic concept of the Init and Destroy of a bean by using Spring Annotation. The technologies used are : Spring 4.3.4, Junit 4.12]]></description>
+				<content:encoded><![CDATA[<p><span id="more-96"></span><br />
+This example presents the basic concept of the Init and Destroy of a bean by using Spring Annotation.</p>
+<p>The technologies used are :</p>
+<ul>
+<li>Spring 4.3.4</li>
+<li>Junit 4.12</li>
+<li>JDK 1.8</li>
+<li>Maven 3.3.9</li>
+</ul>
+<p>You can convert this example to an eclipse project by going to folder where is the pom.xml is, and use the following command :</p>
+<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Here the project files :</p>
+<div id="attachment_97" style="width: 361px" class="wp-caption alignnone"><img class="wp-image-97" src="http://localhost/wordpress/wp-content/uploads/2017/01/Example-Spring-4-Init-Destroy-by-Annotation-300x263.png" alt="Example Spring 4 - Init Destroy by Annotation" width="351" height="308" srcset="http://localhost/wordpress/wp-content/uploads/2017/01/Example-Spring-4-Init-Destroy-by-Annotation-300x263.png 300w, http://localhost/wordpress/wp-content/uploads/2017/01/Example-Spring-4-Init-Destroy-by-Annotation.png 450w" sizes="(max-width: 351px) 100vw, 351px" /><p class="wp-caption-text">Example Spring 4 &#8211; Init Destroy by Annotation</p></div>
+<pre class="brush: java; highlight: [7]; title: ApplicationConfig.java; toolbar: true; notranslate">
+package com.codercocoon.springcoreInitDestroyAnnotation;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * This is a spring configuration class.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+@Configuration
+@ComponentScan(value = { &quot;com.codercocoon.springcoreInitDestroyAnnotation&quot; })
+public class ApplicationConfig {
+}
+</pre>
+<pre class="brush: java; highlight: [9,10,28,29,32,38,39,42]; title: Example.java; toolbar: true; notranslate">
+package com.codercocoon.springcoreInitDestroyAnnotation;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.stereotype.Component;
+
+/**
+ * Example class : this is the example class containing methods which will be
+ * invoked in the bean loading into and unloading from the container.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+@Component
+public class Example {
+
+	private boolean init;
+	private boolean destroy;
+
+	private String title = &quot;I'm an example !&quot;;
+
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * init() method will be invoked when the bean is loaded in the container,
+	 * it set the attribute &quot;init&quot; at True when invoked.
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		init = true;
+	}
+
+	/**
+	 * destroy() method will be invoked when the bean is unloaded from the
+	 * container, it set the attribute &quot;destroy&quot; at True when invoked.
+	 * 
+	 */
+	@PreDestroy
+	public void destroy() {
+		destroy = true;
+	}
+
+	/**
+	 * Getter of the init attribute.
+	 * 
+	 */
+	public boolean isInit() {
+		return init;
+	}
+
+	/**
+	 * Getter of the destroy attribute.
+	 * 
+	 */
+	public boolean isDestroy() {
+		return destroy;
+	}
+}
+</pre>
+<pre class="brush: xml; highlight: [8,10]; title: ApplicationContext.xml; toolbar: true; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot; xmlns:context=&quot;http://www.springframework.org/schema/context&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd&quot;&gt;
+
+	&lt;!-- enabling annotations --&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;!-- package to scan --&gt;
+	&lt;context:component-scan base-package=&quot;com.codercocoon.springcoreInitDestroyAnnotation&quot; /&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; highlight: [16]; title: ApplicationJavaConfigTest.java; toolbar: true; notranslate">
+package com.codercocoon.test.springcoreInitDestroyAnnotation;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.codercocoon.springcoreInitDestroyAnnotation.ApplicationConfig;
+import com.codercocoon.springcoreInitDestroyAnnotation.Example;
+
+/**
+ * Test class instead Java-based config.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { ApplicationConfig.class })
+public class ApplicationJavaConfigTest {
+
+	@Autowired
+	private ApplicationContext contextJavaConfig;
+
+	/**
+	 * This test case checks if the init-method and destroy method are invoked
+	 * in loading and unloading the bean into and from the container.
+	 *
+	 */
+	@Test
+	public void testExample() {
+		Example example = contextJavaConfig.getBean(Example.class);
+		Assert.assertTrue(example.isInit());
+		Assert.assertFalse(example.isDestroy());
+
+		((ConfigurableApplicationContext) contextJavaConfig).close();
+		Assert.assertTrue(example.isDestroy());
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [15]; title: ApplicationXMLConfigTest.java; toolbar: true; notranslate">
+package com.codercocoon.test.springcoreInitDestroyAnnotation;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.codercocoon.springcoreInitDestroyAnnotation.Example;
+
+/**
+ * Test class instead XML-based config.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(&quot;classpath:applicationContext.xml&quot;)
+public class ApplicationXMLConfigTest {
+
+	@Autowired
+	private ApplicationContext contextXMLConfig;
+
+	/**
+	 * This test case checks if the init-method and destroy method are invoked
+	 * in loading and unloading the bean into and from the container.
+	 *
+	 */
+	@Test
+	public void testExample() {
+		Example example = contextXMLConfig.getBean(Example.class);
+		Assert.assertTrue(example.isInit());
+		Assert.assertFalse(example.isDestroy());
+
+		((ConfigurableApplicationContext) contextXMLConfig).close();
+		Assert.assertTrue(example.isDestroy());
+	}
+}
+</pre>
+<pre class="brush: xml; highlight: [12,13,43]; title: pom.xml; toolbar: true; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;com.codercocoon.springcore&lt;/groupId&gt;
+	&lt;artifactId&gt;example-InitDestroy-by-Xml&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;name&gt;Example Spring 4 - Init Destroy by Xml&lt;/name&gt;
+
+	&lt;properties&gt;
+		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
+		&lt;junit.version&gt;4.12&lt;/junit.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;junit&lt;/groupId&gt;
+			&lt;artifactId&gt;junit&lt;/artifactId&gt;
+			&lt;version&gt;${junit.version}&lt;/version&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+				&lt;version&gt;3.6.0&lt;/version&gt;
+				&lt;configuration&gt;
+					&lt;source&gt;1.8&lt;/source&gt;
+					&lt;target&gt;1.8&lt;/target&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+&lt;/project&gt;
+</pre>
+<p><a href="https://github.com/codercocoon/springcoreInitDestroyAnnotation.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/codercocoon/springcoreInitDestroyAnnotation/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2017/01/27/spring-postconstruct-predestroy/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+	</channel>
+</rss>

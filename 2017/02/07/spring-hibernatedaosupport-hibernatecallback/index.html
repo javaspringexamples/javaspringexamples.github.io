@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html class="no-js" lang="fr-FR">
+
+<!-- Mirrored from localhost/wordpress/2017/02/07/spring-hibernatedaosupport-hibernatecallback/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 13 Feb 2019 14:47:05 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<link rel="pingback" href="../../../../xmlrpc.php" />
+<title>Example Spring 4 &#8211; HibernateDaoSupport and HibernateCallback &#8211; CoderCocoon</title>
+<link rel='dns-prefetch' href='http://fonts.googleapis.com/' />
+<link rel='dns-prefetch' href='http://s.w.org/' />
+<link rel="alternate" type="application/rss+xml" title="CoderCocoon &raquo; Flux" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="CoderCocoon &raquo; Flux des commentaires" href="../../../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="CoderCocoon &raquo; Example Spring 4 &#8211; HibernateDaoSupport and HibernateCallback Flux des commentaires" href="feed/index.html" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/localhost\/wordpress\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.0.3"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='wp-block-library-css'  href='../../../../wp-includes/css/dist/block-library/style.minaead.css?ver=5.0.3' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-google-fonts-css'  href='https://fonts.googleapis.com/css?family=Oswald:400,700,300|PT+Serif:400,400italic,700,700italic' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-font-awesome-css'  href='../../../../wp-content/themes/mh-newsdesk-lite/includes/font-awesome.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-style-css'  href='../../../../wp-content/themes/mh-newsdesk-lite/styleaead.css?ver=5.0.3' type='text/css' media='all' />
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jqueryb8ff.js?ver=1.12.4'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jquery-migrate.min330a.js?ver=1.4.1'></script>
+<script type='text/javascript' src='../../../../wp-content/themes/mh-newsdesk-lite/js/scriptsaead.js?ver=5.0.3'></script>
+<link rel='https://api.w.org/' href='../../../../wp-json/index.html' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="../../../../xmlrpc0db0.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="../../../../wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Example Spring 4 &#8211; HibernateTemplate and HibernateCallback' href='../../06/spring-hibernatetemplate-hibernatecallback/index.html' />
+<link rel='next' title='Example Spring 4 &#8211; JdbcDaoSupport' href='../../10/spring-jdbcdaosupport/index.html' />
+<meta name="generator" content="WordPress 5.0.3" />
+<link rel="canonical" href="index.html" />
+<link rel='shortlink' href='../../../../indexa80c.html?p=189' />
+<link rel="alternate" type="application/json+oembed" href="../../../../wp-json/oembed/1.0/embede681.json?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2017%2F02%2F07%2Fspring-hibernatedaosupport-hibernatecallback%2F" />
+<link rel="alternate" type="text/xml+oembed" href="../../../../wp-json/oembed/1.0/embedae81?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2017%2F02%2F07%2Fspring-hibernatedaosupport-hibernatecallback%2F&amp;format=xml" />
+<!--[if lt IE 9]>
+<script src="http://localhost/wordpress/wp-content/themes/mh-newsdesk-lite/js/css3-mediaqueries.js"></script>
+<![endif]-->
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+</head>
+<body class="post-template-default single single-post postid-189 single-format-image mh-right-sb">
+<div id="mh-wrapper">
+<header class="mh-header">
+	<div class="header-wrap mh-clearfix">
+		<a href="../../../../index.html" title="CoderCocoon" rel="home">
+<div class="logo-wrap" role="banner">
+<div class="logo">
+<h1 class="logo-title">CoderCocoon</h1>
+</div>
+</div>
+</a>
+	</div>
+	<div class="header-menu mh-clearfix">
+		<nav class="main-nav mh-clearfix">
+			<div class="menu-home-container"><ul id="menu-home" class="menu"><li id="menu-item-389" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-389"><a href="../../../../category/data-structures/index.html">Data structures</a></li>
+<li id="menu-item-390" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-390"><a href="../../../../category/hibernate/index.html">Hibernate</a></li>
+<li id="menu-item-391" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-391"><a href="../../../../category/java/index.html">Java</a>
+<ul class="sub-menu">
+	<li id="menu-item-392" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-392"><a href="../../../../category/java/thread/index.html">Thread</a></li>
+</ul>
+</li>
+<li id="menu-item-393" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-has-children menu-item-393"><a href="../../../../category/spring/index.html">Spring</a>
+<ul class="sub-menu">
+	<li id="menu-item-396" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-396"><a href="../../../../category/spring/dependency-injection/index.html">Dependency Injection</a></li>
+</ul>
+</li>
+<li id="menu-item-394" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-394"><a href="../../../../category/hackerrank/index.html">Hackerrank</a>
+<ul class="sub-menu">
+	<li id="menu-item-395" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-395"><a href="../../../../category/hackerrank/java-domain/index.html">Java domain</a></li>
+</ul>
+</li>
+</ul></div>		</nav>
+	</div>
+</header><div class="mh-section mh-group">
+	<div id="main-content" class="mh-content"><article id="post-189" class="post-189 post type-post status-publish format-image has-post-thumbnail hentry category-hibernate category-spring tag-hibernate tag-spring post_format-post-format-image">
+	<header class="entry-header mh-clearfix">
+		<h1 class="entry-title">Example Spring 4 &#8211; HibernateDaoSupport and HibernateCallback</h1>
+		<div class="entry-tags mh-clearfix"><span>TOPICS:</span><a href="../../../../tag/hibernate/index.html" rel="tag">hibernate</a><a href="../../../../tag/spring/index.html" rel="tag">spring</a></div>	</header>
+	
+<figure class="entry-thumbnail">
+<img width="200" height="65" src="../../../../wp-content/uploads/2017/01/spring-by-pivotal.png" class="attachment-content-single size-content-single wp-post-image" alt="Spring Example" /><figcaption class="wp-caption-text">Spring Example</figcaption>
+</figure>
+	<p class="entry-meta">
+<span class="entry-meta-author vcard author">Posted By: <a class="fn" href="../../../../author/admin/index.html">admin</a></span>
+<span class="entry-meta-date updated">février 7, 2017</span>
+</p>
+	<div class="entry-content mh-clearfix">
+		<p><span id="more-189"></span><br />
+This example presents the basic concept of using in Spring HibernateDaoSupport and HibernateCallback.</p>
+<p>The technologies used are :</p>
+<ul>
+<li>Spring 4.3.4</li>
+<li>Hibernate 4.3.6</li>
+<li>Junit 4.12</li>
+<li>JDK 1.8</li>
+<li>Maven 3.3.9</li>
+</ul>
+<p>You can convert this example to an eclipse project by going to folder where is the pom.xml is, and use the following command :</p>
+<pre class="brush: plain; title: ; notranslate" title="">mvn eclipse:eclipse</pre>
+<p>Here the project files :</p>
+<div id="attachment_191" style="width: 376px" class="wp-caption alignnone"><img class="wp-image-191 " src="../../../../wp-content/uploads/2017/02/Example-Spring-4-HibernateDaoSupport-and-HibernateCallback-300x266.png" alt="Example Spring 4 - HibernateDaoSupport and HibernateCallback" width="366" height="324" srcset="http://localhost/wordpress/wp-content/uploads/2017/02/Example-Spring-4-HibernateDaoSupport-and-HibernateCallback-300x266.png 300w, http://localhost/wordpress/wp-content/uploads/2017/02/Example-Spring-4-HibernateDaoSupport-and-HibernateCallback.png 496w" sizes="(max-width: 366px) 100vw, 366px" /><p class="wp-caption-text">Example Spring 4 &#8211; HibernateDaoSupport and HibernateCallback</p></div>
+<pre class="brush: java; highlight: [25,26,29,43,58,74,75]; title: HibernateConfiguration.java; toolbar: true; notranslate" title="HibernateConfiguration.java">
+package com.codercocoon.springHibernateDaoSupport.configuration;
+
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@Configuration
+@ComponentScan({ &quot;com.codercocoon.springHibernateDaoSupport&quot; })
+@PropertySource({ &quot;classpath:application.properties&quot; })
+@EnableTransactionManagement
+public class HibernateConfiguration {
+
+	@Autowired
+	protected Environment environment;
+
+	/**
+	 * This method gets the sessionFactory bean.
+	 * 
+	 * @return LocalSessionFactoryBean.
+	 */
+	@Bean
+	public LocalSessionFactoryBean sessionFactory() {
+		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+		sessionFactory.setDataSource(dataSource());
+		sessionFactory.setPackagesToScan(new String[] { environment.getRequiredProperty(&quot;package.model&quot;) });
+		sessionFactory.setHibernateProperties(hibernateProperties());
+		return sessionFactory;
+	}
+
+	/**
+	 * This method gets the dataSource bean.
+	 * 
+	 * @return DataSource.
+	 */
+	@Bean
+	public DataSource dataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(environment.getRequiredProperty(&quot;mysql.driver_class&quot;));
+		dataSource.setUrl(environment.getRequiredProperty(&quot;mysql.url&quot;));
+		dataSource.setUsername(environment.getRequiredProperty(&quot;mysql.username&quot;));
+		dataSource.setPassword(environment.getRequiredProperty(&quot;mysql.password&quot;));
+		return dataSource;
+	}
+
+	/**
+	 * This method loads hibernate properties from application.properties.
+	 * 
+	 * @return Properties.
+	 */
+	private Properties hibernateProperties() {
+		Properties properties = new Properties();
+		properties.put(&quot;hibernate.dialect&quot;, environment.getRequiredProperty(&quot;hibernate.dialect&quot;));
+		properties.put(&quot;hibernate.show_sql&quot;, environment.getRequiredProperty(&quot;hibernate.show_sql&quot;));
+		properties.put(&quot;hibernate.format_sql&quot;, environment.getRequiredProperty(&quot;hibernate.format_sql&quot;));
+		properties.put(&quot;hibernate.hbm2ddl.auto&quot;, environment.getRequiredProperty(&quot;hibernate.hbm2ddl.auto&quot;));
+		properties.put(&quot;hibernate.hbm2ddl.import_files&quot;,
+				environment.getRequiredProperty(&quot;hibernate.hbm2ddl.import_files&quot;));
+		return properties;
+	}
+
+	/**
+	 * This method gets the transactionManager bean, the sessionFactory bean is
+	 * autowired and passed in the argument method.
+	 * 
+	 * @return HibernateTransactionManager.
+	 */
+	@Bean
+	@Autowired
+	public HibernateTransactionManager transactionManager(SessionFactory s) {
+		HibernateTransactionManager txManager = new HibernateTransactionManager();
+		txManager.setSessionFactory(s);
+		return txManager;
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [7,9,16,23,30,39,46,53]; title: ExampleDao.java; toolbar: true; notranslate" title="ExampleDao.java">
+package com.codercocoon.springHibernateDaoSupport.Dao;
+
+import java.util.List;
+import com.codercocoon.springHibernateDaoSupport.model.Example;
+
+/**
+ * The DAO interface.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+
+public interface ExampleDao {
+
+	/**
+	 * Gets all examples from the database.
+	 * 
+	 * @return a list of examples.
+	 */
+	List&lt;Example&gt; getAllExamples();
+
+	/**
+	 * Gets all examples from the database, using Callback.
+	 * 
+	 * @return a list of examples.
+	 */
+	public List&lt;Example&gt; getAllExamplesUsingCallback();
+
+	/**
+	 * Gets an example by its title.
+	 * 
+	 * @param title
+	 *            : is unique constraint.
+	 * @return the example having the title parameter.
+	 */
+	Example getExampleByTitle(String title);
+
+	/**
+	 * Saves the example passed in the parameter.
+	 * 
+	 * @param ex
+	 */
+	void saveExample(Example ex);
+
+	/**
+	 * Updates the example passed in the parameter.
+	 * 
+	 * @param ex
+	 */
+	void updateExample(Example ex);
+
+	/**
+	 * Deletes the example passed in the parameter.
+	 * 
+	 * @param ex
+	 */
+	void deleteExample(Example ex);
+}
+</pre>
+<pre class="brush: java; highlight: [17,19,28,29,40,44,48,49,50,52,56,57,58,64,68,74,78,82,86,90,94]; title: ExampleDaoImpl.java; toolbar: true; notranslate" title="ExampleDaoImpl.java">
+package com.codercocoon.springHibernateDaoSupport.Dao;
+
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.codercocoon.springHibernateDaoSupport.model.Example;
+
+/**
+ * The DAO implementation.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+
+@Repository
+@Transactional
+public class ExampleDaoImpl extends HibernateDaoSupport implements ExampleDao {
+
+	/**
+	 * This method sets the sessionFactory bean to the HibernateDaoSupport
+	 * instead the final method setSessionFactory().
+	 * 
+	 * @param sf
+	 *            : the sessionFactory bean is wired automatically.
+	 */
+	@Autowired
+	public void autowireSessionFactory(SessionFactory sf) {
+		setSessionFactory(sf);
+	}
+
+	/**
+	 * This method selects all examples from the database.
+	 */
+	@Override
+	public List&lt;Example&gt; getAllExamples() {
+		return (List&lt;Example&gt;) getHibernateTemplate().find(&quot;from Example&quot;);
+	}
+
+	/**
+	 * This method shows a simple example of using Callback, Callback is
+	 * generally used to get features that are not available in the
+	 * hibernateTemplate.
+	 * 
+	 * @return the 3 first examples returned in the list.
+	 */
+	@Override
+	public List&lt;Example&gt; getAllExamplesUsingCallback() {
+		return getHibernateTemplate().execute(new HibernateCallback&lt;List&lt;Example&gt;&gt;() {
+			public List&lt;Example&gt; doInHibernate(Session session) throws HibernateException {
+				return session.createCriteria(Example.class).setMaxResults(3).list();
+			}
+		});
+	}
+
+	/**
+	 * This method gets an example from the database by its title.
+	 */
+	@Override
+	public Example getExampleByTitle(String title) {
+		List&lt;Example&gt; l = (List&lt;Example&gt;) getHibernateTemplate().find(&quot;from Example where title = ?&quot;,
+				new Object[] { title });
+		return l.isEmpty() ? null : l.get(0);
+	}
+
+	/**
+	 * This method inserts an example in the database.
+	 */
+	@Override
+	public void saveExample(Example ex) {
+		getHibernateTemplate().save(ex);
+	}
+
+	/**
+	 * This method updates the example passed in arguments.
+	 */
+	@Override
+	public void updateExample(Example ex) {
+		getHibernateTemplate().update(ex);
+	}
+
+	/**
+	 * This method deletes the example passed in arguments.
+	 */
+	@Override
+	public void deleteExample(Example ex) {
+		getHibernateTemplate().delete(ex);
+	}
+}
+</pre>
+<pre class="brush: java; highlight: [13,14,16,33]; title: Example.java; toolbar: true; notranslate" title="Example.java">
+package com.codercocoon.springHibernateTemplate.model;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+/**
+ * Example class : we suppose that an example has : id, title, description and a
+ * publication date.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+@Entity
+public class Example {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = &quot;example_id&quot;)
+	private int id;
+
+	@Column(unique = true, nullable = false)
+	private String title;
+
+	private String description;
+
+	/**
+	 * publicationDate will not be persisted.
+	 */
+	@Transient
+	private Date publicationDate;
+
+	public Example() {
+	}
+
+	public Example(String title, String description) {
+		this.title = title;
+		this.description = description;
+	}
+
+	/**
+	 * Gets Example ID.
+	 * 
+	 * @return int.
+	 */
+	public int getExampleId() {
+		return id;
+	}
+
+	/**
+	 * Sets Example ID.
+	 * 
+	 * @param id.
+	 */
+	public void setExampleId(int id) {
+		this.id = id;
+	}
+
+	/**
+	 * Gets Title.
+	 * 
+	 * @return String.
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
+	 * Sets Example Title.
+	 * 
+	 * @param title.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	/**
+	 * Gets Description.
+	 * 
+	 * @return String.
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Sets Example Description.
+	 * 
+	 * @param description.
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Gets publicationDate.
+	 * 
+	 * @return Date.
+	 */
+	public Date getPublicationDate() {
+		return publicationDate;
+	}
+
+	/**
+	 * Sets Example publicationDate.
+	 * 
+	 * @param description.
+	 */
+	public void setPublicationDate(Date publicationDate) {
+		this.publicationDate = publicationDate;
+	}
+
+	public String toString() {
+		return id + &quot; - &quot; + title + &quot; - &quot; + description;
+	}
+}
+</pre>
+<pre class="brush: plain; highlight: [2,4,11,14]; title: application.properties; notranslate" title="application.properties">
+mysql.driver_class=com.mysql.jdbc.Driver
+#The database will be created if it's not exist.
+mysql.url=jdbc:mysql://localhost:3306/example_hibernate_dao_support?createDatabaseIfNotExist=true
+#Don't forget to configure your login and password to connect to your MySQL server.
+mysql.username=root
+mysql.password=
+hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+hibernate.show_sql=false
+hibernate.format_sql=true
+hibernate.hbm2ddl.auto=create
+#Some data to populate the database.
+hibernate.hbm2ddl.import_files=populate_data.sql
+hibernate.connection.autocommit=true
+#The package to scan to get models.
+package.model=com.codercocoon.springHibernateDaoSupport.model
+</pre>
+<pre class="brush: sql; highlight: [1]; title: populate_data.sql; notranslate" title="populate_data.sql">
+--Insert examples
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 1', 'example description 1');
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 2', 'example description 2');
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 3', 'example description 3');
+INSERT INTO `example` (`title`, `description`) VALUES ('example title 4', 'example description 4');
+</pre>
+<pre class="brush: java; highlight: [18,20,35,45,46,47,60,61,72,73,81,82]; title: TestCase.java; notranslate" title="TestCase.java">
+package com.codercocoon.test.springHibernateDaoSupport;
+
+import java.util.Date;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.codercocoon.springHibernateDaoSupport.Dao.ExampleDao;
+import com.codercocoon.springHibernateDaoSupport.configuration.HibernateConfiguration;
+import com.codercocoon.springHibernateDaoSupport.model.Example;
+
+/**
+ * Test class instead annotation-based config.
+ * 
+ * @author contact@codercocoon.com
+ *
+ */
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = { HibernateConfiguration.class })
+public class TestCase {
+
+	@Autowired
+	ExampleDao exampleDao;
+
+	private final String TITLE = &quot;example title&quot;;
+	private final Example example = new Example(TITLE, &quot;example description&quot;);
+
+	/**
+	 * This test checks if the example is well inserted in the database.
+	 */
+	@Test
+	@Rollback(false)
+	public void testInsertExample() {
+		exampleDao.saveExample(example);
+		Assert.assertTrue(TITLE.equals(exampleDao.getExampleByTitle(TITLE).getTitle()));
+	}
+
+	/**
+	 * This test checks if the example is well updated, for the modification of
+	 * title which is unique, we concatenate it with the date containing
+	 * seconds, to allow running the test many times.
+	 */
+	@Test
+	@Rollback(false)
+	public void testUpdateExample() {
+		Example ex = getExample();
+		ex.setTitle(&quot;title modified &quot;.concat(new Date().toString()));
+		exampleDao.updateExample(ex);
+		ex = exampleDao.getExampleByTitle(TITLE);
+		Assert.assertNull(ex);
+	}
+
+	/**
+	 * This test checks if the example is well deleted, the delete operation is
+	 * rolled back in this case.
+	 */
+	@Test
+	public void testDeleteExample() {
+		Example ex = getExample();
+		exampleDao.deleteExample(ex);
+		ex = exampleDao.getExampleByTitle(TITLE);
+		Assert.assertNull(ex);
+	}
+
+	/**
+	 * This test checks getting examples from database by using Callback, the
+	 * size must be 3.
+	 */
+	@Test
+	public void testExamplesByUsingCallback() {
+		Assert.assertEquals(3, exampleDao.getAllExamplesUsingCallback().size());
+	}
+
+	/**
+	 * This method insert the example if not exist in the database, the object
+	 * inserted is the &quot;example&quot; attribute.
+	 */
+	private Example getExample() {
+		Example ex = exampleDao.getExampleByTitle(TITLE);
+		if (ex == null) {
+			exampleDao.saveExample(example);
+			ex = exampleDao.getExampleByTitle(TITLE);
+		}
+		return ex;
+	}
+}
+</pre>
+<pre class="brush: xml; highlight: [12,13,14,15,63]; title: pom.xml; notranslate" title="pom.xml">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;com.codercocoon.spring&lt;/groupId&gt;
+	&lt;artifactId&gt;example-HibernateTemplate-HibernateCallback&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;name&gt;example HibernateTemplate and HibernateCallback&lt;/name&gt;
+
+	&lt;properties&gt;
+		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
+		&lt;hibernate.version&gt;4.3.6.Final&lt;/hibernate.version&gt;
+		&lt;junit.version&gt;4.12&lt;/junit.version&gt;
+		&lt;mysql.version&gt;5.1.31&lt;/mysql.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-test&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;junit&lt;/groupId&gt;
+			&lt;artifactId&gt;junit&lt;/artifactId&gt;
+			&lt;version&gt;${junit.version}&lt;/version&gt;
+			&lt;scope&gt;test&lt;/scope&gt;
+		&lt;/dependency&gt;
+		&lt;!-- Spring ORM Support --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;!-- Hibernate --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;${hibernate.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+		&lt;!-- MySQL --&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;mysql&lt;/groupId&gt;
+			&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+			&lt;version&gt;${mysql.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+				&lt;version&gt;3.6.0&lt;/version&gt;
+				&lt;configuration&gt;
+					&lt;source&gt;1.8&lt;/source&gt;
+					&lt;target&gt;1.8&lt;/target&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+&lt;/project&gt;
+</pre>
+<p><a href="https://github.com/codercocoon/springHibernateTemplate.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/codercocoon/springHibernateTemplate/archive/master.zip">Download a .zip file</a></p>
+	</div>
+</article><nav class="post-nav-wrap" role="navigation">
+<ul class="post-nav mh-clearfix">
+<li class="post-nav-prev">
+<a href="../../06/spring-hibernatetemplate-hibernatecallback/index.html" rel="prev"><i class="fa fa-chevron-left"></i>Previous post</a></li>
+<li class="post-nav-next">
+<a href="../../10/spring-jdbcdaosupport/index.html" rel="next">Next post<i class="fa fa-chevron-right"></i></a></li>
+</ul>
+</nav>
+<div class="comments-wrap">
+<h4 class="comment-section-title"><span class="comment-count">Be the first to comment</span> <span class="comment-count-more">on "Example Spring 4 &#8211; HibernateDaoSupport and HibernateCallback"</span></h4>
+</div>
+	<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a comment <small><a rel="nofollow" id="cancel-comment-reply-link" href="index.html#respond" style="display:none;">Annuler la réponse</a></small></h3>			<form action="http://localhost/wordpress/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+				<p class="comment-notes">Your email address will not be published.</p><p class="comment-form-comment"><label for="comment">Comment</label><br/><textarea id="comment" name="comment" cols="45" rows="5" aria-required="true"></textarea></p><p class="comment-form-author"><label for="author">Name </label><span class="required">*</span><br/><input id="author" name="author" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-email"><label for="email">Email </label><span class="required">*</span><br/><input id="email" name="email" type="text" value="" size="30" aria-required='true' /></p>
+<p class="comment-form-url"><label for="url">Website</label><br/><input id="url" name="url" type="text" value="" size="30" /></p>
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" /><label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Laisser un commentaire" /> <input type='hidden' name='comment_post_ID' value='189' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p>			</form>
+			</div><!-- #respond -->
+		</div>
+	<aside class="mh-sidebar">
+	<div id="mh_newsdesk_lite_recent_posts-3" class="sb-widget mh-clearfix mh_newsdesk_lite_recent_posts">		<ul class="mh-rp-widget widget-list">				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-annotation-based-autowiring/index.html" title="Example Spring 4 – Annotation Based Autowiring" rel="bookmark">Example Spring 4 – Annotation Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-java-based-autowiring/index.html" title="Example Spring 4 – Java Based Autowiring" rel="bookmark">Example Spring 4 – Java Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-xml-based-autowiring/index.html" title="Example Spring 4 – Xml Based Autowiring" rel="bookmark">Example Spring 4 – Xml Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/29/example-spring-4-annotation-based-configuration/index.html" title="Example Spring 4 – Annotation Based Configuration" rel="bookmark">Example Spring 4 – Annotation Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/26/example-spring-4-java-based-configuration/index.html" title="Example Spring 4 – Java Based Configuration" rel="bookmark">Example Spring 4 – Java Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/23/example-spring-4-xml-based-configuration/index.html" title="Example Spring 4 – XML Based Configuration" rel="bookmark">Example Spring 4 – XML Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../04/27/hackerrank-java-domain-bignumber/index.html" title="Hackerrank [Java domain] : BigNumber" rel="bookmark">Hackerrank [Java domain] : BigNumber</a></li>				<li class="rp-widget-item"><a href="../../../04/26/hackerrank-java-domain-strings/index.html" title="Hackerrank [Java domain] : Strings" rel="bookmark">Hackerrank [Java domain] : Strings</a></li>				<li class="rp-widget-item"><a href="../../../04/26/hackerrank-java-domain-introduction/index.html" title="Hackerrank [Java domain] : Introduction" rel="bookmark">Hackerrank [Java domain] : Introduction</a></li>				<li class="rp-widget-item"><a href="../../../04/20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/index.html" title="Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »" rel="bookmark">Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »</a></li>		</ul></div></aside></div>
+</div>
+<footer class="mh-footer">
+	<div class="wrapper-inner">
+		<p class="copyright">Copyright 2019 | MH Newsdesk lite by <a href="https://www.mhthemes.com/" rel="nofollow">MH Themes</a></p>
+	</div>
+</footer>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushPlain09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJava09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushSql09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore09b1.css?ver=3.0.9b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeEclipse09b1.css?ver=3.0.9b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['auto-links'] = false;
+	SyntaxHighlighter.defaults['light'] = true;
+	SyntaxHighlighter.defaults['pad-line-numbers'] = true;
+	SyntaxHighlighter.all();
+
+	// Infinite scroll support
+	if ( typeof( jQuery ) !== 'undefined' ) {
+		jQuery( function( $ ) {
+			$( document.body ).on( 'post-load', function() {
+				SyntaxHighlighter.highlight();
+			} );
+		} );
+	}
+</script>
+<script type='text/javascript' src='../../../../wp-includes/js/comment-reply.minaead.js?ver=5.0.3'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/wp-embed.minaead.js?ver=5.0.3'></script>
+</body>
+
+<!-- Mirrored from localhost/wordpress/2017/02/07/spring-hibernatedaosupport-hibernatecallback/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 13 Feb 2019 14:47:08 GMT -->
+</html>
