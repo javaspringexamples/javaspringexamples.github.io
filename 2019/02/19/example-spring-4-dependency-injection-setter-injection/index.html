@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html class="no-js" lang="fr-FR">
 
-<!-- Mirrored from localhost/wordpress/2018/11/29/example-spring-4-annotation-based-configuration/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Feb 2019 17:01:50 GMT -->
+<!-- Mirrored from localhost/wordpress/2019/02/19/example-spring-4-dependency-injection-setter-injection/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Feb 2019 17:01:41 GMT -->
 <!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="profile" href="http://gmpg.org/xfn/11" />
-<title>Example Spring 4 – Annotation Based Configuration &#8211; Java and Spring Examples</title>
+<title>Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection &#8211; Java and Spring Examples</title>
 <link rel='dns-prefetch' href='http://fonts.googleapis.com/' />
 <link rel='dns-prefetch' href='http://s.w.org/' />
 <link rel="alternate" type="application/rss+xml" title="Java and Spring Examples &raquo; Flux" href="../../../../feed/index.html" />
@@ -40,19 +40,19 @@ img.emoji {
 <link rel='https://api.w.org/' href='../../../../wp-json/index.html' />
 <link rel="EditURI" type="application/rsd+xml" title="RSD" href="../../../../xmlrpc0db0.php?rsd" />
 <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="../../../../wp-includes/wlwmanifest.xml" /> 
-<link rel='prev' title='Example Spring 4 – Java Based Configuration' href='../../26/example-spring-4-java-based-configuration/index.html' />
-<link rel='next' title='Example Spring 4 – Xml Based Autowiring' href='../../../12/07/example-spring-4-xml-based-autowiring/index.html' />
+<link rel='prev' title='Example Spring 4 &#8211; Dependency Injection &#8211; Constructor Injection' href='../../18/example-spring-4-dependency-injection-constructor-injection/index.html' />
+<link rel='next' title='Example Spring 4 &#8211; Lifecycle Callback Methods' href='../example-spring-4-dependency-injection-lifecycle-callback-methods/index.html' />
 <meta name="generator" content="WordPress 5.0.3" />
 <link rel="canonical" href="index.html" />
-<link rel='shortlink' href='../../../../indexe145.html?p=409' />
-<link rel="alternate" type="application/json+oembed" href="../../../../wp-json/oembed/1.0/embedb42b.json?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2018%2F11%2F29%2Fexample-spring-4-annotation-based-configuration%2F" />
-<link rel="alternate" type="text/xml+oembed" href="../../../../wp-json/oembed/1.0/embed5f0f?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2018%2F11%2F29%2Fexample-spring-4-annotation-based-configuration%2F&amp;format=xml" />
+<link rel='shortlink' href='../../../../index28bc.html?p=495' />
+<link rel="alternate" type="application/json+oembed" href="../../../../wp-json/oembed/1.0/embed0c7f.json?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2019%2F02%2F19%2Fexample-spring-4-dependency-injection-setter-injection%2F" />
+<link rel="alternate" type="text/xml+oembed" href="../../../../wp-json/oembed/1.0/embed6472?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2019%2F02%2F19%2Fexample-spring-4-dependency-injection-setter-injection%2F&amp;format=xml" />
 <!--[if lt IE 9]>
 <script src="http://localhost/wordpress/wp-content/themes/mh-newsdesk-lite/js/css3-mediaqueries.js"></script>
 <![endif]-->
 <style type="text/css" id="syntaxhighlighteranchor"></style>
 </head>
-<body class="post-template-default single single-post postid-409 single-format-standard mh-right-sb">
+<body class="post-template-default single single-post postid-495 single-format-standard mh-right-sb">
 <div id="mh-wrapper">
 <header class="mh-header">
 	<div class="header-wrap mh-clearfix">
@@ -79,229 +79,112 @@ img.emoji {
 </ul></div>		</nav>
 	</div>
 </header><div class="mh-section mh-group">
-	<div id="main-content" class="mh-content"><article id="post-409" class="post-409 post type-post status-publish format-standard has-post-thumbnail hentry category-dependency-injection">
+	<div id="main-content" class="mh-content"><article id="post-495" class="post-495 post type-post status-publish format-standard has-post-thumbnail hentry category-dependency-injection">
 	<header class="entry-header mh-clearfix">
-		<h1 class="entry-title">Example Spring 4 – Annotation Based Configuration</h1>
+		<h1 class="entry-title">Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection</h1>
 			</header>
 	
 <figure class="entry-thumbnail">
 <img width="200" height="65" src="../../../../wp-content/uploads/2017/01/spring-by-pivotal.png" class="attachment-content-single size-content-single wp-post-image" alt="spring example" /></figure>
 	<p class="entry-meta">
 <span class="entry-meta-author vcard author">Posted By: <a class="fn" href="../../../../author/admin/index.html">admin</a></span>
-<span class="entry-meta-date updated">novembre 29, 2018</span>
+<span class="entry-meta-date updated">février 19, 2019</span>
 </p>
 	<div class="entry-content mh-clearfix">
-		<p>This example presents the basic concept of using in Spring the Annotation based configuration.</p>
+		<p>This example presents the basic concept of using setter injection in Spring.</p>
 <p>The technologies used are :<br />
  &#8211; Spring 4.3.4<br />
  &#8211; JDK 1.8<br />
  &#8211; Maven 3.3.9</p>
 <p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
 <pre class="brush: plain; title: ; notranslate" title="">mvn eclipse:eclipse</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate" title="User.java">
-package javaspringexamples.spring.ioc.configuration.annotation;
+<pre class="brush: java; title: A.java; toolbar: true; notranslate" title="A.java">
+package javaspringexamples.spring.ioc.setterInjection.xml;
 
 /**
  * 
  * @author mounir.sahrani@gmail.com
  *
  */
-public class User {
+public class A {
+	private B b;
+	private C c;
 
-	private int id;
-	private String fisrtName;
-	private String lastName;
-	private boolean Accountlocked;
-
-	public int getId() {
-		return id;
+	public B getB() {
+		return b;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setB(B b) {
+		this.b = b;
 	}
 
-	public String getFisrtName() {
-		return fisrtName;
+	public C getC() {
+		return c;
 	}
 
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
+	public void setC(C c) {
+		this.c = c;
 	}
 
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public boolean isAccountlocked() {
-		return Accountlocked;
-	}
-
-	public void setAccountlocked(boolean accountlocked) {
-		Accountlocked = accountlocked;
+	@Override
+	public String toString() {
+		return b.toString() + &quot; - &quot; + c.toString();
 	}
 }
 </pre>
-<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate" title="UserDao.java">
-package javaspringexamples.spring.ioc.configuration.annotation;
+<pre class="brush: java; title: B.java; toolbar: true; notranslate" title="B.java">
+package javaspringexamples.spring.ioc.setterInjection.xml;
 
 /**
  * 
  * @author mounir.sahrani@gmail.com
  *
  */
-public interface UserDao {
+public class B {
+	private String name;
 
-	User find(int userId);
+	public String getName() {
+		return name;
+	}
 
-	void insert(User user);
+	public void setName(String name) {
+		this.name = name;
+	}
 
-	void update(User user);
-
-	void delete(int userId);
-
-	void lockAccount(int userId, boolean locked);
+	@Override
+	public String toString() {
+		return name;
+	}
 
 }
 </pre>
-<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate" title="UserDaoInMemoryImpl.java">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.stereotype.Repository;
+<pre class="brush: java; title: C.java; toolbar: true; notranslate" title="C.java">
+package javaspringexamples.spring.ioc.setterInjection.xml;
 
 /**
  * 
  * @author mounir.sahrani@gmail.com
  *
  */
+public class C {
+	private String name;
 
-@Repository
-public class UserDaoInMemoryImpl implements UserDao {
+	public String getName() {
+		return name;
+	}
 
-	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
-
-	{
-		User user1 = new User();
-		user1.setId(1);
-		user1.setFisrtName(&quot;FirstName 1&quot;);
-		user1.setLastName(&quot;LastName 1&quot;);
-		user1.setAccountlocked(false);
-
-		User user2 = new User();
-		user2.setId(2);
-		user2.setFisrtName(&quot;FirstName 2&quot;);
-		user2.setLastName(&quot;LastName 2&quot;);
-		user2.setAccountlocked(false);
-
-		usersMap.put(user1.getId(), user1);
-		usersMap.put(user2.getId(), user2);
-
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
-	public void insert(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void update(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void delete(int userId) {
-		usersMap.remove(userId);
-	}
-
-	@Override
-	public User find(int userId) {
-		return usersMap.get(userId);
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		User user = usersMap.get(userId);
-		user.setAccountlocked(locked);
-		update(user);
+	public String toString() {
+		return name;
 	}
 }
-</pre>
-<pre class="brush: java; title: UserService.java; toolbar: true; notranslate" title="UserService.java">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserService {
-
-	String getUserinformation(int userId);
-
-	void lockAccountUser(int userId);
-
-	void unlockAccountUser(int userId);
-}
-</pre>
-<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate" title="UserServiceImpl.java">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-
-@Service
-public class UserServiceImpl implements UserService {
-	private UserDao userDao;
-
-	@Autowired
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
-	@Override
-	public void lockAccountUser(int userId) {
-		userDao.lockAccount(userId, true);
-	}
-
-	@Override
-	public void unlockAccountUser(int userId) {
-		userDao.lockAccount(userId, false);
-	}
-
-	@Override
-	public String getUserinformation(int userId) {
-		User user = userDao.find(userId);
-		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
-	}
-}
-</pre>
-<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate" title="pom.xml">
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
-	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd&quot;&gt;
-
-	&lt;context:component-scan base-package=&quot;javaspringexamples.spring.ioc.configuration.annotation&quot;/&gt;
-
-&lt;/beans&gt;
 </pre>
 <pre class="brush: java; title: Main.java; toolbar: true; notranslate" title="Main.java">
-package javaspringexamples.spring.ioc.configuration.annotation;
+package javaspringexamples.spring.ioc.setterInjection.xml;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -314,33 +197,102 @@ public class Main {
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				&quot;/javaspringexamples/spring/ioc/configuration/annotation/configuration.xml&quot;);
-		UserService userService = applicationContext.getBean(UserService.class);
+				&quot;/javaspringexamples/spring/ioc/setterInjection/xml/xmlConfiguration.xml&quot;);
 
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
+		// Getting and printing objectA
+		A objectA = (A) applicationContext.getBean(&quot;objectA&quot;);
+		System.out.println(objectA);
 
-		System.out.println(&quot;Locking User1 account&quot;);
-		userService.lockAccountUser(1);
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
 	}
 
 }
 </pre>
-<p><a href="https://github.com/javaspringexamples/AnnotationBasedConfiguration.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/AnnotationBasedConfiguration/archive/master.zip">Download a .zip file</a></p>
+<pre class="brush: xml; title: xmlConfiguration.xml; toolbar: true; notranslate" title="xmlConfiguration.xml">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:util=&quot;http://www.springframework.org/schema/util&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd&quot;&gt;
+
+	&lt;util:map id=&quot;objectName&quot;&gt;
+		&lt;entry key=&quot;A&quot; value=&quot;Object A&quot; /&gt;
+		&lt;entry key=&quot;B&quot; value=&quot;Object B&quot; /&gt;
+		&lt;entry key=&quot;C&quot; value=&quot;Object C&quot; /&gt;
+	&lt;/util:map&gt;
+
+	&lt;bean id=&quot;objectA&quot;
+		class=&quot;javaspringexamples.spring.ioc.setterInjection.xml.A&quot;&gt;
+		&lt;property name=&quot;b&quot; ref=&quot;objectB&quot; /&gt;
+		&lt;property name=&quot;c&quot; ref=&quot;objectC&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;objectB&quot;
+		class=&quot;javaspringexamples.spring.ioc.setterInjection.xml.B&quot;&gt;
+		&lt;property name=&quot;name&quot; value=&quot;#{objectName[B]}&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;objectC&quot;
+		class=&quot;javaspringexamples.spring.ioc.setterInjection.xml.C&quot;&gt;
+		&lt;property name=&quot;name&quot; value=&quot;#{objectName[C]}&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate" title="pom.xml">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+ 
+    &lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
+    &lt;artifactId&gt;example-XML-Based-Setter-Injection&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+ 
+    &lt;name&gt;example XML Based Setter Injection&lt;/name&gt;
+ 
+    &lt;properties&gt;
+        &lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
+    &lt;/properties&gt;
+ 
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;${springframework.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+ 
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.6.0&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;source&gt;1.8&lt;/source&gt;
+                    &lt;target&gt;1.8&lt;/target&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+</pre>
+<p>The output is :<br />
+Object B &#8211; Object C</p>
+<p><a href="https://github.com/javaspringexamples/XmlBasedSetterInjection.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/XmlBasedSetterInjection/archive/master.zip">Download a .zip file</a></p>
 	</div>
 </article><nav class="post-nav-wrap" role="navigation">
 <ul class="post-nav mh-clearfix">
 <li class="post-nav-prev">
-<a href="../../26/example-spring-4-java-based-configuration/index.html" rel="prev"><i class="fa fa-chevron-left"></i>Previous post</a></li>
+<a href="../../18/example-spring-4-dependency-injection-constructor-injection/index.html" rel="prev"><i class="fa fa-chevron-left"></i>Previous post</a></li>
 <li class="post-nav-next">
-<a href="../../../12/07/example-spring-4-xml-based-autowiring/index.html" rel="next">Next post<i class="fa fa-chevron-right"></i></a></li>
+<a href="../example-spring-4-dependency-injection-lifecycle-callback-methods/index.html" rel="next">Next post<i class="fa fa-chevron-right"></i></a></li>
 </ul>
 </nav>
 	</div>
 	<aside class="mh-sidebar">
-	<div id="mh_newsdesk_lite_recent_posts-3" class="sb-widget mh-clearfix mh_newsdesk_lite_recent_posts">		<ul class="mh-rp-widget widget-list">				<li class="rp-widget-item"><a href="../../../../2019/02/19/example-spring-4-dependency-injection-lifecycle-callback-methods/index.html" title="Example Spring 4 &#8211; Lifecycle Callback Methods" rel="bookmark">Example Spring 4 &#8211; Lifecycle Callback Methods</a></li>				<li class="rp-widget-item"><a href="../../../../2019/02/19/example-spring-4-dependency-injection-setter-injection/index.html" title="Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection" rel="bookmark">Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection</a></li>				<li class="rp-widget-item"><a href="../../../../2019/02/18/example-spring-4-dependency-injection-constructor-injection/index.html" title="Example Spring 4 &#8211; Dependency Injection &#8211; Constructor Injection" rel="bookmark">Example Spring 4 &#8211; Dependency Injection &#8211; Constructor Injection</a></li>				<li class="rp-widget-item"><a href="../../../12/07/example-spring-4-annotation-based-autowiring/index.html" title="Example Spring 4 – Annotation Based Autowiring" rel="bookmark">Example Spring 4 – Annotation Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../12/07/example-spring-4-java-based-autowiring/index.html" title="Example Spring 4 – Java Based Autowiring" rel="bookmark">Example Spring 4 – Java Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../12/07/example-spring-4-xml-based-autowiring/index.html" title="Example Spring 4 – Xml Based Autowiring" rel="bookmark">Example Spring 4 – Xml Based Autowiring</a></li>				<li class="rp-widget-item"><a href="index.html" title="Example Spring 4 – Annotation Based Configuration" rel="bookmark">Example Spring 4 – Annotation Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../26/example-spring-4-java-based-configuration/index.html" title="Example Spring 4 – Java Based Configuration" rel="bookmark">Example Spring 4 – Java Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../23/example-spring-4-xml-based-configuration/index.html" title="Example Spring 4 – XML Based Configuration" rel="bookmark">Example Spring 4 – XML Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2017/04/20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/index.html" title="Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »" rel="bookmark">Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »</a></li>		</ul></div></aside></div>
+	<div id="mh_newsdesk_lite_recent_posts-3" class="sb-widget mh-clearfix mh_newsdesk_lite_recent_posts">		<ul class="mh-rp-widget widget-list">				<li class="rp-widget-item"><a href="../example-spring-4-dependency-injection-lifecycle-callback-methods/index.html" title="Example Spring 4 &#8211; Lifecycle Callback Methods" rel="bookmark">Example Spring 4 &#8211; Lifecycle Callback Methods</a></li>				<li class="rp-widget-item"><a href="index.html" title="Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection" rel="bookmark">Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection</a></li>				<li class="rp-widget-item"><a href="../../18/example-spring-4-dependency-injection-constructor-injection/index.html" title="Example Spring 4 &#8211; Dependency Injection &#8211; Constructor Injection" rel="bookmark">Example Spring 4 &#8211; Dependency Injection &#8211; Constructor Injection</a></li>				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-annotation-based-autowiring/index.html" title="Example Spring 4 – Annotation Based Autowiring" rel="bookmark">Example Spring 4 – Annotation Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-java-based-autowiring/index.html" title="Example Spring 4 – Java Based Autowiring" rel="bookmark">Example Spring 4 – Java Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/12/07/example-spring-4-xml-based-autowiring/index.html" title="Example Spring 4 – Xml Based Autowiring" rel="bookmark">Example Spring 4 – Xml Based Autowiring</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/29/example-spring-4-annotation-based-configuration/index.html" title="Example Spring 4 – Annotation Based Configuration" rel="bookmark">Example Spring 4 – Annotation Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/26/example-spring-4-java-based-configuration/index.html" title="Example Spring 4 – Java Based Configuration" rel="bookmark">Example Spring 4 – Java Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2018/11/23/example-spring-4-xml-based-configuration/index.html" title="Example Spring 4 – XML Based Configuration" rel="bookmark">Example Spring 4 – XML Based Configuration</a></li>				<li class="rp-widget-item"><a href="../../../../2017/04/20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/index.html" title="Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »" rel="bookmark">Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »</a></li>		</ul></div></aside></div>
 </div>
 <footer class="mh-footer">
 	<div class="wrapper-inner">
@@ -399,5 +351,5 @@ public class Main {
 <script type='text/javascript' src='../../../../wp-includes/js/wp-embed.minaead.js?ver=5.0.3'></script>
 </body>
 
-<!-- Mirrored from localhost/wordpress/2018/11/29/example-spring-4-annotation-based-configuration/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Feb 2019 17:01:50 GMT -->
+<!-- Mirrored from localhost/wordpress/2019/02/19/example-spring-4-dependency-injection-setter-injection/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Feb 2019 17:01:41 GMT -->
 </html>
