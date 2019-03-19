@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="no-js" lang="fr-FR">
+
+<!-- Mirrored from localhost/wordpress/2019/03/19/example-spring-4-mvc-changing-theme/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Mar 2019 18:58:43 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="profile" href="http://gmpg.org/xfn/11" />
+<title>Example Spring 4 MVC – Changing Theme &#8211; Java and Spring Examples</title>
+<link rel='dns-prefetch' href='http://fonts.googleapis.com/' />
+<link rel='dns-prefetch' href='http://s.w.org/' />
+<link rel="alternate" type="application/rss+xml" title="Java and Spring Examples &raquo; Flux" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="Java and Spring Examples &raquo; Flux des commentaires" href="../../../../comments/feed/index.html" />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/11\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/localhost\/wordpress\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.0.4"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55358,56760,9792,65039],[55358,56760,8203,9792,65039]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='wp-block-library-css'  href='../../../../wp-includes/css/dist/block-library/style.min5560.css?ver=5.0.4' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-google-fonts-css'  href='https://fonts.googleapis.com/css?family=Oswald:400,700,300|PT+Serif:400,400italic,700,700italic' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-font-awesome-css'  href='../../../../wp-content/themes/mh-newsdesk-lite/includes/font-awesome.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='mh-style-css'  href='../../../../wp-content/themes/mh-newsdesk-lite/style5560.css?ver=5.0.4' type='text/css' media='all' />
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jqueryb8ff.js?ver=1.12.4'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jquery-migrate.min330a.js?ver=1.4.1'></script>
+<script type='text/javascript' src='../../../../wp-content/themes/mh-newsdesk-lite/js/scripts5560.js?ver=5.0.4'></script>
+<link rel='https://api.w.org/' href='../../../../wp-json/index.html' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="../../../../xmlrpc0db0.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="../../../../wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Example Spring 4 MVC – Internationalisation' href='../example-spring-4-mvc-internationalisation/index.html' />
+<meta name="generator" content="WordPress 5.0.4" />
+<link rel="canonical" href="index.html" />
+<link rel='shortlink' href='../../../../indexa165.html?p=550' />
+<link rel="alternate" type="application/json+oembed" href="../../../../wp-json/oembed/1.0/embedf7fb.json?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2019%2F03%2F19%2Fexample-spring-4-mvc-changing-theme%2F" />
+<link rel="alternate" type="text/xml+oembed" href="../../../../wp-json/oembed/1.0/embed99c8?url=http%3A%2F%2Flocalhost%2Fwordpress%2F2019%2F03%2F19%2Fexample-spring-4-mvc-changing-theme%2F&amp;format=xml" />
+<!--[if lt IE 9]>
+<script src="http://localhost/wordpress/wp-content/themes/mh-newsdesk-lite/js/css3-mediaqueries.js"></script>
+<![endif]-->
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+</head>
+<body class="post-template-default single single-post postid-550 single-format-standard mh-right-sb">
+<div id="mh-wrapper">
+<header class="mh-header">
+	<div class="header-wrap mh-clearfix">
+		<a href="../../../../index.html" title="Java and Spring Examples" rel="home">
+<div class="logo-wrap" role="banner">
+<div class="logo">
+<h1 class="logo-title">Java and Spring Examples</h1>
+</div>
+</div>
+</a>
+	</div>
+	<div class="header-menu mh-clearfix">
+		<nav class="main-nav mh-clearfix">
+			<div class="menu-home-container"><ul id="menu-home" class="menu"><li id="menu-item-391" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-391"><a href="../../../../category/java/index.html">Java</a>
+<ul class="sub-menu">
+	<li id="menu-item-392" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-392"><a href="../../../../category/java/thread/index.html">Thread</a></li>
+</ul>
+</li>
+<li id="menu-item-393" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor menu-item-has-children menu-item-393"><a href="../../../../category/spring/index.html">Spring</a>
+<ul class="sub-menu">
+	<li id="menu-item-396" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-396"><a href="../../../../category/spring/dependency-injection/index.html">Dependency Injection</a></li>
+	<li id="menu-item-500" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-500"><a href="../../../../category/spring/spring-mvc/index.html">Spring MVC</a></li>
+</ul>
+</li>
+</ul></div>		</nav>
+	</div>
+</header><div class="mh-section mh-group">
+	<div id="main-content" class="mh-content"><article id="post-550" class="post-550 post type-post status-publish format-standard has-post-thumbnail hentry category-spring-mvc">
+	<header class="entry-header mh-clearfix">
+		<h1 class="entry-title">Example Spring 4 MVC – Changing Theme</h1>
+			</header>
+	
+<figure class="entry-thumbnail">
+<img width="200" height="65" src="../../../../wp-content/uploads/2017/01/spring-by-pivotal.png" class="attachment-content-single size-content-single wp-post-image" alt="spring example" /></figure>
+	<p class="entry-meta">
+<span class="entry-meta-author vcard author">Posted By: <a class="fn" href="../../../../author/admin/index.html">admin</a></span>
+<span class="entry-meta-date updated">mars 19, 2019</span>
+</p>
+	<div class="entry-content mh-clearfix">
+		<p>This example presents the basic concept of using in Spring the changing theme.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate" title="">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: welcomeController.java; notranslate" title="welcomeController.java">
+package javaspringexamples.spring.changingtheme.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class welcomeController {
+
+    @RequestMapping(value = &quot;/welcome&quot;)
+    public ModelAndView user() {
+        return new ModelAndView(&quot;welcome&quot;);
+    }
+}
+</pre>
+<pre class="brush: bash; title: white.properties; notranslate" title="white.properties">
+style=css/white.css
+</pre>
+<pre class="brush: bash; title: yellow.properties; notranslate" title="yellow.properties">
+style=css/yellow.css
+</pre>
+<pre class="brush: css; title: white.css; notranslate" title="white.css">
+body {
+    background-color: white;
+    color: black;
+}
+</pre>
+<pre class="brush: css; title: yellow.css; notranslate" title="yellow.css">
+body {
+    background-color: yellow;
+    color: green;
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate" title="web.xml">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate" title="springmvc-servlet.xml">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.changingtheme&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;themeSource&quot;
+		class=&quot;org.springframework.ui.context.support.ResourceBundleThemeSource&quot; /&gt;
+
+	&lt;bean id=&quot;themeResolver&quot;
+		class=&quot;org.springframework.web.servlet.theme.SessionThemeResolver&quot;&gt;
+		&lt;property name=&quot;defaultThemeName&quot; value=&quot;yellow&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;mvc:interceptors&gt;
+		&lt;bean id=&quot;themeChangeInterceptor&quot;
+			class=&quot;org.springframework.web.servlet.theme.ThemeChangeInterceptor&quot;&gt;
+			&lt;property name=&quot;paramName&quot; value=&quot;theme&quot; /&gt;
+		&lt;/bean&gt;
+	&lt;/mvc:interceptors&gt;
+
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate" title="index.jsp">
+&lt;%
+	response.sendRedirect(&quot;welcome.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: welcome.jsp; notranslate" title="welcome.jsp">
+&lt;%@ page contentType=&quot;text/html;charset=ISO-8859-9&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags&quot; prefix=&quot;spring&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples.io - Spring MVC Changing Theme&lt;/title&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;&lt;spring:theme code=&quot;style&quot;/&gt;&quot;
+	type=&quot;text/css&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	Theme :
+	&lt;a href=&quot;?theme=white&quot;&gt;White theme&lt;/a&gt; -
+	&lt;a href=&quot;?theme=yellow&quot;&gt;Yellow theme&lt;/a&gt;
+	&lt;br /&gt;
+	&lt;h1&gt;JavaSpringExamples.io - Changing theme&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcChangingTheme.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcChangingTheme/archive/master.zip">Download a .zip file</a></p>
+	</div>
+</article><nav class="post-nav-wrap" role="navigation">
+<ul class="post-nav mh-clearfix">
+<li class="post-nav-prev">
+<a href="../example-spring-4-mvc-internationalisation/index.html" rel="prev"><i class="fa fa-chevron-left"></i>Previous post</a></li>
+<li class="post-nav-next">
+</li>
+</ul>
+</nav>
+	</div>
+	<aside class="mh-sidebar">
+	<div id="mh_newsdesk_lite_recent_posts-3" class="sb-widget mh-clearfix mh_newsdesk_lite_recent_posts">		<ul class="mh-rp-widget widget-list">				<li class="rp-widget-item"><a href="index.html" title="Example Spring 4 MVC – Changing Theme" rel="bookmark">Example Spring 4 MVC – Changing Theme</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-mvc-internationalisation/index.html" title="Example Spring 4 MVC – Internationalisation" rel="bookmark">Example Spring 4 MVC – Internationalisation</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-mvc-exception-handling/index.html" title="Example Spring 4 MVC – Exception Handling" rel="bookmark">Example Spring 4 MVC – Exception Handling</a></li>				<li class="rp-widget-item"><a href="../529/index.html" title="Example Spring 4 MVC – Form" rel="bookmark">Example Spring 4 MVC – Form</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-mvc-bean-validation/index.html" title="Example Spring 4 MVC – Bean Validation" rel="bookmark">Example Spring 4 MVC – Bean Validation</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-mvc-hello-word-xml-config/index.html" title="Example Spring 4 MVC – Hello Word XML Config" rel="bookmark">Example Spring 4 MVC – Hello Word XML Config</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-mvc-hello-word-annotation-config/index.html" title="Example Spring 4 MVC – Hello Word Annotation Config" rel="bookmark">Example Spring 4 MVC – Hello Word Annotation Config</a></li>				<li class="rp-widget-item"><a href="../../../02/19/example-spring-4-dependency-injection-lifecycle-callback-methods/index.html" title="Example Spring 4 &#8211; Lifecycle Callback Methods" rel="bookmark">Example Spring 4 &#8211; Lifecycle Callback Methods</a></li>				<li class="rp-widget-item"><a href="../../../02/19/example-spring-4-dependency-injection-setter-injection/index.html" title="Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection" rel="bookmark">Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection</a></li>				<li class="rp-widget-item"><a href="../../../02/18/example-spring-4-dependency-injection-constructor-injection/index.html" title="Example Spring 4 &#8211; Dependency Injection &#8211; Constructor Injection" rel="bookmark">Example Spring 4 &#8211; Dependency Injection &#8211; Constructor Injection</a></li>		</ul></div></aside></div>
+</div>
+<footer class="mh-footer">
+	<div class="wrapper-inner">
+		<p class="copyright">Copyright 2019 | MH Newsdesk lite by <a href="https://www.mhthemes.com/" rel="nofollow">MH Themes</a></p>
+	</div>
+</footer>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shCore09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushBash09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushJava09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushCss09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/scripts/shBrushXml09b1.js?ver=3.0.9b'></script>
+<script type='text/javascript'>
+	(function(){
+		var corecss = document.createElement('link');
+		var themecss = document.createElement('link');
+		var corecssurl = "../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shCore09b1.css?ver=3.0.9b";
+		if ( corecss.setAttribute ) {
+				corecss.setAttribute( "rel", "stylesheet" );
+				corecss.setAttribute( "type", "text/css" );
+				corecss.setAttribute( "href", corecssurl );
+		} else {
+				corecss.rel = "stylesheet";
+				corecss.href = corecssurl;
+		}
+		document.getElementsByTagName("head")[0].insertBefore( corecss, document.getElementById("syntaxhighlighteranchor") );
+		var themecssurl = "../../../../wp-content/plugins/syntaxhighlighter/syntaxhighlighter3/styles/shThemeEclipse09b1.css?ver=3.0.9b";
+		if ( themecss.setAttribute ) {
+				themecss.setAttribute( "rel", "stylesheet" );
+				themecss.setAttribute( "type", "text/css" );
+				themecss.setAttribute( "href", themecssurl );
+		} else {
+				themecss.rel = "stylesheet";
+				themecss.href = themecssurl;
+		}
+		//document.getElementById("syntaxhighlighteranchor").appendChild(themecss);
+		document.getElementsByTagName("head")[0].insertBefore( themecss, document.getElementById("syntaxhighlighteranchor") );
+	})();
+	SyntaxHighlighter.config.strings.expandSource = '+ expand source';
+	SyntaxHighlighter.config.strings.help = '?';
+	SyntaxHighlighter.config.strings.alert = 'SyntaxHighlighter\n\n';
+	SyntaxHighlighter.config.strings.noBrush = 'Can\'t find brush for: ';
+	SyntaxHighlighter.config.strings.brushNotHtmlScript = 'Brush wasn\'t configured for html-script option: ';
+	SyntaxHighlighter.defaults['auto-links'] = false;
+	SyntaxHighlighter.defaults['light'] = true;
+	SyntaxHighlighter.defaults['pad-line-numbers'] = true;
+	SyntaxHighlighter.all();
+
+	// Infinite scroll support
+	if ( typeof( jQuery ) !== 'undefined' ) {
+		jQuery( function( $ ) {
+			$( document.body ).on( 'post-load', function() {
+				SyntaxHighlighter.highlight();
+			} );
+		} );
+	}
+</script>
+<script type='text/javascript' src='../../../../wp-includes/js/wp-embed.min5560.js?ver=5.0.4'></script>
+</body>
+
+<!-- Mirrored from localhost/wordpress/2019/03/19/example-spring-4-mvc-changing-theme/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 19 Mar 2019 18:59:02 GMT -->
+</html>

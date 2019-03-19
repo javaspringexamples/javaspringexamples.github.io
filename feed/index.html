@@ -12,12 +12,1343 @@
 	<atom:link href="http://localhost/wordpress/feed/" rel="self" type="application/rss+xml" />
 	<link>http://localhost/wordpress</link>
 	<description></description>
-	<lastBuildDate>Tue, 19 Feb 2019 17:00:57 +0000</lastBuildDate>
+	<lastBuildDate>Tue, 19 Mar 2019 18:56:38 +0000</lastBuildDate>
 	<language>fr-FR</language>
 	<sy:updatePeriod>hourly</sy:updatePeriod>
 	<sy:updateFrequency>1</sy:updateFrequency>
-	<generator>https://wordpress.org/?v=5.0.3</generator>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
 	<item>
+		<title>Example Spring 4 MVC – Changing Theme</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-changing-theme/</link>
+		<pubDate>Tue, 19 Mar 2019 17:41:29 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=550</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring the changing theme. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the changing theme.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: welcomeController.java; notranslate">
+package javaspringexamples.spring.changingtheme.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class welcomeController {
+
+    @RequestMapping(value = &quot;/welcome&quot;)
+    public ModelAndView user() {
+        return new ModelAndView(&quot;welcome&quot;);
+    }
+}
+</pre>
+<pre class="brush: bash; title: white.properties; notranslate">
+style=css/white.css
+</pre>
+<pre class="brush: bash; title: yellow.properties; notranslate">
+style=css/yellow.css
+</pre>
+<pre class="brush: css; title: white.css; notranslate">
+body {
+    background-color: white;
+    color: black;
+}
+</pre>
+<pre class="brush: css; title: yellow.css; notranslate">
+body {
+    background-color: yellow;
+    color: green;
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.changingtheme&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;themeSource&quot;
+		class=&quot;org.springframework.ui.context.support.ResourceBundleThemeSource&quot; /&gt;
+
+	&lt;bean id=&quot;themeResolver&quot;
+		class=&quot;org.springframework.web.servlet.theme.SessionThemeResolver&quot;&gt;
+		&lt;property name=&quot;defaultThemeName&quot; value=&quot;yellow&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;mvc:interceptors&gt;
+		&lt;bean id=&quot;themeChangeInterceptor&quot;
+			class=&quot;org.springframework.web.servlet.theme.ThemeChangeInterceptor&quot;&gt;
+			&lt;property name=&quot;paramName&quot; value=&quot;theme&quot; /&gt;
+		&lt;/bean&gt;
+	&lt;/mvc:interceptors&gt;
+
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;%
+	response.sendRedirect(&quot;welcome.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: welcome.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html;charset=ISO-8859-9&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags&quot; prefix=&quot;spring&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples.io - Spring MVC Changing Theme&lt;/title&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;&lt;spring:theme code=&quot;style&quot;/&gt;&quot;
+	type=&quot;text/css&quot; /&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	Theme :
+	&lt;a href=&quot;?theme=white&quot;&gt;White theme&lt;/a&gt; -
+	&lt;a href=&quot;?theme=yellow&quot;&gt;Yellow theme&lt;/a&gt;
+	&lt;br /&gt;
+	&lt;h1&gt;JavaSpringExamples.io - Changing theme&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcChangingTheme.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcChangingTheme/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 MVC – Internationalisation</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-internationalisation/</link>
+		<pubDate>Tue, 19 Mar 2019 17:30:52 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=548</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring the internationalisation. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse IDE...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the internationalisation.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: WelcomeController.java; notranslate">
+package javaspringexamples.spring.internationalisation.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class WelcomeController {
+
+	@RequestMapping(value = &quot;/welcome&quot;)
+	public ModelAndView user() {
+			return new ModelAndView(&quot;welcome&quot;);
+	}
+}
+</pre>
+<pre class="brush: bash; title: messages_en_US.properties; notranslate">
+welcome=Welcome to JavaSpringExamples.io
+</pre>
+<pre class="brush: bash; title: messages_fr_FR.properties; notranslate">
+welcome=Bienvenue à JavaSpringExamples.io
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.internationalisation&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;localeResolver&quot;
+		class=&quot;org.springframework.web.servlet.i18n.SessionLocaleResolver&quot;&gt;
+		&lt;property name=&quot;defaultLocale&quot; value=&quot;en_US&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;messageSource&quot;
+		class=&quot;org.springframework.context.support.ReloadableResourceBundleMessageSource&quot;&gt;
+		&lt;property name=&quot;basename&quot; value=&quot;classpath:messages&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;mvc:interceptors&gt;
+		&lt;bean id=&quot;localeChangeInterceptor&quot;
+			class=&quot;org.springframework.web.servlet.i18n.LocaleChangeInterceptor&quot;&gt;
+			&lt;property name=&quot;paramName&quot; value=&quot;lang&quot; /&gt;
+		&lt;/bean&gt;
+	&lt;/mvc:interceptors&gt;
+
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;%
+	response.sendRedirect(&quot;welcome.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: welcome.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags&quot; prefix=&quot;spring&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Spring MVC Internationalization&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+	Language :
+	&lt;a href=&quot;?lang=en_US&quot;&gt;English&lt;/a&gt; -
+	&lt;a href=&quot;?lang=fr_FR&quot;&gt;Français&lt;/a&gt;
+	&lt;h2&gt;
+		&lt;spring:message code=&quot;welcome&quot; /&gt;
+	&lt;/h2&gt;
+	Locale: ${pageContext.response.locale}
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcInternationalisation.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcInternationalisation/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 MVC – Exception Handling</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-exception-handling/</link>
+		<comments>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-exception-handling/#respond</comments>
+		<pubDate>Tue, 19 Mar 2019 16:17:18 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=537</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring the exception handling. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the exception handling.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: Country.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.domain;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Country {
+
+	private String name;
+	private String isoCode;
+
+	public Country() {
+	}
+
+	public Country(String name, String isoCode) {
+		this.name = name;
+		this.isoCode = isoCode;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getIsoCode() {
+		return isoCode;
+	}
+
+	public void setIsoCode(String isoCode) {
+		this.isoCode = isoCode;
+	}
+}
+</pre>
+<pre class="brush: java; title: CountryNotFoundException.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.exception;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class CountryNotFoundException extends Exception {
+
+	public CountryNotFoundException(String name) {
+		super(&quot;Country not found with name: &quot; + name);
+	}
+}
+</pre>
+<pre class="brush: java; title: GlobalExceptionHandler.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.handler;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleException() {
+		return new ModelAndView(&quot;errorGlobal&quot;);
+	}
+}
+</pre>
+<pre class="brush: java; title: CountryController.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javaspringexamples.spring.exceptionhandling.domain.Country;
+import javaspringexamples.spring.exceptionhandling.exception.CountryNotFoundException;
+
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class CountryController {
+
+	private Map&lt;String, Country&gt; countries = new HashMap&lt;String, Country&gt;();
+
+	@PostConstruct
+	public void setup() {
+		countries.put(&quot;morocco&quot;, new Country(&quot;Morocco&quot;, &quot;MA&quot;));
+		countries.put(&quot;france&quot;, new Country(&quot;France&quot;, &quot;FR&quot;));
+		countries.put(&quot;united states of america&quot;, new Country(&quot;United states of America&quot;, &quot;US&quot;));
+		countries.put(&quot;error&quot;, new Country(&quot;Error&quot;, &quot;Err&quot;));
+	}
+
+	@RequestMapping(value = &quot;/form&quot;)
+	public ModelAndView country() {
+		return new ModelAndView(&quot;form&quot;, &quot;country&quot;, new Country());
+	}
+
+	@RequestMapping(value = &quot;/result&quot;)
+	public ModelAndView process(String name) throws Exception {
+		ModelAndView modelAndView = new ModelAndView();
+		if (&quot;error&quot;.equalsIgnoreCase(name)) {
+			throw new Exception();
+		}
+
+		Country country = countries.get(name.toLowerCase());
+		if (country == null) {
+			throw new CountryNotFoundException(name);
+		}
+		modelAndView.addObject(&quot;country&quot;, country);
+		modelAndView.setViewName(&quot;result&quot;);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(CountryNotFoundException.class)
+	public ModelAndView handleException(CountryNotFoundException e) {
+		ModelAndView modelAndView = new ModelAndView(&quot;errorCountry&quot;);
+		modelAndView.addObject(&quot;errorMessage&quot;, e.getMessage());
+		return modelAndView;
+	}
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+         version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.exceptionhandling&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;%
+	response.sendRedirect(&quot;form.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: form.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Exception Handling&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+	&lt;h2&gt;Search Country&lt;/h2&gt;
+	&lt;mvc:form modelAttribute=&quot;country&quot; action=&quot;result.mvc&quot;&gt;
+		&lt;table&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;name&quot;&gt;Country Name&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:input path=&quot;name&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td colspan=&quot;2&quot;&gt;&lt;input type=&quot;submit&quot; value=&quot;Search&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;
+	&lt;/mvc:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: errorCountry.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Country Not Found&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;${errorMessage}&lt;/h2&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: errorGlobal.jsp; notranslate">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Error!&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;Error occurred!&lt;/h2&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: result.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Exception Handling&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;Search Country&lt;/h2&gt;
+	&lt;table&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Country Name :&lt;/td&gt;
+			&lt;td&gt;${country.name}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;ISO Code :&lt;/td&gt;
+			&lt;td&gt;${country.isoCode}&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcExceptionHandling.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcExceptionHandling/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			<wfw:commentRss>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-exception-handling/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		</item>
+		<item>
+		<title>Example Spring 4 MVC – Form</title>
+		<link>http://localhost/wordpress/2019/03/19/529/</link>
+		<pubDate>Tue, 19 Mar 2019 15:59:32 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=529</guid>
+		<description><![CDATA[This example presents the basic concept of using forms in Spring MVC. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse IDE...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using forms in Spring MVC.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: User.java; notranslate">
+package javaspringexamples.spring.mvcform.domain;
+
+import java.time.LocalDate;
+
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class User {
+
+	@Size(min = 3, max = 14)
+	private String name;
+	@Size(min = 3, max = 14)
+	private String lastname;
+	private String password;
+	private String detail;
+	@DateTimeFormat(pattern = &quot;yyyy-MM-dd&quot;)
+	private LocalDate birthDate;
+	private Gender gender;
+	private String country;
+	private boolean nonSmoking;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+
+	public LocalDate getBirthDate() {
+		return birthDate;
+	}
+
+	public void setBirthDate(LocalDate birthDate) {
+		this.birthDate = birthDate;
+	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public boolean isNonSmoking() {
+		return nonSmoking;
+	}
+
+	public void setNonSmoking(boolean nonSmoking) {
+		this.nonSmoking = nonSmoking;
+	}
+}
+</pre>
+<pre class="brush: java; title: Gender.java; notranslate">
+package javaspringexamples.spring.mvcform.domain;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public enum Gender {
+	MALE,
+	FEMALE;
+}
+</pre>
+<pre class="brush: java; title: UserController.java; notranslate">
+package javaspringexamples.spring.mvcform.controller;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javaspringexamples.spring.mvcform.domain.Gender;
+import javaspringexamples.spring.mvcform.domain.User;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class UserController {
+
+	private static final String[] countries = { &quot;Morocco&quot;, &quot;United States&quot;, &quot;France&quot; };
+
+	@RequestMapping(value = &quot;/form&quot;)
+	public ModelAndView user() {
+		ModelAndView modelAndView = new ModelAndView(&quot;userForm&quot;, &quot;user&quot;, new User());
+		modelAndView.addObject(&quot;genders&quot;, Gender.values());
+		modelAndView.addObject(&quot;countries&quot;, countries);
+
+		return modelAndView;
+	}
+
+	@RequestMapping(value = &quot;/result&quot;)
+	public ModelAndView processUser(@Valid User user, BindingResult result) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject(&quot;user&quot;, user);
+
+		if (result.hasErrors()) {
+			modelAndView.addObject(&quot;genders&quot;, Gender.values());
+			modelAndView.addObject(&quot;countries&quot;, countries);
+			modelAndView.setViewName(&quot;userForm&quot;);
+		} else {
+			modelAndView.setViewName(&quot;userResult&quot;);
+		}
+
+		return modelAndView;
+	}
+}
+</pre>
+<pre class="brush: plain; title: errorMessages.properties; notranslate">
+Size.user.name=Error format: at least 3, max 14.
+Size.user.lastname=Error format: at least 3, max 14.
+Pattern.user.password=Error format: at least 4 letters, max 15.
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.mvcform&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;% response.sendRedirect(&quot;form.mvc&quot;); %&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: userForm.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Spring MVC Form&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+	&lt;h2&gt;Form&lt;/h2&gt;
+	&lt;mvc:form modelAttribute=&quot;user&quot; action=&quot;result.mvc&quot;&gt;
+		&lt;table&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;name&quot;&gt;Name&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:input path=&quot;name&quot; /&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:errors path=&quot;name&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;lastname&quot;&gt;Last Name&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:input path=&quot;lastname&quot; /&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:errors path=&quot;lastname&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;password&quot;&gt;Password&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:password path=&quot;password&quot; /&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:errors path=&quot;password&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;detail&quot;&gt;Detail&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:textarea path=&quot;detail&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;birthDate&quot;&gt;Birth Date&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:input path=&quot;birthDate&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;gender&quot;&gt;Gender&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:radiobuttons path=&quot;gender&quot; items=&quot;${genders}&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;country&quot;&gt;Country&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:select path=&quot;country&quot; items=&quot;${countries}&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;nonSmoking&quot;&gt;Non Smoking&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:checkbox path=&quot;nonSmoking&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td colspan=&quot;2&quot;&gt;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;
+	&lt;/mvc:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: userResult.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Spring MVC Form&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;Result&lt;/h2&gt;
+	&lt;table&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Name&lt;/td&gt;
+			&lt;td&gt;${user.name}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Last name&lt;/td&gt;
+			&lt;td&gt;${user.lastname}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Password&lt;/td&gt;
+			&lt;td&gt;${user.password}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Detail&lt;/td&gt;
+			&lt;td&gt;${user.detail}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Birth Date&lt;/td&gt;
+			&lt;td&gt;${user.birthDate}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Gender&lt;/td&gt;
+			&lt;td&gt;${user.gender}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Country&lt;/td&gt;
+			&lt;td&gt;${user.country}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Non-Smoking&lt;/td&gt;
+			&lt;td&gt;${user.nonSmoking}&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcForm.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcForm/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 MVC – Bean Validation</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-bean-validation/</link>
+		<pubDate>Tue, 19 Mar 2019 15:46:06 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=525</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring MVC bean validation. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring MVC bean validation.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: User.java; notranslate">
+package javaspringexamples.spring.beanvalidation.domain;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class User {
+
+	@Size(min = 3, max = 20)
+	String username;
+
+	@Pattern(regexp = &quot;^[a-zA-Z]\\w{3,14}$&quot;)
+	String password;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+}
+</pre>
+<pre class="brush: java; title: errorMessages.properties; notranslate">
+Pattern.user.password=Error format: at least 4 letters, max 15.
+Size.user.username=Error format: at least 3, max 20.
+</pre>
+<pre class="brush: java; title: UserController.java; notranslate">
+package javaspringexamples.spring.beanvalidation.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import javaspringexamples.spring.beanvalidation.domain.User;
+
+import javax.validation.Valid;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+@Controller
+public class UserController {
+
+	@RequestMapping(value = &quot;/form&quot;)
+	public ModelAndView initiateUser() {
+		return new ModelAndView(&quot;userForm&quot;, &quot;user&quot;, new User());
+	}
+
+	@RequestMapping(value = &quot;/result&quot;, method = RequestMethod.POST)
+	public ModelAndView processUser(@Valid User user, BindingResult result) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject(&quot;usr&quot;, user);
+
+		if (result.hasErrors()) {
+			modelAndView.setViewName(&quot;userForm&quot;);
+		} else {
+			modelAndView.setViewName(&quot;userResult&quot;);
+		}
+
+		return modelAndView;
+	}
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.beanvalidation.controller&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven validator=&quot;validator&quot; /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/views/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;messageSource&quot;
+		class=&quot;org.springframework.context.support.ReloadableResourceBundleMessageSource&quot;&gt;
+		&lt;property name=&quot;basename&quot; value=&quot;classpath:errorMessages&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;validator&quot;
+		class=&quot;org.springframework.validation.beanvalidation.LocalValidatorFactoryBean&quot;&gt;
+		&lt;property name=&quot;validationMessageSource&quot; ref=&quot;messageSource&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;%
+	response.sendRedirect(&quot;form.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: userForm.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Spring MVC Form&lt;/title&gt;
+&lt;style type=&quot;text/css&quot;&gt;
+.formFieldError {
+	background-color: #FFC;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+	&lt;h2&gt;Form&lt;/h2&gt;
+	&lt;mvc:form modelAttribute=&quot;user&quot; action=&quot;result.mvc&quot;&gt;
+		&lt;table&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;username&quot;&gt;Login&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:input path=&quot;username&quot; cssErrorClass=&quot;formFieldError&quot; /&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:errors path=&quot;username&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;password&quot;&gt;Password&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:password path=&quot;password&quot;
+						cssErrorClass=&quot;formFieldError&quot; /&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:errors path=&quot;password&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td colspan=&quot;3&quot;&gt;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;
+	&lt;/mvc:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: userResult.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Spring MVC Form&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;Result Form&lt;/h2&gt;
+	&lt;table&gt;
+		&lt;tr&gt;
+			&lt;td&gt;login :&lt;/td&gt;
+			&lt;td&gt;${usr.username}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Password :&lt;/td&gt;
+			&lt;td&gt;${usr.password}&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcBeanValidation.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcBeanValidation/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 MVC – Hello Word XML Config</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-hello-word-xml-config/</link>
+		<pubDate>Tue, 19 Mar 2019 15:32:31 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=522</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring MVC the XML based configuration. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring MVC the XML based configuration.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: HelloController.java; notranslate">
+package javaspringexamples.spring.springmvcHelloWord.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class HelloController {
+
+	@RequestMapping(value = &quot;/hello&quot;)
+	public ModelAndView sayHello() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject(&quot;message&quot;, &quot;Hello JavaSpringExamples Word!&quot;);
+		mv.setViewName(&quot;helloWord&quot;);
+		return mv;
+	}
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee 
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;init-param&gt;
+			&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+			&lt;param-value&gt;/WEB-INF/spring/springmvc-servlet.xml&lt;/param-value&gt;
+		&lt;/init-param&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd&quot;&gt;
+ 
+    &lt;context:component-scan base-package=&quot;javaspringexamples.spring.springmvcHelloWord&quot; /&gt;
+    &lt;context:annotation-config /&gt;
+ 
+    &lt;bean class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+        &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/views/&quot; /&gt;
+        &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;% response.sendRedirect(&quot;hello.mvc&quot;); %&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: helloWord.jsp; notranslate">
+&lt;html&gt;
+&lt;body&gt;
+    ${message}
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>The output is : Hello JavaSpringExamples Word!</p>
+<p><a href="https://github.com/javaspringexamples/springMvcHelloWordXmlConfig.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcHelloWordXmlConfig/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 MVC – Hello Word Annotation Config</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-hello-word-annotation-config/</link>
+		<pubDate>Tue, 19 Mar 2019 11:30:21 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=501</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring MVC the annotation based configuration. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring MVC the annotation based configuration.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.8<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: AppConfig.java; notranslate">
+package javaspringexamples.spring.springmvcHelloWord.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Configuration
+@ComponentScan(basePackages = { &quot;javaspringexamples.spring.springmvcHelloWord&quot; })
+public class AppConfig {
+
+	@Bean
+	public InternalResourceViewResolver getInternalResourceViewResolver() {
+		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+		resolver.setPrefix(&quot;/WEB-INF/views/&quot;);
+		resolver.setSuffix(&quot;.jsp&quot;);
+		return resolver;
+	}
+}
+</pre>
+<pre class="brush: java; title: HelloController.java; notranslate">
+package javaspringexamples.spring.springmvcHelloWord.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class HelloController {
+
+	@RequestMapping(value = &quot;/hello&quot;)
+	public ModelAndView sayHello() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject(&quot;message&quot;, &quot;Hello JavaSpringExamples Word!&quot;);
+		mv.setViewName(&quot;helloWord&quot;);
+		return mv;
+	}
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee 
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;init-param&gt;
+			&lt;param-name&gt;contextClass&lt;/param-name&gt;
+			&lt;param-value&gt;
+	           	org.springframework.web.context.support.AnnotationConfigWebApplicationContext
+	       	&lt;/param-value&gt;
+		&lt;/init-param&gt;
+		&lt;init-param&gt;
+			&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
+			&lt;param-value&gt;
+                javaspringexamples.spring.springmvcHelloWord.config.AppConfig
+            &lt;/param-value&gt;
+		&lt;/init-param&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;% response.sendRedirect(&quot;hello.mvc&quot;); %&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: helloWord.jsp; notranslate">
+&lt;html&gt;
+&lt;body&gt;
+    ${message}
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>The output is : Hello JavaSpringExamples Word!</p>
+<p><a href="https://github.com/javaspringexamples/springMvcHelloWordAnnotationConfig.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcHelloWordAnnotationConfig/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
 		<title>Example Spring 4 &#8211; Lifecycle Callback Methods</title>
 		<link>http://localhost/wordpress/2019/02/19/example-spring-4-dependency-injection-lifecycle-callback-methods/</link>
 		<pubDate>Tue, 19 Feb 2019 16:55:16 +0000</pubDate>
@@ -593,2003 +1924,6 @@ Object B-Object C<br />
 Object B-Object C</p>
 <p><a href="https://github.com/javaspringexamples/XmlBasedConstructorInjection.git">Get the sources of the example from the following GitHub url</a></p>
 <p>Or <a href="https://github.com/javaspringexamples/XmlBasedConstructorInjection/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 – Annotation Based Autowiring</title>
-		<link>http://localhost/wordpress/2018/12/07/example-spring-4-annotation-based-autowiring/</link>
-		<pubDate>Fri, 07 Dec 2018 15:33:52 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Dependency Injection]]></category>
-
-		<guid isPermaLink="false">http://codercocoon.com/?p=419</guid>
-		<description><![CDATA[This example presents the basic concept of using in Spring the Annotation based Autowiring. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the Annotation based Autowiring.</p>
-<p>The technologies used are :<br />
-&#8211; Spring 4.3.4<br />
-&#8211; JDK 1.8<br />
-&#8211; Maven 3.3.9</p>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.annotation;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class User {
-
-	private int id;
-	private String fisrtName;
-	private String lastName;
-	private boolean Accountlocked;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getFisrtName() {
-		return fisrtName;
-	}
-
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public boolean isAccountlocked() {
-		return Accountlocked;
-	}
-
-	public void setAccountlocked(boolean accountlocked) {
-		Accountlocked = accountlocked;
-	}
-}
-</pre>
-<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.annotation;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-
-	User find(int userId);
-
-	void insert(User user);
-
-	void update(User user);
-
-	void delete(int userId);
-
-	void lockAccount(int userId, boolean locked);
-
-}
-
-</pre>
-<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.annotation;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-
-@Repository
-@Qualifier(&quot;userDao&quot;)
-public class UserDaoInMemoryImpl implements UserDao {
-
-	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
-
-	{
-		User user1 = new User();
-		user1.setId(1);
-		user1.setFisrtName(&quot;FirstName 1&quot;);
-		user1.setLastName(&quot;LastName 1&quot;);
-		user1.setAccountlocked(false);
-
-		User user2 = new User();
-		user2.setId(2);
-		user2.setFisrtName(&quot;FirstName 2&quot;);
-		user2.setLastName(&quot;LastName 2&quot;);
-		user2.setAccountlocked(false);
-
-		usersMap.put(user1.getId(), user1);
-		usersMap.put(user2.getId(), user2);
-
-	}
-
-	@Override
-	public void insert(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void update(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void delete(int userId) {
-		usersMap.remove(userId);
-	}
-
-	@Override
-	public User find(int userId) {
-		return usersMap.get(userId);
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		User user = usersMap.get(userId);
-		user.setAccountlocked(locked);
-		update(user);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserDaoJdbcImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.annotation;
-
-import org.springframework.stereotype.Repository;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-
-@Repository
-public class UserDaoJdbcImpl implements UserDao {
-
-	@Override
-	public void insert(User user) {
-		
-	}
-
-	@Override
-	public void update(User user) {
-		
-	}
-
-	@Override
-	public void delete(int userId) {
-		
-	}
-
-	@Override
-	public User find(int userId) {
-		return null;
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserService.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.annotation;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserService {
-
-	String getUserinformation(int userId);
-
-	void lockAccountUser(int userId);
-
-	void unlockAccountUser(int userId);
-}
-
-</pre>
-<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.annotation;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-
-@Service
-public class UserServiceImpl implements UserService {
-	private UserDao userDao;
-
-	@Autowired
-	@Qualifier(&quot;userDao&quot;)
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
-	@Override
-	public void lockAccountUser(int userId) {
-		userDao.lockAccount(userId, true);
-	}
-
-	@Override
-	public void unlockAccountUser(int userId) {
-		userDao.lockAccount(userId, false);
-	}
-
-	@Override
-	public String getUserinformation(int userId) {
-		User user = userDao.find(userId);
-		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
-	}
-}
-</pre>
-<pre class="brush: xml; title: annotationConfiguration.xml; toolbar: true; notranslate">
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:context=&quot;http://www.springframework.org/schema/context&quot; xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd&quot;&gt;
-
-	&lt;context:component-scan base-package=&quot;javaspringexamples.spring.ioc.autowiring.annotation&quot; /&gt;
-
-&lt;/beans&gt;
-
-</pre>
-<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-	&lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
-	&lt;artifactId&gt;example-Annotation-Based-Autowiring&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-	&lt;packaging&gt;jar&lt;/packaging&gt;
-
-	&lt;name&gt;example Annotation Based Autowiring&lt;/name&gt;
-
-	&lt;properties&gt;
-		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;${springframework.version}&lt;/version&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-
-	&lt;build&gt;
-		&lt;plugins&gt;
-			&lt;plugin&gt;
-				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-				&lt;version&gt;3.6.0&lt;/version&gt;
-				&lt;configuration&gt;
-					&lt;source&gt;1.8&lt;/source&gt;
-					&lt;target&gt;1.8&lt;/target&gt;
-				&lt;/configuration&gt;
-			&lt;/plugin&gt;
-		&lt;/plugins&gt;
-	&lt;/build&gt;
-&lt;/project&gt;
-
-</pre>
-<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.annotation;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-public class Main {
-
-	public static void main(String[] args) {
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				&quot;javaspringexamples/spring/ioc/autowiring/annotation/annotationConfiguration.xml&quot;);
-		UserService userService = applicationContext.getBean(UserService.class);
-
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
-
-		System.out.println(&quot;Locking User1 account&quot;);
-		userService.lockAccountUser(1);
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-
-	}
-
-}
-
-</pre>
-<p><a href="https://github.com/javaspringexamples/AnnotationBasedAutowiring.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/AnnotationBasedAutowiring/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 – Java Based Autowiring</title>
-		<link>http://localhost/wordpress/2018/12/07/example-spring-4-java-based-autowiring/</link>
-		<pubDate>Fri, 07 Dec 2018 15:24:33 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Dependency Injection]]></category>
-
-		<guid isPermaLink="false">http://codercocoon.com/?p=417</guid>
-		<description><![CDATA[This example presents the basic concept of using in Spring the Java based Autowiring. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the Java based Autowiring.</p>
-<p>The technologies used are :<br />
- &#8211; Spring 4.3.4<br />
- &#8211; JDK 1.8<br />
- &#8211; Maven 3.3.9</p>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class User {
-
-	private int id;
-	private String fisrtName;
-	private String lastName;
-	private boolean Accountlocked;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getFisrtName() {
-		return fisrtName;
-	}
-
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public boolean isAccountlocked() {
-		return Accountlocked;
-	}
-
-	public void setAccountlocked(boolean accountlocked) {
-		Accountlocked = accountlocked;
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-
-	User find(int userId);
-
-	void insert(User user);
-
-	void update(User user);
-
-	void delete(int userId);
-
-	void lockAccount(int userId, boolean locked);
-
-}
-
-</pre>
-<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoInMemoryImpl implements UserDao {
-
-	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
-
-	{
-		User user1 = new User();
-		user1.setId(1);
-		user1.setFisrtName(&quot;FirstName 1&quot;);
-		user1.setLastName(&quot;LastName 1&quot;);
-		user1.setAccountlocked(false);
-
-		User user2 = new User();
-		user2.setId(2);
-		user2.setFisrtName(&quot;FirstName 2&quot;);
-		user2.setLastName(&quot;LastName 2&quot;);
-		user2.setAccountlocked(false);
-
-		usersMap.put(user1.getId(), user1);
-		usersMap.put(user2.getId(), user2);
-
-	}
-
-	@Override
-	public void insert(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void update(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void delete(int userId) {
-		usersMap.remove(userId);
-	}
-
-	@Override
-	public User find(int userId) {
-		return usersMap.get(userId);
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		User user = usersMap.get(userId);
-		user.setAccountlocked(locked);
-		update(user);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserDaoJdbcImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoJdbcImpl implements UserDao {
-
-	@Override
-	public void insert(User user) {
-		
-	}
-
-	@Override
-	public void update(User user) {
-		
-	}
-
-	@Override
-	public void delete(int userId) {
-		
-	}
-
-	@Override
-	public User find(int userId) {
-		return null;
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserService.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserService {
-
-	String getUserinformation(int userId);
-
-	void lockAccountUser(int userId);
-
-	void unlockAccountUser(int userId);
-}
-
-</pre>
-<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserServiceImpl implements UserService {
-	private UserDao userDao;
-
-	@Autowired
-	@Qualifier
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
-	@Override
-	public void lockAccountUser(int userId) {
-		userDao.lockAccount(userId, true);
-	}
-
-	@Override
-	public void unlockAccountUser(int userId) {
-		userDao.lockAccount(userId, false);
-	}
-
-	@Override
-	public String getUserinformation(int userId) {
-		User user = userDao.find(userId);
-		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
-	}
-}
-</pre>
-<pre class="brush: java; title: JavaConfiguration.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Configuration
-public class JavaConfiguration {
-
-	@Bean
-	public UserService userService() {
-		UserServiceImpl bean = new UserServiceImpl();
-		return bean;
-	}
-
-	@Bean
-	@Qualifier
-	public UserDao userDao() {
-		UserDaoInMemoryImpl bean = new UserDaoInMemoryImpl();
-		return bean;
-	}
-	
-	@Bean
-	public UserDao userJdbcDao() {
-		UserDaoJdbcImpl bean = new UserDaoJdbcImpl();
-		return bean;
-	}
-}
-
-</pre>
-<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-	&lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
-	&lt;artifactId&gt;example-Java-Based-Autowiring&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-	&lt;packaging&gt;jar&lt;/packaging&gt;
-
-	&lt;name&gt;example Java Based Autowiring&lt;/name&gt;
-
-	&lt;properties&gt;
-		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;${springframework.version}&lt;/version&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-
-	&lt;build&gt;
-		&lt;plugins&gt;
-			&lt;plugin&gt;
-				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-				&lt;version&gt;3.6.0&lt;/version&gt;
-				&lt;configuration&gt;
-					&lt;source&gt;1.8&lt;/source&gt;
-					&lt;target&gt;1.8&lt;/target&gt;
-				&lt;/configuration&gt;
-			&lt;/plugin&gt;
-		&lt;/plugins&gt;
-	&lt;/build&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.java;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-
-	public static void main(String[] args) {
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(
-				JavaConfiguration.class);
-		UserService userService = applicationContext.getBean(&quot;userService&quot;, UserService.class);
-
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
-
-		System.out.println(&quot;Locking User1 account&quot;);
-		userService.lockAccountUser(1);
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-	}
-
-}
-
-</pre>
-<p><a href="https://github.com/javaspringexamples/JavaBasedAutowiring.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/JavaBasedAutowiring/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 – Xml Based Autowiring</title>
-		<link>http://localhost/wordpress/2018/12/07/example-spring-4-xml-based-autowiring/</link>
-		<pubDate>Fri, 07 Dec 2018 16:05:28 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Dependency Injection]]></category>
-
-		<guid isPermaLink="false">http://codercocoon.com/?p=412</guid>
-		<description><![CDATA[This example presents the basic concept of using in Spring the Xml based Autowiring. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the Xml based Autowiring.</p>
-<p>The technologies used are :<br />
- &#8211; Spring 4.3.4<br />
- &#8211; JDK 1.8<br />
- &#8211; Maven 3.3.9</p>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class User {
-
-	private int id;
-	private String fisrtName;
-	private String lastName;
-	private boolean Accountlocked;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getFisrtName() {
-		return fisrtName;
-	}
-
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public boolean isAccountlocked() {
-		return Accountlocked;
-	}
-
-	public void setAccountlocked(boolean accountlocked) {
-		Accountlocked = accountlocked;
-	}
-}
-</pre>
-<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-
-	User find(int userId);
-
-	void insert(User user);
-
-	void update(User user);
-
-	void delete(int userId);
-
-	void lockAccount(int userId, boolean locked);
-
-}
-</pre>
-<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.xml;
-
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoInMemoryImpl implements UserDao {
-
-	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
-
-	{
-		User user1 = new User();
-		user1.setId(1);
-		user1.setFisrtName(&quot;FirstName 1&quot;);
-		user1.setLastName(&quot;LastName 1&quot;);
-		user1.setAccountlocked(false);
-
-		User user2 = new User();
-		user2.setId(2);
-		user2.setFisrtName(&quot;FirstName 2&quot;);
-		user2.setLastName(&quot;LastName 2&quot;);
-		user2.setAccountlocked(false);
-
-		usersMap.put(user1.getId(), user1);
-		usersMap.put(user2.getId(), user2);
-
-	}
-
-	@Override
-	public void insert(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void update(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void delete(int userId) {
-		usersMap.remove(userId);
-	}
-
-	@Override
-	public User find(int userId) {
-		return usersMap.get(userId);
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		User user = usersMap.get(userId);
-		user.setAccountlocked(locked);
-		update(user);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserDaoJdbcImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoJdbcImpl implements UserDao {
-
-	@Override
-	public void insert(User user) {
-		
-	}
-
-	@Override
-	public void update(User user) {
-		
-	}
-
-	@Override
-	public void delete(int userId) {
-		
-	}
-
-	@Override
-	public User find(int userId) {
-		return null;
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserService.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserService {
-
-	String getUserinformation(int userId);
-
-	void lockAccountUser(int userId);
-
-	void unlockAccountUser(int userId);
-}
-
-</pre>
-<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserServiceImpl implements UserService {
-	private UserDao userDao;
-
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
-	@Override
-	public void lockAccountUser(int userId) {
-		userDao.lockAccount(userId, true);
-	}
-
-	@Override
-	public void unlockAccountUser(int userId) {
-		userDao.lockAccount(userId, false);
-	}
-
-	@Override
-	public String getUserinformation(int userId) {
-		User user = userDao.find(userId);
-		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
-	}
-}
-</pre>
-<pre class="brush: xml; title: XmlConfiguration.xml; toolbar: true; notranslate">
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
-
-	&lt;bean id=&quot;userService&quot;
-		class=&quot;javaspringexamples.spring.ioc.autowiring.xml.UserServiceImpl&quot;
-		autowire=&quot;byName&quot; /&gt;
-
-	&lt;bean id=&quot;userDao&quot;
-		class=&quot;javaspringexamples.spring.ioc.autowiring.xml.UserDaoInMemoryImpl&quot; /&gt;
-
-	&lt;bean id=&quot;userDaoJdbc&quot;
-		class=&quot;javaspringexamples.spring.ioc.autowiring.xml.UserDaoJdbcImpl&quot; /&gt;
-
-&lt;/beans&gt;
-
-</pre>
-<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-	&lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
-	&lt;artifactId&gt;example-XML-Based-autowiring&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-	&lt;packaging&gt;jar&lt;/packaging&gt;
-
-	&lt;name&gt;example XML Based Autowiring&lt;/name&gt;
-
-	&lt;properties&gt;
-		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;${springframework.version}&lt;/version&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-
-	&lt;build&gt;
-		&lt;plugins&gt;
-			&lt;plugin&gt;
-				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-				&lt;version&gt;3.6.0&lt;/version&gt;
-				&lt;configuration&gt;
-					&lt;source&gt;1.8&lt;/source&gt;
-					&lt;target&gt;1.8&lt;/target&gt;
-				&lt;/configuration&gt;
-			&lt;/plugin&gt;
-		&lt;/plugins&gt;
-	&lt;/build&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.autowiring.xml;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-public class Main {
-
-	public static void main(String[] args) {
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				&quot;javaspringexamples/spring/ioc/autowiring/xml/XmlConfiguration.xml&quot;);
-		UserService userService = applicationContext.getBean(&quot;userService&quot;, UserService.class);
-
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
-
-		System.out.println(&quot;Locking User1 account&quot;);
-		userService.lockAccountUser(1);
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-	}
-
-}
-</pre>
-<p><a href="https://github.com/javaspringexamples/XmlBasedAutowiring.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/XmlBasedAutowiring/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 – Annotation Based Configuration</title>
-		<link>http://localhost/wordpress/2018/11/29/example-spring-4-annotation-based-configuration/</link>
-		<pubDate>Thu, 29 Nov 2018 17:41:52 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Dependency Injection]]></category>
-
-		<guid isPermaLink="false">http://codercocoon.com/?p=409</guid>
-		<description><![CDATA[This example presents the basic concept of using in Spring the Annotation based configuration. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the Annotation based configuration.</p>
-<p>The technologies used are :<br />
- &#8211; Spring 4.3.4<br />
- &#8211; JDK 1.8<br />
- &#8211; Maven 3.3.9</p>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class User {
-
-	private int id;
-	private String fisrtName;
-	private String lastName;
-	private boolean Accountlocked;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getFisrtName() {
-		return fisrtName;
-	}
-
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public boolean isAccountlocked() {
-		return Accountlocked;
-	}
-
-	public void setAccountlocked(boolean accountlocked) {
-		Accountlocked = accountlocked;
-	}
-}
-</pre>
-<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-
-	User find(int userId);
-
-	void insert(User user);
-
-	void update(User user);
-
-	void delete(int userId);
-
-	void lockAccount(int userId, boolean locked);
-
-}
-</pre>
-<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.stereotype.Repository;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-
-@Repository
-public class UserDaoInMemoryImpl implements UserDao {
-
-	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
-
-	{
-		User user1 = new User();
-		user1.setId(1);
-		user1.setFisrtName(&quot;FirstName 1&quot;);
-		user1.setLastName(&quot;LastName 1&quot;);
-		user1.setAccountlocked(false);
-
-		User user2 = new User();
-		user2.setId(2);
-		user2.setFisrtName(&quot;FirstName 2&quot;);
-		user2.setLastName(&quot;LastName 2&quot;);
-		user2.setAccountlocked(false);
-
-		usersMap.put(user1.getId(), user1);
-		usersMap.put(user2.getId(), user2);
-
-	}
-
-	@Override
-	public void insert(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void update(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void delete(int userId) {
-		usersMap.remove(userId);
-	}
-
-	@Override
-	public User find(int userId) {
-		return usersMap.get(userId);
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		User user = usersMap.get(userId);
-		user.setAccountlocked(locked);
-		update(user);
-	}
-}
-</pre>
-<pre class="brush: java; title: UserService.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserService {
-
-	String getUserinformation(int userId);
-
-	void lockAccountUser(int userId);
-
-	void unlockAccountUser(int userId);
-}
-</pre>
-<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-
-@Service
-public class UserServiceImpl implements UserService {
-	private UserDao userDao;
-
-	@Autowired
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
-	@Override
-	public void lockAccountUser(int userId) {
-		userDao.lockAccount(userId, true);
-	}
-
-	@Override
-	public void unlockAccountUser(int userId) {
-		userDao.lockAccount(userId, false);
-	}
-
-	@Override
-	public String getUserinformation(int userId) {
-		User user = userDao.find(userId);
-		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
-	}
-}
-</pre>
-<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
-	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd&quot;&gt;
-
-	&lt;context:component-scan base-package=&quot;javaspringexamples.spring.ioc.configuration.annotation&quot;/&gt;
-
-&lt;/beans&gt;
-</pre>
-<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.annotation;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-
-	public static void main(String[] args) {
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				&quot;/javaspringexamples/spring/ioc/configuration/annotation/configuration.xml&quot;);
-		UserService userService = applicationContext.getBean(UserService.class);
-
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
-
-		System.out.println(&quot;Locking User1 account&quot;);
-		userService.lockAccountUser(1);
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-	}
-
-}
-</pre>
-<p><a href="https://github.com/javaspringexamples/AnnotationBasedConfiguration.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/AnnotationBasedConfiguration/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 – Java Based Configuration</title>
-		<link>http://localhost/wordpress/2018/11/26/example-spring-4-java-based-configuration/</link>
-		<pubDate>Mon, 26 Nov 2018 10:00:42 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Dependency Injection]]></category>
-
-		<guid isPermaLink="false">http://codercocoon.com/?p=399</guid>
-		<description><![CDATA[This example presents the basic concept of using in Spring the Java based configuration. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the Java based configuration.</p>
-<p>The technologies used are :<br />
- &#8211; Spring 4.3.4<br />
- &#8211; JDK 1.8<br />
- &#8211; Maven 3.3.9</p>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class User {
-
-	private int id;
-	private String fisrtName;
-	private String lastName;
-	private boolean Accountlocked;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getFisrtName() {
-		return fisrtName;
-	}
-
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public boolean isAccountlocked() {
-		return Accountlocked;
-	}
-
-	public void setAccountlocked(boolean accountlocked) {
-		Accountlocked = accountlocked;
-	}
-}
-</pre>
-<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-
-	User find(int userId);
-
-	void insert(User user);
-
-	void update(User user);
-
-	void delete(int userId);
-
-	void lockAccount(int userId, boolean locked);
-
-}
-</pre>
-<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.java;
-
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoInMemoryImpl implements UserDao {
-
-	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
-
-	{
-		User user1 = new User();
-		user1.setId(1);
-		user1.setFisrtName(&quot;FirstName 1&quot;);
-		user1.setLastName(&quot;LastName 1&quot;);
-		user1.setAccountlocked(false);
-
-		User user2 = new User();
-		user2.setId(2);
-		user2.setFisrtName(&quot;FirstName 2&quot;);
-		user2.setLastName(&quot;LastName 2&quot;);
-		user2.setAccountlocked(false);
-
-		usersMap.put(user1.getId(), user1);
-		usersMap.put(user2.getId(), user2);
-
-	}
-
-	@Override
-	public void insert(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void update(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void delete(int userId) {
-		usersMap.remove(userId);
-	}
-
-	@Override
-	public User find(int userId) {
-		return usersMap.get(userId);
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		User user = usersMap.get(userId);
-		user.setAccountlocked(locked);
-		update(user);
-	}
-}
-</pre>
-<pre class="brush: java; title: UserService.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserService {
-
-	String getUserinformation(int userId);
-
-	void lockAccountUser(int userId);
-
-	void unlockAccountUser(int userId);
-}
-
-</pre>
-<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.java;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserServiceImpl implements UserService {
-	private UserDao userDao;
-
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
-	@Override
-	public void lockAccountUser(int userId) {
-		userDao.lockAccount(userId, true);
-	}
-
-	@Override
-	public void unlockAccountUser(int userId) {
-		userDao.lockAccount(userId, false);
-	}
-
-	@Override
-	public String getUserinformation(int userId) {
-		User user = userDao.find(userId);
-		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
-	}
-}
-</pre>
-<pre class="brush: java; title: JavaConfiguration.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.java;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Configuration
-public class JavaConfiguration {
-
-	@Bean
-	public UserService userService() {
-		UserServiceImpl bean = new UserServiceImpl();
-		bean.setUserDao(userDao());
-		return bean;
-	}
-
-	@Bean
-	public UserDao userDao() {
-		UserDaoInMemoryImpl bean = new UserDaoInMemoryImpl();
-		return bean;
-	}
-}
-
-</pre>
-<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-	&lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
-	&lt;artifactId&gt;example-Java-Based-Configuration&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-	&lt;packaging&gt;jar&lt;/packaging&gt;
-
-	&lt;name&gt;example Java Based Configuration&lt;/name&gt;
-
-	&lt;properties&gt;
-		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;${springframework.version}&lt;/version&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-
-	&lt;build&gt;
-		&lt;plugins&gt;
-			&lt;plugin&gt;
-				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-				&lt;version&gt;3.6.0&lt;/version&gt;
-				&lt;configuration&gt;
-					&lt;source&gt;1.8&lt;/source&gt;
-					&lt;target&gt;1.8&lt;/target&gt;
-				&lt;/configuration&gt;
-			&lt;/plugin&gt;
-		&lt;/plugins&gt;
-	&lt;/build&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.java;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-
-	public static void main(String[] args) {
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(JavaConfiguration.class);
-		UserService userService = applicationContext.getBean(&quot;userService&quot;, UserService.class);
-
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
-
-		System.out.println(&quot;Locking User1 account&quot;);
-		userService.lockAccountUser(1);
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-	}
-
-}
-</pre>
-<p><a href="https://github.com/javaspringexamples/JavaBasedConfiguration.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/JavaBasedConfiguration/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 – XML Based Configuration</title>
-		<link>http://localhost/wordpress/2018/11/23/example-spring-4-xml-based-configuration/</link>
-		<pubDate>Fri, 23 Nov 2018 16:14:49 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Dependency Injection]]></category>
-
-		<guid isPermaLink="false">http://codercocoon.com/?p=386</guid>
-		<description><![CDATA[This example presents the basic concept of using in Spring the XML based configuration. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the XML based configuration.</p>
-<p>The technologies used are :<br />
- &#8211; Spring 4.3.4<br />
- &#8211; JDK 1.8<br />
- &#8211; Maven 3.3.9</p>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class User {
-
-	private int id;
-	private String fisrtName;
-	private String lastName;
-	private boolean Accountlocked;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getFisrtName() {
-		return fisrtName;
-	}
-
-	public void setFisrtName(String fisrtName) {
-		this.fisrtName = fisrtName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public boolean isAccountlocked() {
-		return Accountlocked;
-	}
-
-	public void setAccountlocked(boolean accountlocked) {
-		Accountlocked = accountlocked;
-	}
-}
-</pre>
-<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-
-	User find(int userId);
-
-	void insert(User user);
-
-	void update(User user);
-
-	void delete(int userId);
-
-	void lockAccount(int userId, boolean locked);
-
-}
-
-</pre>
-<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.xml;
-
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoInMemoryImpl implements UserDao {
-
-	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
-
-	{
-		User user1 = new User();
-		user1.setId(1);
-		user1.setFisrtName(&quot;FirstName 1&quot;);
-		user1.setLastName(&quot;LastName 1&quot;);
-		user1.setAccountlocked(false);
-
-		User user2 = new User();
-		user2.setId(2);
-		user2.setFisrtName(&quot;FirstName 2&quot;);
-		user2.setLastName(&quot;LastName 2&quot;);
-		user2.setAccountlocked(false);
-
-		usersMap.put(user1.getId(), user1);
-		usersMap.put(user2.getId(), user2);
-
-	}
-
-	@Override
-	public void insert(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void update(User user) {
-		usersMap.put(user.getId(), user);
-	}
-
-	@Override
-	public void delete(int userId) {
-		usersMap.remove(userId);
-	}
-
-	@Override
-	public User find(int userId) {
-		return usersMap.get(userId);
-	}
-
-	@Override
-	public void lockAccount(int userId, boolean locked) {
-		User user = usersMap.get(userId);
-		user.setAccountlocked(locked);
-		update(user);
-	}
-}
-</pre>
-<pre class="brush: java; title: UserService.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserService {
-
-	String getUserinformation(int userId);
-
-	void lockAccountUser(int userId);
-
-	void unlockAccountUser(int userId);
-}
-</pre>
-<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.xml;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserServiceImpl implements UserService {
-	private UserDao userDao;
-
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
-	}
-
-	@Override
-	public void lockAccountUser(int userId) {
-		userDao.lockAccount(userId, true);
-	}
-
-	@Override
-	public void unlockAccountUser(int userId) {
-		userDao.lockAccount(userId, false);
-	}
-
-	@Override
-	public String getUserinformation(int userId) {
-		User user = userDao.find(userId);
-		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
-	}
-}
-</pre>
-<pre class="brush: xml; title: XmlConfiguration.xml; toolbar: true; notranslate">
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;&gt;
-
-	&lt;bean id=&quot;userService&quot;
-		class=&quot;javaspringexamples.spring.ioc.configuration.xml.UserServiceImpl&quot;&gt;
-		&lt;property name=&quot;userDao&quot; ref=&quot;userDao&quot; /&gt;
-	&lt;/bean&gt;
-
-	&lt;bean id=&quot;userDao&quot;
-		class=&quot;javaspringexamples.spring.ioc.configuration.xml.UserDaoInMemoryImpl&quot;&gt;
-
-	&lt;/bean&gt;
-
-&lt;/beans&gt;
-</pre>
-<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-	&lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
-	&lt;artifactId&gt;example-XML-Based-Configuration&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-	&lt;packaging&gt;jar&lt;/packaging&gt;
-
-	&lt;name&gt;example XML Based Configuration&lt;/name&gt;
-
-	&lt;properties&gt;
-		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;${springframework.version}&lt;/version&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-
-	&lt;build&gt;
-		&lt;plugins&gt;
-			&lt;plugin&gt;
-				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-				&lt;version&gt;3.6.0&lt;/version&gt;
-				&lt;configuration&gt;
-					&lt;source&gt;1.8&lt;/source&gt;
-					&lt;target&gt;1.8&lt;/target&gt;
-				&lt;/configuration&gt;
-			&lt;/plugin&gt;
-		&lt;/plugins&gt;
-	&lt;/build&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: User.java; toolbar: true; notranslate">
-package javaspringexamples.spring.ioc.configuration.xml;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-
-	public static void main(String[] args) {
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-				&quot;/javaspringexamples/spring/ioc/configuration/xml/XmlConfiguration.xml&quot;);
-		UserService userService = applicationContext.getBean(&quot;userService&quot;, UserService.class);
-
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
-
-		System.out.println(&quot;Locking User1 account&quot;);
-		userService.lockAccountUser(1);
-		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
-	}
-
-}
-
-</pre>
-<p><a href="https://github.com/javaspringexamples/XMLBasedConfiguration.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/XMLBasedConfiguration/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Thread using  « ExecutorService, Executors, Callable » and « ForkJoinPool, RecursiveTask »</title>
-		<link>http://localhost/wordpress/2017/04/20/thread-executorservice-executors-callable-forkjoinpool-recursivetask/</link>
-		<pubDate>Thu, 20 Apr 2017 12:11:59 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Thread]]></category>
-		<category><![CDATA[thread]]></category>
-
-		<guid isPermaLink="false">http://codercocoon.com/?p=311</guid>
-		<description><![CDATA[This example presents how to handle a pool of threads using : ExecutorService, Executors, Callable and ForkJoinPool, RecursiveTask.]]></description>
-				<content:encoded><![CDATA[<p><span id="more-311"></span><br />
-This example presents how to handle a pool of threads using : ExecutorService, Executors, Callable and ForkJoinPool, RecursiveTask.</p>
-<p>Get the sources of the example from the following GitHub url : <a href="https://github.com/javaspringexamples/ThreadHandlePool.git" target="_blank">https://github.com/javaspringexamples/ThreadHandlePool.git</a></p>
-<p>Or Download a .zip file : <a href="https://github.com/javaspringexamples/ThreadHandlePool/archive/master.zip" target="_blank">https://github.com/javaspringexamples/ThreadHandlePool/archive/master.zip</a></p>
-<pre class="brush: java; highlight: [13,14,16,28,40,53,58,60]; title: ListInitializerCallable.java; toolbar: true; notranslate">
-package javaspringexamples.ThreadExamples;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.IntStream;
-
-/**
- * This example represents how to create a pool of threads using ExecutorService
- * and Callable interfaces.
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class ListInitializerCallable implements Callable&lt;List&lt;Integer&gt;&gt; {
-
-	int[] data;
-
-	public ListInitializerCallable(int[] data) {
-		this.data = data;
-	}
-
-	/**
-	 * Method call() to override for Callable objects.
-	 */
-	@Override
-	public List&lt;Integer&gt; call() throws Exception {
-		ArrayList&lt;Integer&gt; l = new ArrayList&lt;&gt;();
-		for (int i = 0; i &lt; data.length; i++) {
-			l.add(data[i] % 2);
-		}
-		return l;
-	}
-
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 */
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
-
-		int lenght = 10000;
-
-		ListInitializerCallable li1 = new ListInitializerCallable(IntStream.range(0, lenght / 2).toArray());
-		ListInitializerCallable li2 = new ListInitializerCallable(IntStream.range((lenght / 2), lenght).toArray());
-
-		// Fixing the pool to 2 threads
-		ExecutorService es = Executors.newFixedThreadPool(2);
-		Future&lt;List&lt;Integer&gt;&gt; f1 = es.submit(li1);
-		Future&lt;List&lt;Integer&gt;&gt; f2 = es.submit(li2);
-
-		// Getting the list returned of the 1st thread.
-		List&lt;Integer&gt; l1 = f1.get();
-		// Getting the list returned of the 2nd thread.
-		List&lt;Integer&gt; l2 = f2.get();
-		// Merging the two lists.
-		l1.addAll(l2);
-
-		System.out.println(l1.size());
-		System.out.println(l1);
-
-		// Shutting down the ExecutorService
-		es.shutdown();
-	}
-
-}
-</pre>
-<pre class="brush: java; highlight: [11,12,14,30,31,40,42,43,53,65,67]; title: ListInitializerRecursiveTask.java; toolbar: true; notranslate">
-package javaspringexamples.ThreadExamples;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveTask;
-import java.util.stream.IntStream;
-
-/**
- * This example represents how to create a pool of threads using ForkJoinPool
- * and extending the RecursiveTask class.
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class ListInitializerRecursiveTask extends RecursiveTask&lt;List&lt;Integer&gt;&gt; {
-
-	private int[] data;
-	private int begin;
-	private int end;
-
-	public ListInitializerRecursiveTask(int[] data, int _begin, int _end) {
-		this.data = data;
-		begin = _begin;
-		end = _end;
-	}
-
-	/**
-	 * Method compute() to override for RecursiveTask objects, we initiate the
-	 * list recursively.
-	 */
-	@Override
-	protected List&lt;Integer&gt; compute() {
-		List&lt;Integer&gt; l = new ArrayList&lt;&gt;();
-
-		int middle = (end - begin) / 2;
-		if (middle &gt; 500) {
-			ListInitializerRecursiveTask li1 = new ListInitializerRecursiveTask(data, begin, (begin + middle));
-			li1.fork();
-			ListInitializerRecursiveTask li2 = new ListInitializerRecursiveTask(data, (begin + middle), end);
-			l = li2.compute();
-			l.addAll(li1.join());
-		} else {
-			for (int i = begin; i &lt; end; i++) {
-				l.add(data[i] % 2);
-			}
-		}
-		return l;
-	}
-
-	/**
-	 * The main method.
-	 * 
-	 * @param args
-	 * @throws InterruptedException
-	 * @throws ExecutionException
-	 */
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
-
-		int lenght = 10000;
-		ListInitializerRecursiveTask li1 = new ListInitializerRecursiveTask(IntStream.range(0, lenght).toArray(), 0,
-				lenght);
-
-		// Initiating the ForkJoinPool
-		ForkJoinPool fjp = new ForkJoinPool();
-		// Getting the list initiated recursively
-		List&lt;Integer&gt; l = fjp.invoke(li1);
-
-		System.out.println(l.size());
-		System.out.println(l);
-	}
-}
-</pre>
 ]]></content:encoded>
 			</item>
 	</channel>
