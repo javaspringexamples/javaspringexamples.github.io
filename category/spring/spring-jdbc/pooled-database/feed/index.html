@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Pooled Database &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/spring-jdbc/pooled-database/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 JDBC – Pooled Database</title>
+		<link>http://localhost/wordpress/2019/06/01/example-spring-4-jdbc-pooled-database/</link>
+		<pubDate>Sat, 01 Jun 2019 14:20:58 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Pooled Database]]></category>
+		<category><![CDATA[Spring JDBC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=586</guid>
+		<description><![CDATA[This example presents the basic concept of configuring pooled datasource in Spring JDBC. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of configuring pooled datasource in Spring JDBC.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJDBC&lt;/groupId&gt;
+	&lt;artifactId&gt;springJdbcConfiguringPooledDatasource&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;commons-dbcp&lt;/groupId&gt;
+			&lt;artifactId&gt;commons-dbcp&lt;/artifactId&gt;
+			&lt;version&gt;1.4&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.mchange&lt;/groupId&gt;
+			&lt;artifactId&gt;c3p0&lt;/artifactId&gt;
+			&lt;version&gt;0.9.5.3&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/project&gt;
+</pre>
+<pre class="brush: java; title: ConfigForBasicDataSource.java; notranslate">
+package javaspringexamples.springJDBC.pooledDatasource;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Configuration
+public class ConfigForBasicDataSource {
+
+	@Bean(destroyMethod = &quot;close&quot;)
+	public DataSource dataSource() {
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
+		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
+		dataSource.setUsername(&quot;sa&quot;);
+		dataSource.setPassword(&quot;&quot;);
+		return dataSource;
+	}
+}
+
+</pre>
+<pre class="brush: java; title: ConfigForComboPooledDataSource.java; notranslate">
+package javaspringexamples.springJDBC.pooledDatasource;
+
+import javax.sql.DataSource;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Configuration
+public class ConfigForComboPooledDataSource {
+
+	@Bean(destroyMethod = &quot;close&quot;)
+	public DataSource dataSource() throws Exception {
+		ComboPooledDataSource dataSource = new ComboPooledDataSource();
+		dataSource.setDriverClass(&quot;org.h2.Driver&quot;);
+		dataSource.setJdbcUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
+		dataSource.setUser(&quot;sa&quot;);
+		dataSource.setPassword(&quot;&quot;);
+		return dataSource;
+	}
+}
+
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJDBC.pooledDatasource;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) throws SQLException {
+		// Instatiating for BasicDataSource
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(
+				ConfigForBasicDataSource.class);
+		DataSource dataSource = applicationContext.getBean(&quot;dataSource&quot;, DataSource.class);
+
+		Connection connection = dataSource.getConnection();
+		System.out.println(connection.isClosed());
+		connection.close();
+		System.out.println(connection.isClosed());
+
+		// Instatiating for ComboPooledDatasource
+		applicationContext = new AnnotationConfigApplicationContext(ConfigForComboPooledDataSource.class);
+		dataSource = applicationContext.getBean(&quot;dataSource&quot;, DataSource.class);
+
+		connection = dataSource.getConnection();
+		System.out.println(connection.isClosed());
+		connection.close();
+		System.out.println(connection.isClosed());
+	}
+
+}
+
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJdbcConfiguringPooledDatasource.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJdbcConfiguringPooledDatasource/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

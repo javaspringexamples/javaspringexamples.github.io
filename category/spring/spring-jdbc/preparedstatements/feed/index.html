@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>PreparedStatements &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/spring-jdbc/preparedstatements/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 JDBC – PreparedStatements</title>
+		<link>http://localhost/wordpress/2019/06/01/example-spring-4-jdbc-preparedstatements/</link>
+		<pubDate>Sat, 01 Jun 2019 14:36:43 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[PreparedStatements]]></category>
+		<category><![CDATA[Spring JDBC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=597</guid>
+		<description><![CDATA[This example presents the basic concept of using prepared statements in Spring JDBC. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using prepared statements in Spring JDBC.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJDBC&lt;/groupId&gt;
+	&lt;artifactId&gt;springJdbcPreparedStatements&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+			&lt;artifactId&gt;lombok&lt;/artifactId&gt;
+			&lt;version&gt;1.18.6&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+&lt;/project&gt;
+</pre>
+<pre class="brush: java; title: Conf.java; notranslate">
+package javaspringexamples.springJDBC.preparedStatements;
+
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.DatabasePopulator;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Configuration
+public class Conf {
+
+	@Value(&quot;classpath:schema.sql&quot;)
+	private Resource schemaScript;
+
+	@Value(&quot;classpath:data.sql&quot;)
+	private Resource dataScript;
+
+	@Bean
+	public DataSource dataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
+		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
+		dataSource.setUsername(&quot;sa&quot;);
+		dataSource.setPassword(&quot;&quot;);
+		return dataSource;
+	}
+
+	@Bean
+	public DataSourceInitializer dataSourceInitializer(final DataSource dataSource) {
+		final DataSourceInitializer initializer = new DataSourceInitializer();
+		initializer.setDataSource(dataSource);
+		initializer.setDatabasePopulator(databasePopulator());
+		return initializer;
+	}
+
+	private DatabasePopulator databasePopulator() {
+		final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+		populator.addScript(schemaScript);
+		populator.addScript(dataScript);
+		return populator;
+	}
+
+	@Bean
+	public JdbcTemplate jdbcTemplate() {
+		JdbcTemplate jdbcTemplate = new JdbcTemplate();
+		jdbcTemplate.setDataSource(dataSource());
+		return jdbcTemplate;
+	}
+
+	@Bean
+	public UserDao userDao() {
+		UserDaoImpl userDao = new UserDaoImpl();
+		userDao.setJdbcTemplate(jdbcTemplate());
+		return userDao;
+	}
+}
+
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJDBC.preparedStatements;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+	public static void main(String[] args) throws SQLException {
+		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Conf.class);
+
+		UserDao userDao = applicationContext.getBean(UserDao.class);
+
+		List&lt;User&gt; users = new ArrayList&lt;&gt;();
+		users.addAll(userDao.findByUserName(&quot;jsmith&quot;));
+		users.addAll(userDao.findLocked(false));
+		users.add(userDao.findById(65L));
+
+		for (User user : users)
+			System.out.println(user.toString());
+	}
+}
+</pre>
+<pre class="brush: java; title: User.java; notranslate">
+package javaspringexamples.springJDBC.preparedStatements;
+
+import java.util.Date;
+
+import lombok.Data;
+import lombok.ToString;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Data
+public class User {
+	private long id;
+	private String name;
+	private String userName;
+	@ToString.Exclude
+	private Date accessTime;
+	private boolean locked;
+}
+</pre>
+<pre class="brush: java; title: UserDao.java; notranslate">
+package javaspringexamples.springJDBC.preparedStatements;
+
+import java.util.List;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public interface UserDao {
+	public User findById(long usertId);
+	public List&lt;User&gt; findByUserName(String userName);
+	public List&lt;User&gt; findLocked(boolean locked);
+}
+</pre>
+<pre class="brush: java; title: UserDaoImpl.java; notranslate">
+package javaspringexamples.springJDBC.preparedStatements;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
+import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class UserDaoImpl implements UserDao {
+
+	private JdbcTemplate jdbcTemplate;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private UserRowMapper userRowMapper = new UserRowMapper();
+
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+	}
+
+	public User findById(long userId) {
+		return jdbcTemplate.queryForObject(&quot;SELECT id, name, user_name, access_time, locked FROM USER WHERE id = ?&quot;,
+				userRowMapper, userId);
+	}
+
+	public List&lt;User&gt; findByUserName(String userName) {
+		PreparedStatementCreatorFactory psCreatorFactory = new PreparedStatementCreatorFactory(
+				&quot;SELECT id, name, user_name, access_time, locked FROM USER WHERE user_name like ?&quot;,
+				new int[] { Types.VARCHAR });
+		return jdbcTemplate.query(psCreatorFactory.newPreparedStatementCreator(new Object[] { userName }),
+				userRowMapper);
+	}
+
+	public List&lt;User&gt; findLocked(boolean locked) {
+		return jdbcTemplate.query(&quot;SELECT id, name, user_name, access_time, locked FROM USER WHERE locked = ?&quot;,
+				new PreparedStatementSetter() {
+					@Override
+					public void setValues(PreparedStatement ps) throws SQLException {
+						ps.setBoolean(1, locked);
+					}
+				}, userRowMapper);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: UserRowMapper.java; notranslate">
+package javaspringexamples.springJDBC.preparedStatements;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.jdbc.core.RowMapper;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class UserRowMapper implements RowMapper&lt;User&gt; {
+
+	public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+		User user = new User();
+		user.setId(rs.getLong(&quot;id&quot;));
+		user.setName(rs.getString(&quot;name&quot;));
+		user.setUserName(rs.getString(&quot;user_name&quot;));
+		user.setAccessTime(rs.getTimestamp(&quot;access_time&quot;));
+		user.setLocked(rs.getBoolean(&quot;locked&quot;));
+		return user;
+	}
+
+}
+
+</pre>
+<pre class="brush: java; title: data.sql; notranslate">
+MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (999L, 'Mounir SAHRANI', 'msahrani', '2019-01-01',false);
+MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (256L, 'Laurent SOURDEAU', 'lsourdeau', '2019-06-01',false);
+MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (65L, 'John SMITH', 'jsmith', '2019-06-01',true);
+</pre>
+<pre class="brush: java; title: schema.sql; notranslate">
+CREATE TABLE IF NOT EXISTS USER (ID BIGINT IDENTITY PRIMARY KEY, NAME VARCHAR(60), USER_NAME VARCHAR(60), ACCESS_TIME TIMESTAMP, LOCKED BOOLEAN);
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJdbcPreparedStatements.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJdbcPreparedStatements/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Lifecycle Callback Methods &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/dependency-injection/lifecycle-callback-methods/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 &#8211; Lifecycle Callback Methods</title>
+		<link>http://localhost/wordpress/2019/02/19/example-spring-4-dependency-injection-lifecycle-callback-methods/</link>
+		<pubDate>Tue, 19 Feb 2019 16:55:16 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Dependency Injection]]></category>
+		<category><![CDATA[Lifecycle Callback Methods]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=497</guid>
+		<description><![CDATA[This example presents the basic concept of using setter injection in Spring. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an Eclipse IDE...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using setter injection in Spring.</p>
+<p>The technologies used are :<br />
+ &#8211; Spring 4.3.4<br />
+ &#8211; JDK 1.8<br />
+ &#8211; Maven 3.3.9</p>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
+<pre class="brush: java; title: A.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.LifecycleCallbackMethods;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class A {
+	@PostConstruct
+	public void init() throws Exception {
+		System.out.println(&quot;A @PostConstruct-init() method invoked&quot;);
+	}
+
+	@PreDestroy
+	public void destroy() throws RuntimeException {
+		System.out.println(&quot;A @PreDestroy-destroy() method invoked&quot;);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: B.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.LifecycleCallbackMethods;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class B implements InitializingBean, DisposableBean {
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println(&quot;B InitializingBean-afterPropertiesSet() method invoked&quot;);
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		System.out.println(&quot;B DisposableBean-destroy() method invoked&quot;);
+	}
+
+}
+
+</pre>
+<pre class="brush: java; title: C.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.LifecycleCallbackMethods;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class C {
+	public void init() throws Exception {
+		System.out.println(&quot;C init-method=\&quot;init\&quot;-init() method invoked&quot;);
+	}
+
+	public void destroy() throws RuntimeException {
+		System.out.println(&quot;C destroy-method=\&quot;destroy\&quot;-destroy() method invoked&quot;);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.LifecycleCallbackMethods;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+				&quot;classpath:/applicationContext.xml&quot;);
+		applicationContext.registerShutdownHook();
+	}
+
+}
+
+</pre>
+<pre class="brush: xml; title: applicationContext.xml; toolbar: true; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd&quot;&gt;
+
+	&lt;context:annotation-config /&gt;
+
+	&lt;bean
+		class=&quot;javaspringexamples.spring.ioc.LifecycleCallbackMethods.A&quot; /&gt;
+	&lt;bean
+		class=&quot;javaspringexamples.spring.ioc.LifecycleCallbackMethods.B&quot; /&gt;
+	&lt;bean id=&quot;c&quot;
+		class=&quot;javaspringexamples.spring.ioc.LifecycleCallbackMethods.C&quot;
+		init-method=&quot;init&quot; destroy-method=&quot;destroy&quot; /&gt;
+
+&lt;/beans&gt;
+
+</pre>
+<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
+	&lt;artifactId&gt;Lifecycle-Callback-Methods&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;name&gt;example Lifecycle Callback Methods&lt;/name&gt;
+
+	&lt;properties&gt;
+		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+				&lt;version&gt;3.6.0&lt;/version&gt;
+				&lt;configuration&gt;
+					&lt;source&gt;1.8&lt;/source&gt;
+					&lt;target&gt;1.8&lt;/target&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+&lt;/project&gt;
+
+</pre>
+<p>The output is :<br />
+A @PostConstruct-init() method invoked<br />
+B InitializingBean-afterPropertiesSet() method invoked<br />
+C init-method= »init »-init() method invoked<br />
+C destroy-method= »destroy »-destroy() method invoked<br />
+B DisposableBean-destroy() method invoked<br />
+A @PreDestroy-destroy() method invoked</p>
+<p><a href="https://github.com/javaspringexamples/LifecycleCallbackMethods.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/LifecycleCallbackMethods/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

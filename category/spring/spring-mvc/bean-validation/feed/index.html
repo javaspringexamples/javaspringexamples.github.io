@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Bean Validation &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/spring-mvc/bean-validation/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 MVC – Bean Validation</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-bean-validation/</link>
+		<pubDate>Tue, 19 Mar 2019 15:46:06 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Bean Validation]]></category>
+		<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=525</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring MVC bean validation. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring MVC bean validation.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: User.java; notranslate">
+package javaspringexamples.spring.beanvalidation.domain;
+
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class User {
+
+	@Size(min = 3, max = 20)
+	String username;
+
+	@Pattern(regexp = &quot;^[a-zA-Z]\\w{3,14}$&quot;)
+	String password;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+}
+</pre>
+<pre class="brush: java; title: errorMessages.properties; notranslate">
+Pattern.user.password=Error format: at least 4 letters, max 15.
+Size.user.username=Error format: at least 3, max 20.
+</pre>
+<pre class="brush: java; title: UserController.java; notranslate">
+package javaspringexamples.spring.beanvalidation.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import javaspringexamples.spring.beanvalidation.domain.User;
+
+import javax.validation.Valid;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+@Controller
+public class UserController {
+
+	@RequestMapping(value = &quot;/form&quot;)
+	public ModelAndView initiateUser() {
+		return new ModelAndView(&quot;userForm&quot;, &quot;user&quot;, new User());
+	}
+
+	@RequestMapping(value = &quot;/result&quot;, method = RequestMethod.POST)
+	public ModelAndView processUser(@Valid User user, BindingResult result) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.addObject(&quot;usr&quot;, user);
+
+		if (result.hasErrors()) {
+			modelAndView.setViewName(&quot;userForm&quot;);
+		} else {
+			modelAndView.setViewName(&quot;userResult&quot;);
+		}
+
+		return modelAndView;
+	}
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.beanvalidation.controller&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven validator=&quot;validator&quot; /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/views/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;messageSource&quot;
+		class=&quot;org.springframework.context.support.ReloadableResourceBundleMessageSource&quot;&gt;
+		&lt;property name=&quot;basename&quot; value=&quot;classpath:errorMessages&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;validator&quot;
+		class=&quot;org.springframework.validation.beanvalidation.LocalValidatorFactoryBean&quot;&gt;
+		&lt;property name=&quot;validationMessageSource&quot; ref=&quot;messageSource&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;%
+	response.sendRedirect(&quot;form.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: userForm.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Spring MVC Form&lt;/title&gt;
+&lt;style type=&quot;text/css&quot;&gt;
+.formFieldError {
+	background-color: #FFC;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+	&lt;h2&gt;Form&lt;/h2&gt;
+	&lt;mvc:form modelAttribute=&quot;user&quot; action=&quot;result.mvc&quot;&gt;
+		&lt;table&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;username&quot;&gt;Login&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:input path=&quot;username&quot; cssErrorClass=&quot;formFieldError&quot; /&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:errors path=&quot;username&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;password&quot;&gt;Password&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:password path=&quot;password&quot;
+						cssErrorClass=&quot;formFieldError&quot; /&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:errors path=&quot;password&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td colspan=&quot;3&quot;&gt;&lt;input type=&quot;submit&quot; value=&quot;Submit&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;
+	&lt;/mvc:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: userResult.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Spring MVC Form&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;Result Form&lt;/h2&gt;
+	&lt;table&gt;
+		&lt;tr&gt;
+			&lt;td&gt;login :&lt;/td&gt;
+			&lt;td&gt;${usr.username}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Password :&lt;/td&gt;
+			&lt;td&gt;${usr.password}&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcBeanValidation.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcBeanValidation/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

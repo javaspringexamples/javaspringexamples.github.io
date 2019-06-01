@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Exception Handling &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/spring-mvc/exception-handling/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 MVC – Exception Handling</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-exception-handling/</link>
+		<pubDate>Tue, 19 Mar 2019 16:17:18 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Exception Handling]]></category>
+		<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=537</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring the exception handling. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the exception handling.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: Country.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.domain;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Country {
+
+	private String name;
+	private String isoCode;
+
+	public Country() {
+	}
+
+	public Country(String name, String isoCode) {
+		this.name = name;
+		this.isoCode = isoCode;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getIsoCode() {
+		return isoCode;
+	}
+
+	public void setIsoCode(String isoCode) {
+		this.isoCode = isoCode;
+	}
+}
+</pre>
+<pre class="brush: java; title: CountryNotFoundException.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.exception;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class CountryNotFoundException extends Exception {
+
+	public CountryNotFoundException(String name) {
+		super(&quot;Country not found with name: &quot; + name);
+	}
+}
+</pre>
+<pre class="brush: java; title: GlobalExceptionHandler.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.handler;
+
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+	@ExceptionHandler(Exception.class)
+	public ModelAndView handleException() {
+		return new ModelAndView(&quot;errorGlobal&quot;);
+	}
+}
+</pre>
+<pre class="brush: java; title: CountryController.java; notranslate">
+package javaspringexamples.spring.exceptionhandling.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+import javaspringexamples.spring.exceptionhandling.domain.Country;
+import javaspringexamples.spring.exceptionhandling.exception.CountryNotFoundException;
+
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class CountryController {
+
+	private Map&lt;String, Country&gt; countries = new HashMap&lt;String, Country&gt;();
+
+	@PostConstruct
+	public void setup() {
+		countries.put(&quot;morocco&quot;, new Country(&quot;Morocco&quot;, &quot;MA&quot;));
+		countries.put(&quot;france&quot;, new Country(&quot;France&quot;, &quot;FR&quot;));
+		countries.put(&quot;united states of america&quot;, new Country(&quot;United states of America&quot;, &quot;US&quot;));
+		countries.put(&quot;error&quot;, new Country(&quot;Error&quot;, &quot;Err&quot;));
+	}
+
+	@RequestMapping(value = &quot;/form&quot;)
+	public ModelAndView country() {
+		return new ModelAndView(&quot;form&quot;, &quot;country&quot;, new Country());
+	}
+
+	@RequestMapping(value = &quot;/result&quot;)
+	public ModelAndView process(String name) throws Exception {
+		ModelAndView modelAndView = new ModelAndView();
+		if (&quot;error&quot;.equalsIgnoreCase(name)) {
+			throw new Exception();
+		}
+
+		Country country = countries.get(name.toLowerCase());
+		if (country == null) {
+			throw new CountryNotFoundException(name);
+		}
+		modelAndView.addObject(&quot;country&quot;, country);
+		modelAndView.setViewName(&quot;result&quot;);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(CountryNotFoundException.class)
+	public ModelAndView handleException(CountryNotFoundException e) {
+		ModelAndView modelAndView = new ModelAndView(&quot;errorCountry&quot;);
+		modelAndView.addObject(&quot;errorMessage&quot;, e.getMessage());
+		return modelAndView;
+	}
+}
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;web-app xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+         xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee
+	  http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+         version=&quot;3.1&quot;&gt;
+
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.exceptionhandling&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;%
+	response.sendRedirect(&quot;form.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: form.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Exception Handling&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+	&lt;h2&gt;Search Country&lt;/h2&gt;
+	&lt;mvc:form modelAttribute=&quot;country&quot; action=&quot;result.mvc&quot;&gt;
+		&lt;table&gt;
+			&lt;tr&gt;
+				&lt;td&gt;&lt;mvc:label path=&quot;name&quot;&gt;Country Name&lt;/mvc:label&gt;&lt;/td&gt;
+				&lt;td&gt;&lt;mvc:input path=&quot;name&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+				&lt;td colspan=&quot;2&quot;&gt;&lt;input type=&quot;submit&quot; value=&quot;Search&quot; /&gt;&lt;/td&gt;
+			&lt;/tr&gt;
+		&lt;/table&gt;
+	&lt;/mvc:form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: errorCountry.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Country Not Found&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;${errorMessage}&lt;/h2&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: errorGlobal.jsp; notranslate">
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Error!&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;Error occurred!&lt;/h2&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: result.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags/form&quot; prefix=&quot;mvc&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;JavaSpringExamples Exception Handling&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	&lt;h2&gt;Search Country&lt;/h2&gt;
+	&lt;table&gt;
+		&lt;tr&gt;
+			&lt;td&gt;Country Name :&lt;/td&gt;
+			&lt;td&gt;${country.name}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td&gt;ISO Code :&lt;/td&gt;
+			&lt;td&gt;${country.isoCode}&lt;/td&gt;
+		&lt;/tr&gt;
+	&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcExceptionHandling.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcExceptionHandling/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

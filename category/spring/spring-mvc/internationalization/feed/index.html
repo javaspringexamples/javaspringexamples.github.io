@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Internationalization &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/spring-mvc/internationalization/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 MVC – Internationalization</title>
+		<link>http://localhost/wordpress/2019/03/19/example-spring-4-mvc-internationalisation/</link>
+		<pubDate>Tue, 19 Mar 2019 17:30:52 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Internationalization]]></category>
+		<category><![CDATA[Spring MVC]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=548</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring the internationalization. The technologies used are : &#8211; Spring 4.3.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this example to an Eclipse IDE...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the internationalization.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: java; title: WelcomeController.java; notranslate">
+package javaspringexamples.spring.internationalisation.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Controller
+public class WelcomeController {
+
+	@RequestMapping(value = &quot;/welcome&quot;)
+	public ModelAndView user() {
+			return new ModelAndView(&quot;welcome&quot;);
+	}
+}
+</pre>
+<pre class="brush: bash; title: messages_en_US.properties; notranslate">
+welcome=Welcome to JavaSpringExamples.io
+</pre>
+<pre class="brush: bash; title: messages_fr_FR.properties; notranslate">
+welcome=Bienvenue à JavaSpringExamples.io
+</pre>
+<pre class="brush: xml; title: web.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot;
+	xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot;
+	version=&quot;3.1&quot;&gt;
+	&lt;servlet&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;
+		&lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+	&lt;/servlet&gt;
+	&lt;servlet-mapping&gt;
+		&lt;servlet-name&gt;springmvc&lt;/servlet-name&gt;
+		&lt;url-pattern&gt;*.mvc&lt;/url-pattern&gt;
+	&lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</pre>
+<pre class="brush: xml; title: springmvc-servlet.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+	xmlns:mvc=&quot;http://www.springframework.org/schema/mvc&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
+       					   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+       					   http://www.springframework.org/schema/context
+       					   http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       					   http://www.springframework.org/schema/mvc 
+       					   http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan
+		base-package=&quot;javaspringexamples.spring.internationalisation&quot; /&gt;
+	&lt;context:annotation-config /&gt;
+	&lt;mvc:annotation-driven /&gt;
+
+	&lt;bean
+		class=&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;
+		&lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/pages/&quot; /&gt;
+		&lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;localeResolver&quot;
+		class=&quot;org.springframework.web.servlet.i18n.SessionLocaleResolver&quot;&gt;
+		&lt;property name=&quot;defaultLocale&quot; value=&quot;en_US&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;messageSource&quot;
+		class=&quot;org.springframework.context.support.ReloadableResourceBundleMessageSource&quot;&gt;
+		&lt;property name=&quot;basename&quot; value=&quot;classpath:messages&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;mvc:interceptors&gt;
+		&lt;bean id=&quot;localeChangeInterceptor&quot;
+			class=&quot;org.springframework.web.servlet.i18n.LocaleChangeInterceptor&quot;&gt;
+			&lt;property name=&quot;paramName&quot; value=&quot;lang&quot; /&gt;
+		&lt;/bean&gt;
+	&lt;/mvc:interceptors&gt;
+
+&lt;/beans&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: index.jsp; notranslate">
+&lt;%
+	response.sendRedirect(&quot;welcome.mvc&quot;);
+%&gt;
+</pre>
+<pre class="brush: java; html-script: true; title: welcome.jsp; notranslate">
+&lt;%@ page contentType=&quot;text/html; charset=ISO-8859-1&quot;%&gt;
+&lt;%@taglib uri=&quot;http://www.springframework.org/tags&quot; prefix=&quot;spring&quot;%&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Spring MVC Internationalization&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+	Language :
+	&lt;a href=&quot;?lang=en_US&quot;&gt;English&lt;/a&gt; -
+	&lt;a href=&quot;?lang=fr_FR&quot;&gt;Français&lt;/a&gt;
+	&lt;h2&gt;
+		&lt;spring:message code=&quot;welcome&quot; /&gt;
+	&lt;/h2&gt;
+	Locale: ${pageContext.response.locale}
+&lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springMvcInternationalisation.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springMvcInternationalisation/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

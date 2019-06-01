@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Annotation Based Autowiring &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/dependency-injection/annotation-based-autowiring/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 – Annotation Based Autowiring</title>
+		<link>http://localhost/wordpress/2018/12/07/example-spring-4-annotation-based-autowiring/</link>
+		<pubDate>Fri, 07 Dec 2018 15:33:52 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Annotation Based Autowiring]]></category>
+		<category><![CDATA[Dependency Injection]]></category>
+
+		<guid isPermaLink="false">http://codercocoon.com/?p=419</guid>
+		<description><![CDATA[This example presents the basic concept of using in Spring the Annotation based Autowiring. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using in Spring the Annotation based Autowiring.</p>
+<p>The technologies used are :<br />
+&#8211; Spring 4.3.4<br />
+&#8211; JDK 1.8<br />
+&#8211; Maven 3.3.9</p>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
+<pre class="brush: java; title: User.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.autowiring.annotation;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class User {
+
+	private int id;
+	private String fisrtName;
+	private String lastName;
+	private boolean Accountlocked;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getFisrtName() {
+		return fisrtName;
+	}
+
+	public void setFisrtName(String fisrtName) {
+		this.fisrtName = fisrtName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public boolean isAccountlocked() {
+		return Accountlocked;
+	}
+
+	public void setAccountlocked(boolean accountlocked) {
+		Accountlocked = accountlocked;
+	}
+}
+</pre>
+<pre class="brush: java; title: UserDao.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.autowiring.annotation;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public interface UserDao {
+
+	User find(int userId);
+
+	void insert(User user);
+
+	void update(User user);
+
+	void delete(int userId);
+
+	void lockAccount(int userId, boolean locked);
+
+}
+
+</pre>
+<pre class="brush: java; title: UserDaoInMemoryImpl.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.autowiring.annotation;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+@Repository
+@Qualifier(&quot;userDao&quot;)
+public class UserDaoInMemoryImpl implements UserDao {
+
+	private Map&lt;Integer, User&gt; usersMap = new HashMap&lt;&gt;();
+
+	{
+		User user1 = new User();
+		user1.setId(1);
+		user1.setFisrtName(&quot;FirstName 1&quot;);
+		user1.setLastName(&quot;LastName 1&quot;);
+		user1.setAccountlocked(false);
+
+		User user2 = new User();
+		user2.setId(2);
+		user2.setFisrtName(&quot;FirstName 2&quot;);
+		user2.setLastName(&quot;LastName 2&quot;);
+		user2.setAccountlocked(false);
+
+		usersMap.put(user1.getId(), user1);
+		usersMap.put(user2.getId(), user2);
+
+	}
+
+	@Override
+	public void insert(User user) {
+		usersMap.put(user.getId(), user);
+	}
+
+	@Override
+	public void update(User user) {
+		usersMap.put(user.getId(), user);
+	}
+
+	@Override
+	public void delete(int userId) {
+		usersMap.remove(userId);
+	}
+
+	@Override
+	public User find(int userId) {
+		return usersMap.get(userId);
+	}
+
+	@Override
+	public void lockAccount(int userId, boolean locked) {
+		User user = usersMap.get(userId);
+		user.setAccountlocked(locked);
+		update(user);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: UserDaoJdbcImpl.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.autowiring.annotation;
+
+import org.springframework.stereotype.Repository;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+@Repository
+public class UserDaoJdbcImpl implements UserDao {
+
+	@Override
+	public void insert(User user) {
+		
+	}
+
+	@Override
+	public void update(User user) {
+		
+	}
+
+	@Override
+	public void delete(int userId) {
+		
+	}
+
+	@Override
+	public User find(int userId) {
+		return null;
+	}
+
+	@Override
+	public void lockAccount(int userId, boolean locked) {
+		
+	}
+}
+
+</pre>
+<pre class="brush: java; title: UserService.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.autowiring.annotation;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public interface UserService {
+
+	String getUserinformation(int userId);
+
+	void lockAccountUser(int userId);
+
+	void unlockAccountUser(int userId);
+}
+
+</pre>
+<pre class="brush: java; title: UserServiceImpl.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.autowiring.annotation;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+@Service
+public class UserServiceImpl implements UserService {
+	private UserDao userDao;
+
+	@Autowired
+	@Qualifier(&quot;userDao&quot;)
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
+	@Override
+	public void lockAccountUser(int userId) {
+		userDao.lockAccount(userId, true);
+	}
+
+	@Override
+	public void unlockAccountUser(int userId) {
+		userDao.lockAccount(userId, false);
+	}
+
+	@Override
+	public String getUserinformation(int userId) {
+		User user = userDao.find(userId);
+		return user.getFisrtName() + &quot; - &quot; + user.getLastName() + &quot; - &quot; + user.isAccountlocked();
+	}
+}
+</pre>
+<pre class="brush: xml; title: annotationConfiguration.xml; toolbar: true; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:context=&quot;http://www.springframework.org/schema/context&quot; xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd&quot;&gt;
+
+	&lt;context:component-scan base-package=&quot;javaspringexamples.spring.ioc.autowiring.annotation&quot; /&gt;
+
+&lt;/beans&gt;
+
+</pre>
+<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+	&lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
+	&lt;artifactId&gt;example-Annotation-Based-Autowiring&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;name&gt;example Annotation Based Autowiring&lt;/name&gt;
+
+	&lt;properties&gt;
+		&lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;${springframework.version}&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+
+	&lt;build&gt;
+		&lt;plugins&gt;
+			&lt;plugin&gt;
+				&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+				&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+				&lt;version&gt;3.6.0&lt;/version&gt;
+				&lt;configuration&gt;
+					&lt;source&gt;1.8&lt;/source&gt;
+					&lt;target&gt;1.8&lt;/target&gt;
+				&lt;/configuration&gt;
+			&lt;/plugin&gt;
+		&lt;/plugins&gt;
+	&lt;/build&gt;
+&lt;/project&gt;
+
+</pre>
+<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.autowiring.annotation;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Main {
+
+	public static void main(String[] args) {
+		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+				&quot;javaspringexamples/spring/ioc/autowiring/annotation/annotationConfiguration.xml&quot;);
+		UserService userService = applicationContext.getBean(UserService.class);
+
+		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
+		System.out.println(&quot;User2 Informations: &quot; + userService.getUserinformation(2));
+
+		System.out.println(&quot;Locking User1 account&quot;);
+		userService.lockAccountUser(1);
+		System.out.println(&quot;User1 Informations: &quot; + userService.getUserinformation(1));
+
+	}
+
+}
+
+</pre>
+<p><a href="https://github.com/javaspringexamples/AnnotationBasedAutowiring.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/AnnotationBasedAutowiring/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Dependency Injection – Setter Injection &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/dependency-injection/dependency-injection-setter-injection/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 &#8211; Dependency Injection &#8211; Setter Injection</title>
+		<link>http://localhost/wordpress/2019/02/19/example-spring-4-dependency-injection-setter-injection/</link>
+		<pubDate>Tue, 19 Feb 2019 14:25:58 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Dependency Injection]]></category>
+		<category><![CDATA[Dependency Injection – Setter Injection]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=495</guid>
+		<description><![CDATA[This example presents the basic concept of using setter injection in Spring. The technologies used are : &#8211; Spring 4.3.4 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert this example to an Eclipse IDE...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using setter injection in Spring.</p>
+<p>The technologies used are :<br />
+ &#8211; Spring 4.3.4<br />
+ &#8211; JDK 1.8<br />
+ &#8211; Maven 3.3.9</p>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: plain; title: ; notranslate">mvn eclipse:eclipse</pre>
+<pre class="brush: java; title: A.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.setterInjection.xml;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class A {
+	private B b;
+	private C c;
+
+	public B getB() {
+		return b;
+	}
+
+	public void setB(B b) {
+		this.b = b;
+	}
+
+	public C getC() {
+		return c;
+	}
+
+	public void setC(C c) {
+		this.c = c;
+	}
+
+	@Override
+	public String toString() {
+		return b.toString() + &quot; - &quot; + c.toString();
+	}
+}
+</pre>
+<pre class="brush: java; title: B.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.setterInjection.xml;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class B {
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
+}
+</pre>
+<pre class="brush: java; title: C.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.setterInjection.xml;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class C {
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+}
+</pre>
+<pre class="brush: java; title: Main.java; toolbar: true; notranslate">
+package javaspringexamples.spring.ioc.setterInjection.xml;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+				&quot;/javaspringexamples/spring/ioc/setterInjection/xml/xmlConfiguration.xml&quot;);
+
+		// Getting and printing objectA
+		A objectA = (A) applicationContext.getBean(&quot;objectA&quot;);
+		System.out.println(objectA);
+
+	}
+
+}
+</pre>
+<pre class="brush: xml; title: xmlConfiguration.xml; toolbar: true; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:util=&quot;http://www.springframework.org/schema/util&quot;
+	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd&quot;&gt;
+
+	&lt;util:map id=&quot;objectName&quot;&gt;
+		&lt;entry key=&quot;A&quot; value=&quot;Object A&quot; /&gt;
+		&lt;entry key=&quot;B&quot; value=&quot;Object B&quot; /&gt;
+		&lt;entry key=&quot;C&quot; value=&quot;Object C&quot; /&gt;
+	&lt;/util:map&gt;
+
+	&lt;bean id=&quot;objectA&quot;
+		class=&quot;javaspringexamples.spring.ioc.setterInjection.xml.A&quot;&gt;
+		&lt;property name=&quot;b&quot; ref=&quot;objectB&quot; /&gt;
+		&lt;property name=&quot;c&quot; ref=&quot;objectC&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;objectB&quot;
+		class=&quot;javaspringexamples.spring.ioc.setterInjection.xml.B&quot;&gt;
+		&lt;property name=&quot;name&quot; value=&quot;#{objectName[B]}&quot; /&gt;
+	&lt;/bean&gt;
+
+	&lt;bean id=&quot;objectC&quot;
+		class=&quot;javaspringexamples.spring.ioc.setterInjection.xml.C&quot;&gt;
+		&lt;property name=&quot;name&quot; value=&quot;#{objectName[C]}&quot; /&gt;
+	&lt;/bean&gt;
+&lt;/beans&gt;
+</pre>
+<pre class="brush: xml; title: pom.xml; toolbar: true; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+ 
+    &lt;groupId&gt;javaspringexamples.spring&lt;/groupId&gt;
+    &lt;artifactId&gt;example-XML-Based-Setter-Injection&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+ 
+    &lt;name&gt;example XML Based Setter Injection&lt;/name&gt;
+ 
+    &lt;properties&gt;
+        &lt;springframework.version&gt;4.3.4.RELEASE&lt;/springframework.version&gt;
+    &lt;/properties&gt;
+ 
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+            &lt;version&gt;${springframework.version}&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+ 
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.6.0&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;source&gt;1.8&lt;/source&gt;
+                    &lt;target&gt;1.8&lt;/target&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+</pre>
+<p>The output is :<br />
+Object B &#8211; Object C</p>
+<p><a href="https://github.com/javaspringexamples/XmlBasedSetterInjection.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/XmlBasedSetterInjection/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>
