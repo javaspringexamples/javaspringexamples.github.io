@@ -12,7 +12,7 @@
 	<atom:link href="http://localhost/wordpress/category/spring/spring-jdbc/jdbctemplate/feed/" rel="self" type="application/rss+xml" />
 	<link>http://localhost/wordpress</link>
 	<description></description>
-	<lastBuildDate>Sat, 01 Jun 2019 14:53:50 +0000</lastBuildDate>
+	<lastBuildDate>Tue, 18 Jun 2019 12:02:21 +0000</lastBuildDate>
 	<language>fr-FR</language>
 	<sy:updatePeriod>hourly</sy:updatePeriod>
 	<sy:updateFrequency>1</sy:updateFrequency>
@@ -26,8 +26,8 @@
 		<category><![CDATA[Spring JDBC]]></category>
 
 		<guid isPermaLink="false">http://localhost/wordpress/?p=593</guid>
-		<description><![CDATA[This example presents the basic concept of using jdbcTemplate in Spring JDBC. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using jdbcTemplate in Spring JDBC.</p>
+		<description><![CDATA[This example presents the basic concept of using jdbcTemplate in Spring Jdbc. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using jdbcTemplate in Spring Jdbc.</p>
 <p>The technologies used are :</p>
 <ul>
  &#8211; Spring 4.3.18<br />
@@ -91,6 +91,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
 @Configuration
 public class Conf {
 	@Bean
@@ -120,6 +125,57 @@ public class Conf {
 }
 
 </pre>
+<pre class="brush: java; title: ExceptionDeleteFailed.java; notranslate">
+package javaspringexamples.springJDBC.JdbcTemplate;
+
+import org.springframework.dao.DataAccessException;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class ExceptionDeleteFailed extends DataAccessException {
+	public ExceptionDeleteFailed(String msg) {
+		super(msg);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: ExceptionInsertFailed.java; notranslate">
+package javaspringexamples.springJDBC.JdbcTemplate;
+
+import org.springframework.dao.DataAccessException;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class ExceptionInsertFailed extends DataAccessException {
+	public ExceptionInsertFailed(String msg) {
+		super(msg);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: ExceptionUpdateFailed.java; notranslate">
+package javaspringexamples.springJDBC.JdbcTemplate;
+
+import org.springframework.dao.DataAccessException;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class ExceptionUpdateFailed extends DataAccessException {
+	public ExceptionUpdateFailed(String msg) {
+		super(msg);
+	}
+}
+
+</pre>
 <pre class="brush: java; title: Main.java; notranslate">
 package javaspringexamples.springJDBC.JdbcTemplate;
 
@@ -138,9 +194,24 @@ public class Main {
 
 		UserDao userDao = applicationContext.getBean(UserDao.class);
 		User user = new User();
+		user.setName(&quot;Waaaaw&quot;);
+		user.setUserName(&quot;Wiiiiiw&quot;);
+		user.setLocked(false);
 		userDao.insert(user);
+
+		user = userDao.find(user.getId());
+		System.out.println(user.getName() + &quot;, &quot; + user.getUserName() + &quot;, &quot; + user.isLocked());
+
+		user.setLocked(true);
 		userDao.update(user);
-		userDao.delete(999);
+
+		user = userDao.find(user.getId());
+		System.out.println(user.getName() + &quot;, &quot; + user.getUserName() + &quot;, &quot; + user.isLocked());
+
+		userDao.delete(user.getId());
+		
+		user = userDao.find(user.getId());
+		System.out.println(user);
 	}
 }
 
@@ -161,7 +232,7 @@ import lombok.Data;
 public class User {
 	private long id;
 	private String name;
-	private double userName;
+	private String userName;
 	private Date accessTime;
 	private boolean locked;
 }
@@ -181,12 +252,23 @@ public interface UserDao {
 	public void update(User user);
 
 	public void delete(long userId);
+	
+	public User find(long userId);
 }
 </pre>
 <pre class="brush: java; title: UserDaoJdbcImpl.java; notranslate">
 package javaspringexamples.springJDBC.JdbcTemplate;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 /**
  * 
@@ -202,18 +284,49 @@ public class UserDaoJdbcImpl implements UserDao {
 	}
 
 	public void insert(User user) {
-		System.out.println(&quot;Invoiking public void insert(User user)&quot;);
+		PreparedStatementCreatorFactory psCreatorFactory = new PreparedStatementCreatorFactory(
+				&quot;insert into user(name, user_name, locked) values(?,?,?)&quot;,
+				new int[] { Types.VARCHAR, Types.VARCHAR, Types.BOOLEAN });
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		int count = jdbcTemplate.update(psCreatorFactory.newPreparedStatementCreator(
+				new Object[] { user.getName(), user.getUserName(), user.isLocked() }), keyHolder);
+		if (count != 1)
+			throw new ExceptionInsertFailed(&quot;Cannot insert user&quot;);
+		user.setId(keyHolder.getKey().longValue());
 	}
 
 	public void update(User user) {
-		System.out.println(&quot;Invoiking public void update(User user)&quot;);
+		int count = jdbcTemplate.update(&quot;update user  set (name, user_name, locked) = (?,?,?) where id = ?&quot;,
+				user.getName(), user.getUserName(), user.isLocked(), user.getId());
+		if (count != 1)
+			throw new ExceptionUpdateFailed(&quot;Cannot update user&quot;);
 	}
 
 	public void delete(long userId) {
-		System.out.println(&quot;Invoiking public void delete(long userId)&quot;);
+		int count = jdbcTemplate.update(&quot;delete user where id = ?&quot;, userId);
+		if (count != 1)
+			throw new ExceptionDeleteFailed(&quot;Cannot delete user&quot;);
+	}
+
+	public User find(long userId) {
+		try {
+			return jdbcTemplate.queryForObject(&quot;select id, name, user_name, locked from user where id = ?&quot;,
+					new RowMapper&lt;User&gt;() {
+						public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+							User user = new User();
+							user.setId(rs.getLong(&quot;id&quot;));
+							user.setName(rs.getString(&quot;name&quot;));
+							user.setUserName(rs.getString(&quot;user_name&quot;));
+							user.setLocked(rs.getBoolean(&quot;locked&quot;));
+							return user;
+						}
+					}, userId);
+
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 }
-
 </pre>
 <p><a href="https://github.com/javaspringexamples/springJdbcConfiguringJdbcTemplate.git">Get the sources of the example from the following GitHub url</a></p>
 <p>Or <a href="https://github.com/javaspringexamples/springJdbcConfiguringJdbcTemplate/archive/master.zip">Download a .zip file</a></p>

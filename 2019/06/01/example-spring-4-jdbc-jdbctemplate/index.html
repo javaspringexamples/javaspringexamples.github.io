@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="fr-FR">
 
-<!-- Mirrored from localhost/wordpress/2019/06/01/example-spring-4-jdbc-jdbctemplate/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 01 Jun 2019 14:58:21 GMT -->
+<!-- Mirrored from localhost/wordpress/2019/06/01/example-spring-4-jdbc-jdbctemplate/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 18 Jun 2019 12:05:25 GMT -->
 <!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
 <head>
 <meta charset="UTF-8">
@@ -109,7 +109,9 @@ img.emoji {
 		<li id="menu-item-610" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-610"><a href="../../../../category/spring/spring-jdbc/pooled-database/index.html">Pooled Database</a></li>
 		<li id="menu-item-611" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-611"><a href="../../../../category/spring/spring-jdbc/preparedstatements/index.html">PreparedStatements</a></li>
 		<li id="menu-item-612" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-612"><a href="../../../../category/spring/spring-jdbc/queries-in-clause/index.html">Queries in clause</a></li>
+		<li id="menu-item-617" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-617"><a href="../../../../category/spring/spring-jdbc/dml-operations/index.html">DML Operations</a></li>
 		<li id="menu-item-613" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-613"><a href="../../../../category/spring/spring-jdbc/sql-queries/index.html">SQL Queries</a></li>
+		<li id="menu-item-624" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-624"><a href="../../../../category/spring/spring-jdbc/batch-operations/index.html">Batch Operations</a></li>
 	</ul>
 </li>
 </ul>
@@ -129,7 +131,7 @@ img.emoji {
 <span class="entry-meta-date updated">juin 1, 2019</span>
 </p>
 	<div class="entry-content mh-clearfix">
-		<p>This example presents the basic concept of using jdbcTemplate in Spring JDBC.</p>
+		<p>This example presents the basic concept of using jdbcTemplate in Spring Jdbc.</p>
 <p>The technologies used are :</p>
 <ul>
  &#8211; Spring 4.3.18<br />
@@ -193,6 +195,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
 @Configuration
 public class Conf {
 	@Bean
@@ -222,6 +229,57 @@ public class Conf {
 }
 
 </pre>
+<pre class="brush: java; title: ExceptionDeleteFailed.java; notranslate" title="ExceptionDeleteFailed.java">
+package javaspringexamples.springJDBC.JdbcTemplate;
+
+import org.springframework.dao.DataAccessException;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class ExceptionDeleteFailed extends DataAccessException {
+	public ExceptionDeleteFailed(String msg) {
+		super(msg);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: ExceptionInsertFailed.java; notranslate" title="ExceptionInsertFailed.java">
+package javaspringexamples.springJDBC.JdbcTemplate;
+
+import org.springframework.dao.DataAccessException;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class ExceptionInsertFailed extends DataAccessException {
+	public ExceptionInsertFailed(String msg) {
+		super(msg);
+	}
+}
+
+</pre>
+<pre class="brush: java; title: ExceptionUpdateFailed.java; notranslate" title="ExceptionUpdateFailed.java">
+package javaspringexamples.springJDBC.JdbcTemplate;
+
+import org.springframework.dao.DataAccessException;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class ExceptionUpdateFailed extends DataAccessException {
+	public ExceptionUpdateFailed(String msg) {
+		super(msg);
+	}
+}
+
+</pre>
 <pre class="brush: java; title: Main.java; notranslate" title="Main.java">
 package javaspringexamples.springJDBC.JdbcTemplate;
 
@@ -240,9 +298,24 @@ public class Main {
 
 		UserDao userDao = applicationContext.getBean(UserDao.class);
 		User user = new User();
+		user.setName(&quot;Waaaaw&quot;);
+		user.setUserName(&quot;Wiiiiiw&quot;);
+		user.setLocked(false);
 		userDao.insert(user);
+
+		user = userDao.find(user.getId());
+		System.out.println(user.getName() + &quot;, &quot; + user.getUserName() + &quot;, &quot; + user.isLocked());
+
+		user.setLocked(true);
 		userDao.update(user);
-		userDao.delete(999);
+
+		user = userDao.find(user.getId());
+		System.out.println(user.getName() + &quot;, &quot; + user.getUserName() + &quot;, &quot; + user.isLocked());
+
+		userDao.delete(user.getId());
+		
+		user = userDao.find(user.getId());
+		System.out.println(user);
 	}
 }
 
@@ -263,7 +336,7 @@ import lombok.Data;
 public class User {
 	private long id;
 	private String name;
-	private double userName;
+	private String userName;
 	private Date accessTime;
 	private boolean locked;
 }
@@ -283,12 +356,23 @@ public interface UserDao {
 	public void update(User user);
 
 	public void delete(long userId);
+	
+	public User find(long userId);
 }
 </pre>
 <pre class="brush: java; title: UserDaoJdbcImpl.java; notranslate" title="UserDaoJdbcImpl.java">
 package javaspringexamples.springJDBC.JdbcTemplate;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 /**
  * 
@@ -304,18 +388,49 @@ public class UserDaoJdbcImpl implements UserDao {
 	}
 
 	public void insert(User user) {
-		System.out.println(&quot;Invoiking public void insert(User user)&quot;);
+		PreparedStatementCreatorFactory psCreatorFactory = new PreparedStatementCreatorFactory(
+				&quot;insert into user(name, user_name, locked) values(?,?,?)&quot;,
+				new int[] { Types.VARCHAR, Types.VARCHAR, Types.BOOLEAN });
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		int count = jdbcTemplate.update(psCreatorFactory.newPreparedStatementCreator(
+				new Object[] { user.getName(), user.getUserName(), user.isLocked() }), keyHolder);
+		if (count != 1)
+			throw new ExceptionInsertFailed(&quot;Cannot insert user&quot;);
+		user.setId(keyHolder.getKey().longValue());
 	}
 
 	public void update(User user) {
-		System.out.println(&quot;Invoiking public void update(User user)&quot;);
+		int count = jdbcTemplate.update(&quot;update user  set (name, user_name, locked) = (?,?,?) where id = ?&quot;,
+				user.getName(), user.getUserName(), user.isLocked(), user.getId());
+		if (count != 1)
+			throw new ExceptionUpdateFailed(&quot;Cannot update user&quot;);
 	}
 
 	public void delete(long userId) {
-		System.out.println(&quot;Invoiking public void delete(long userId)&quot;);
+		int count = jdbcTemplate.update(&quot;delete user where id = ?&quot;, userId);
+		if (count != 1)
+			throw new ExceptionDeleteFailed(&quot;Cannot delete user&quot;);
+	}
+
+	public User find(long userId) {
+		try {
+			return jdbcTemplate.queryForObject(&quot;select id, name, user_name, locked from user where id = ?&quot;,
+					new RowMapper&lt;User&gt;() {
+						public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+							User user = new User();
+							user.setId(rs.getLong(&quot;id&quot;));
+							user.setName(rs.getString(&quot;name&quot;));
+							user.setUserName(rs.getString(&quot;user_name&quot;));
+							user.setLocked(rs.getBoolean(&quot;locked&quot;));
+							return user;
+						}
+					}, userId);
+
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 }
-
 </pre>
 <p><a href="https://github.com/javaspringexamples/springJdbcConfiguringJdbcTemplate.git">Get the sources of the example from the following GitHub url</a></p>
 <p>Or <a href="https://github.com/javaspringexamples/springJdbcConfiguringJdbcTemplate/archive/master.zip">Download a .zip file</a></p>
@@ -330,7 +445,7 @@ public class UserDaoJdbcImpl implements UserDao {
 </nav>
 	</div>
 	<aside class="mh-sidebar">
-	<div id="mh_newsdesk_lite_recent_posts-3" class="sb-widget mh-clearfix mh_newsdesk_lite_recent_posts">		<ul class="mh-rp-widget widget-list">				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-sql-queries/index.html" title="Example Spring 4 JDBC – SQL Queries" rel="bookmark">Example Spring 4 JDBC – SQL Queries</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-queries-in-clause/index.html" title="Example Spring 4 JDBC – Queries in clause" rel="bookmark">Example Spring 4 JDBC – Queries in clause</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-preparedstatements/index.html" title="Example Spring 4 JDBC – PreparedStatements" rel="bookmark">Example Spring 4 JDBC – PreparedStatements</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-namedparameter/index.html" title="Example Spring 4 JDBC – NamedParameter" rel="bookmark">Example Spring 4 JDBC – NamedParameter</a></li>				<li class="rp-widget-item"><a href="index.html" title="Example Spring 4 JDBC – JdbcTemplate" rel="bookmark">Example Spring 4 JDBC – JdbcTemplate</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-initializing-database/index.html" title="Example Spring 4 JDBC – Initializing Database" rel="bookmark">Example Spring 4 JDBC – Initializing Database</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-pooled-database/index.html" title="Example Spring 4 JDBC – Pooled Database" rel="bookmark">Example Spring 4 JDBC – Pooled Database</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-embedded-database/index.html" title="Example Spring 4 JDBC – Embedded Database" rel="bookmark">Example Spring 4 JDBC – Embedded Database</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-configuring-singledatasource/index.html" title="Example Spring 4 JDBC – Configuring SingleDatasource" rel="bookmark">Example Spring 4 JDBC – Configuring SingleDatasource</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-configuring-datasource/index.html" title="Example Spring 4 JDBC &#8211; Configuring Datasource" rel="bookmark">Example Spring 4 JDBC &#8211; Configuring Datasource</a></li>		</ul></div></aside></div>
+	<div id="mh_newsdesk_lite_recent_posts-3" class="sb-widget mh-clearfix mh_newsdesk_lite_recent_posts">		<ul class="mh-rp-widget widget-list">				<li class="rp-widget-item"><a href="../../18/example-spring-4-jdbc-batch-operations/index.html" title="Example Spring 4 JDBC – Batch Operations" rel="bookmark">Example Spring 4 JDBC – Batch Operations</a></li>				<li class="rp-widget-item"><a href="../../17/example-spring-4-jdbc-dml-operations/index.html" title="Example Spring 4 JDBC – DML Operations" rel="bookmark">Example Spring 4 JDBC – DML Operations</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-sql-queries/index.html" title="Example Spring 4 JDBC – SQL Queries" rel="bookmark">Example Spring 4 JDBC – SQL Queries</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-queries-in-clause/index.html" title="Example Spring 4 JDBC – Queries in clause" rel="bookmark">Example Spring 4 JDBC – Queries in clause</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-preparedstatements/index.html" title="Example Spring 4 JDBC – PreparedStatements" rel="bookmark">Example Spring 4 JDBC – PreparedStatements</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-namedparameter/index.html" title="Example Spring 4 JDBC – NamedParameter" rel="bookmark">Example Spring 4 JDBC – NamedParameter</a></li>				<li class="rp-widget-item"><a href="index.html" title="Example Spring 4 JDBC – JdbcTemplate" rel="bookmark">Example Spring 4 JDBC – JdbcTemplate</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-initializing-database/index.html" title="Example Spring 4 JDBC – Initializing Database" rel="bookmark">Example Spring 4 JDBC – Initializing Database</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-pooled-database/index.html" title="Example Spring 4 JDBC – Pooled Database" rel="bookmark">Example Spring 4 JDBC – Pooled Database</a></li>				<li class="rp-widget-item"><a href="../example-spring-4-jdbc-embedded-database/index.html" title="Example Spring 4 JDBC – Embedded Database" rel="bookmark">Example Spring 4 JDBC – Embedded Database</a></li>		</ul></div></aside></div>
 </div>
 <footer class="mh-footer">
 	<div class="wrapper-inner">
@@ -389,5 +504,5 @@ public class UserDaoJdbcImpl implements UserDao {
 <script type='text/javascript' src='../../../../wp-includes/js/wp-embed.min5560.js?ver=5.0.4'></script>
 </body>
 
-<!-- Mirrored from localhost/wordpress/2019/06/01/example-spring-4-jdbc-jdbctemplate/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 01 Jun 2019 14:58:26 GMT -->
+<!-- Mirrored from localhost/wordpress/2019/06/01/example-spring-4-jdbc-jdbctemplate/ by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 18 Jun 2019 12:05:25 GMT -->
 </html>
