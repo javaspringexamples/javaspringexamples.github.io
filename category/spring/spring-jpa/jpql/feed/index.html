@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>JPQL &#8211; Java and Spring Examples</title>
+	<atom:link href="http://localhost/wordpress/category/spring/spring-jpa/jpql/feed/" rel="self" type="application/rss+xml" />
+	<link>http://localhost/wordpress</link>
+	<description></description>
+	<lastBuildDate>Wed, 26 Jun 2019 15:04:13 +0000</lastBuildDate>
+	<language>fr-FR</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.0.4</generator>
+	<item>
+		<title>Example Spring 4 JPA – JPQL Examples</title>
+		<link>http://localhost/wordpress/2019/06/26/example-spring-4-jpa-jpql-examples/</link>
+		<pubDate>Wed, 26 Jun 2019 14:46:53 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[JPQL]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=641</guid>
+		<description><![CDATA[This example presents the basic concept of using JPQL in Spring. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using JPQL in Spring.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJPA&lt;/groupId&gt;
+	&lt;artifactId&gt;springJPAQL&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-entitymanager&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/project&gt;
+
+</pre>
+<pre class="brush: java; title: Car.java; notranslate">
+package javaspringexamples.springJPA.JPAQL;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Car {
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String model;
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public Long getId() {
+		return id;
+	}
+}
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJPA.JPAQL;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(&quot;test-jpa&quot;);
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction transaction = entityManager.getTransaction();
+
+		transaction.begin();
+		// Creating entities
+		Person person = new Person();
+		person.setFirstName(&quot;Jabane&quot;);
+		person.setLastName(&quot;KOLOBANE&quot;);
+		Car car1 = new Car();
+		car1.setModel(&quot;R4&quot;);
+		Car car2 = new Car();
+		car2.setModel(&quot;R6&quot;);
+		// Add cars into person's collection
+		person.getCars().add(car1);
+		person.getCars().add(car2);
+		// persisting entities
+		entityManager.persist(person);
+
+		// SELECT
+		Query query = entityManager.createQuery(&quot;Select p from Person p&quot;);
+		List&lt;Person&gt; l_p = query.getResultList();
+		for (Person p : l_p)
+			System.out.println(p);
+
+		// UPDATE
+		query = entityManager.createQuery(&quot;Update Person set firstName = ?&quot;);
+		query.setParameter(1, &quot;waaaaaaaaaaa&quot;);
+		query.executeUpdate();
+
+		transaction.commit();
+		entityManager.close();
+	}
+}
+
+</pre>
+<pre class="brush: java; title: Person.java; notranslate">
+package javaspringexamples.springJPA.JPAQL;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Person {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String firstName;
+
+	private String lastName;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = &quot;person_id&quot;)
+	private Set&lt;Car&gt; cars = new HashSet&lt;Car&gt;();
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public Set&lt;Car&gt; getCars() {
+		return cars;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer str = new StringBuffer(firstName + &quot; &quot; + lastName + &quot; : &quot;);
+		for (Car c : cars)
+			str.append(&quot;'&quot; + c.getModel() + &quot;' &quot;);
+		return str.toString();
+	}
+}
+
+</pre>
+<pre class="brush: xml; title: persistence.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;persistence version=&quot;2.0&quot;
+    xmlns=&quot;http://java.sun.com/xml/ns/persistence&quot; 
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/persistence 
+    http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd&quot;&gt;
+    &lt;persistence-unit name=&quot;test-jpa&quot; transaction-type=&quot;RESOURCE_LOCAL&quot;&gt;
+        &lt;properties&gt;
+            &lt;property name=&quot;hibernate.connection.driver_class&quot; value=&quot;org.h2.Driver&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.url&quot; value=&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.username&quot; value=&quot;sa&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.password&quot; value=&quot;&quot; /&gt;
+            &lt;property name=&quot;hibernate.dialect&quot; value=&quot;org.hibernate.dialect.H2Dialect&quot; /&gt;
+            &lt;property name=&quot;hibernate.hbm2ddl.auto&quot; value=&quot;create&quot; /&gt;
+            &lt;!-- property name=&quot;hibernate.hbm2ddl.auto&quot; value=&quot;update&quot; /--&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+&lt;/persistence&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJPAQL.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJPAQL/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+	</channel>
+</rss>

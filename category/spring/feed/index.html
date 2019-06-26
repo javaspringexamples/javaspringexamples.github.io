@@ -12,12 +12,1274 @@
 	<atom:link href="http://localhost/wordpress/category/spring/feed/" rel="self" type="application/rss+xml" />
 	<link>http://localhost/wordpress</link>
 	<description></description>
-	<lastBuildDate>Tue, 18 Jun 2019 12:02:21 +0000</lastBuildDate>
+	<lastBuildDate>Wed, 26 Jun 2019 15:04:13 +0000</lastBuildDate>
 	<language>fr-FR</language>
 	<sy:updatePeriod>hourly</sy:updatePeriod>
 	<sy:updateFrequency>1</sy:updateFrequency>
 	<generator>https://wordpress.org/?v=5.0.4</generator>
 	<item>
+		<title>Example Spring 4 JPA – Data Access Exception Translating</title>
+		<link>http://localhost/wordpress/2019/06/26/example-spring-4-jpa-data-access-exception-translating/</link>
+		<pubDate>Wed, 26 Jun 2019 15:01:27 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[Exception Translating]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=648</guid>
+		<description><![CDATA[This example presents the basic concept of translating data access exceptions in Spring. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of translating data access exceptions in Spring.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJPA&lt;/groupId&gt;
+	&lt;artifactId&gt;springJPAExceptionTranslating&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-entitymanager&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/project&gt;
+
+</pre>
+<pre class="brush: java; title: Conf.java; notranslate">
+package javaspringexamples.springJPA.ExceptionTranslating;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Configuration
+public class Conf {
+
+	@Bean
+	public DataSource dataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
+		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
+		dataSource.setUsername(&quot;sa&quot;);
+		dataSource.setPassword(&quot;&quot;);
+		return dataSource;
+	}
+
+	private Map&lt;String, ?&gt; jpaProperties() {
+		Map&lt;String, String&gt; jpaPropertiesMap = new HashMap&lt;String, String&gt;();
+		jpaPropertiesMap.put(&quot;hibernate.dialect&quot;, &quot;org.hibernate.dialect.H2Dialect&quot;);
+		jpaPropertiesMap.put(&quot;hibernate.hbm2ddl.auto&quot;, &quot;update&quot;);
+		return jpaPropertiesMap;
+	}
+
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+		factoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+		factoryBean.setDataSource(dataSource());
+		factoryBean.setPackagesToScan(&quot;javaspringexamples.springJPA.ExceptionTranslating&quot;);
+		factoryBean.setJpaPropertyMap(jpaProperties());
+		return factoryBean;
+	}
+
+	@Bean
+	public PersonDAO personDao() {
+		PersonDAOImpl dao = new PersonDAOImpl();
+		return dao;
+	}
+
+	@Bean
+	public static PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
+		PersistenceExceptionTranslationPostProcessor bean = new PersistenceExceptionTranslationPostProcessor();
+		return bean;
+	}
+
+}
+
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJPA.ExceptionTranslating;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.dao.DataAccessException;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Conf.class);
+
+		PersonDAO dao = (PersonDAO) applicationContext.getBean(&quot;personDao&quot;);
+		// Creating person object
+		Person person = new Person();
+		person.setFirstName(null);
+		person.setLastName(&quot;KOLOBANE&quot;);
+
+		// Spring handles different types of data access exceptions thrown from the data
+		// access layer, and translates them into
+		// org.springframework.dao.DataAccessException.
+		try {
+			// Saving person
+			dao.save(person);
+		} catch (DataAccessException dae) {
+			System.out.println(&quot;Exception translated by Spring and handled&quot;);
+		}
+	}
+}
+</pre>
+<pre class="brush: java; title: Person.java; notranslate">
+package javaspringexamples.springJPA.ExceptionTranslating;
+
+import javax.persistence.Basic;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Person {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	@Basic(optional=false)
+	private String firstName;
+
+	private String lastName;
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+}
+
+</pre>
+<pre class="brush: java; title: PersonDAO.java; notranslate">
+package javaspringexamples.springJPA.ExceptionTranslating;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public interface PersonDAO {
+	public void save(Person p);
+}
+
+</pre>
+<pre class="brush: java; title: PersonDAOImpl.java; notranslate">
+package javaspringexamples.springJPA.ExceptionTranslating;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceUnit;
+
+import org.springframework.stereotype.Repository;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+@Repository
+public class PersonDAOImpl implements PersonDAO {
+
+	@PersistenceUnit
+	private EntityManagerFactory emf;
+
+	public void save(Person p) {
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+		em.persist(p);
+		transaction.commit();
+		em.close();
+	}
+}
+
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJPAExceptionTranslating.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJPAExceptionTranslating/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 JPA – @PersistenceUnit</title>
+		<link>http://localhost/wordpress/2019/06/26/example-spring-4-jpa-persistenceunit/</link>
+		<pubDate>Wed, 26 Jun 2019 14:54:33 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[PersistenceUnit]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=645</guid>
+		<description><![CDATA[This example presents the basic concept of using PersistenceUnit in Spring. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using PersistenceUnit in Spring.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJPA&lt;/groupId&gt;
+	&lt;artifactId&gt;springJPAPersistenceUnit&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-entitymanager&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/project&gt;
+
+</pre>
+<pre class="brush: java; title: Conf.java; notranslate">
+package javaspringexamples.springJPA.PersistenceUnit;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+
+@Configuration
+public class Conf {
+
+	@Bean
+	public DataSource dataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
+		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
+		dataSource.setUsername(&quot;sa&quot;);
+		dataSource.setPassword(&quot;&quot;);
+		return dataSource;
+	}
+
+	private Map&lt;String, ?&gt; jpaProperties() {
+		Map&lt;String, String&gt; jpaPropertiesMap = new HashMap&lt;String, String&gt;();
+		jpaPropertiesMap.put(&quot;hibernate.dialect&quot;, &quot;org.hibernate.dialect.H2Dialect&quot;);
+		jpaPropertiesMap.put(&quot;hibernate.hbm2ddl.auto&quot;, &quot;update&quot;);
+		return jpaPropertiesMap;
+	}
+
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+		factoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+		factoryBean.setDataSource(dataSource());
+		factoryBean.setPackagesToScan(&quot;javaspringexamples.springJPA.PersistenceUnit&quot;);
+		factoryBean.setJpaPropertyMap(jpaProperties());
+		return factoryBean;
+	}
+
+	@Bean
+	public PersonDAO personDao() {
+		PersonDAOImpl dao = new PersonDAOImpl();
+		return dao;
+	}
+
+}
+
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJPA.PersistenceUnit;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Conf.class);
+
+		PersonDAO dao = (PersonDAO) applicationContext.getBean(&quot;personDao&quot;);
+		// Creating person object
+		Person person = new Person();
+		person.setFirstName(&quot;Jabane&quot;);
+		person.setLastName(&quot;KOLOBANE&quot;);
+		// Saving person
+		dao.save(person);
+	}
+}
+</pre>
+<pre class="brush: java; title: Person.java; notranslate">
+package javaspringexamples.springJPA.PersistenceUnit;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Person {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String firstName;
+
+	private String lastName;
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+}
+
+</pre>
+<pre class="brush: java; title: PersonDAO.java; notranslate">
+package javaspringexamples.springJPA.PersistenceUnit;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public interface PersonDAO {
+	public void save(Person p);
+}
+
+</pre>
+<pre class="brush: java; title: PersonDAOImpl.java; notranslate">
+package javaspringexamples.springJPA.PersistenceUnit;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceUnit;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+public class PersonDAOImpl implements PersonDAO {
+
+	@PersistenceUnit
+	private EntityManagerFactory emf;
+
+	public void save(Person p) {
+		EntityManager em = emf.createEntityManager();
+		EntityTransaction transaction = em.getTransaction();
+		transaction.begin();
+		em.persist(p);
+		transaction.commit();
+		em.close();
+	}
+}
+
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJPAPersistenceUnit.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJPAPersistenceUnit/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 JPA – @PersistenceContext</title>
+		<link>http://localhost/wordpress/2019/06/26/example-spring-4-jpa-persistencecontext/</link>
+		<pubDate>Wed, 26 Jun 2019 14:50:35 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[PersistenceContext]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=643</guid>
+		<description><![CDATA[This example presents the basic concept of using PersistenceContext in Spring. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using PersistenceContext in Spring.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJPA&lt;/groupId&gt;
+	&lt;artifactId&gt;springJPAPersistenceContext&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-entitymanager&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/project&gt;
+
+</pre>
+<pre class="brush: java; title: Conf.java; notranslate">
+package javaspringexamples.springJPA.PersistenceContext;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
+import org.hibernate.jpa.HibernatePersistenceProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Configuration
+@EnableTransactionManagement
+public class Conf {
+
+	@Bean
+	public DataSource dataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
+		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
+		dataSource.setUsername(&quot;sa&quot;);
+		dataSource.setPassword(&quot;&quot;);
+		return dataSource;
+	}
+
+	private Map&lt;String, ?&gt; jpaProperties() {
+		Map&lt;String, String&gt; jpaPropertiesMap = new HashMap&lt;String, String&gt;();
+		jpaPropertiesMap.put(&quot;hibernate.dialect&quot;, &quot;org.hibernate.dialect.H2Dialect&quot;);
+		jpaPropertiesMap.put(&quot;hibernate.hbm2ddl.auto&quot;, &quot;update&quot;);
+		return jpaPropertiesMap;
+	}
+
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+		factoryBean.setPersistenceProviderClass(HibernatePersistenceProvider.class);
+		factoryBean.setDataSource(dataSource());
+		factoryBean.setPackagesToScan(&quot;javaspringexamples.springJPA.PersistenceContext&quot;);
+		factoryBean.setJpaPropertyMap(jpaProperties());
+		return factoryBean;
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(entityManagerFactory);
+		return transactionManager;
+	}
+
+	@Bean
+	public PersonDAO personDao() {
+		PersonDAOImpl dao = new PersonDAOImpl();
+		return dao;
+	}
+
+}
+
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJPA.PersistenceContext;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Conf.class);
+
+		PersonDAO dao = (PersonDAO) applicationContext.getBean(&quot;personDao&quot;);
+		// Creating person object
+		Person person = new Person();
+		person.setFirstName(&quot;Jabane&quot;);
+		person.setLastName(&quot;KOLOBANE&quot;);
+		// Saving person
+		dao.save(person);
+	}
+}
+</pre>
+<pre class="brush: java; title: Person.java; notranslate">
+package javaspringexamples.springJPA.PersistenceContext;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Person {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String firstName;
+
+	private String lastName;
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+}
+
+</pre>
+<pre class="brush: java; title: PersonDAO.java; notranslate">
+package javaspringexamples.springJPA.PersistenceContext;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public interface PersonDAO {
+	public void save(Person p);
+}
+
+</pre>
+<pre class="brush: java; title: PersonDAOImpl.java; notranslate">
+package javaspringexamples.springJPA.PersistenceContext;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+
+@Transactional
+public class PersonDAOImpl implements PersonDAO {
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	public void save(Person p) {
+		//EntityTransaction transaction = entityManager.getTransaction();
+		//transaction.begin();
+		entityManager.persist(p);
+		//transaction.commit();
+		entityManager.close();
+	}
+}
+
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJPAPersistenceContext.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJPAPersistenceContext/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 JPA – JPQL Examples</title>
+		<link>http://localhost/wordpress/2019/06/26/example-spring-4-jpa-jpql-examples/</link>
+		<pubDate>Wed, 26 Jun 2019 14:46:53 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[JPQL]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=641</guid>
+		<description><![CDATA[This example presents the basic concept of using JPQL in Spring. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert this...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using JPQL in Spring.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.80<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJPA&lt;/groupId&gt;
+	&lt;artifactId&gt;springJPAQL&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-entitymanager&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/project&gt;
+
+</pre>
+<pre class="brush: java; title: Car.java; notranslate">
+package javaspringexamples.springJPA.JPAQL;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Car {
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String model;
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public Long getId() {
+		return id;
+	}
+}
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJPA.JPAQL;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(&quot;test-jpa&quot;);
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction transaction = entityManager.getTransaction();
+
+		transaction.begin();
+		// Creating entities
+		Person person = new Person();
+		person.setFirstName(&quot;Jabane&quot;);
+		person.setLastName(&quot;KOLOBANE&quot;);
+		Car car1 = new Car();
+		car1.setModel(&quot;R4&quot;);
+		Car car2 = new Car();
+		car2.setModel(&quot;R6&quot;);
+		// Add cars into person's collection
+		person.getCars().add(car1);
+		person.getCars().add(car2);
+		// persisting entities
+		entityManager.persist(person);
+
+		// SELECT
+		Query query = entityManager.createQuery(&quot;Select p from Person p&quot;);
+		List&lt;Person&gt; l_p = query.getResultList();
+		for (Person p : l_p)
+			System.out.println(p);
+
+		// UPDATE
+		query = entityManager.createQuery(&quot;Update Person set firstName = ?&quot;);
+		query.setParameter(1, &quot;waaaaaaaaaaa&quot;);
+		query.executeUpdate();
+
+		transaction.commit();
+		entityManager.close();
+	}
+}
+
+</pre>
+<pre class="brush: java; title: Person.java; notranslate">
+package javaspringexamples.springJPA.JPAQL;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Person {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String firstName;
+
+	private String lastName;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = &quot;person_id&quot;)
+	private Set&lt;Car&gt; cars = new HashSet&lt;Car&gt;();
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public Set&lt;Car&gt; getCars() {
+		return cars;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer str = new StringBuffer(firstName + &quot; &quot; + lastName + &quot; : &quot;);
+		for (Car c : cars)
+			str.append(&quot;'&quot; + c.getModel() + &quot;' &quot;);
+		return str.toString();
+	}
+}
+
+</pre>
+<pre class="brush: xml; title: persistence.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;persistence version=&quot;2.0&quot;
+    xmlns=&quot;http://java.sun.com/xml/ns/persistence&quot; 
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/persistence 
+    http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd&quot;&gt;
+    &lt;persistence-unit name=&quot;test-jpa&quot; transaction-type=&quot;RESOURCE_LOCAL&quot;&gt;
+        &lt;properties&gt;
+            &lt;property name=&quot;hibernate.connection.driver_class&quot; value=&quot;org.h2.Driver&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.url&quot; value=&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.username&quot; value=&quot;sa&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.password&quot; value=&quot;&quot; /&gt;
+            &lt;property name=&quot;hibernate.dialect&quot; value=&quot;org.hibernate.dialect.H2Dialect&quot; /&gt;
+            &lt;property name=&quot;hibernate.hbm2ddl.auto&quot; value=&quot;create&quot; /&gt;
+            &lt;!-- property name=&quot;hibernate.hbm2ddl.auto&quot; value=&quot;update&quot; /--&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+&lt;/persistence&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJPAQL.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJPAQL/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
+		<title>Example Spring 4 JPA – JPA CRUD Examples</title>
+		<link>http://localhost/wordpress/2019/06/26/example-spring-4-jpa-jpa-crud-examples/</link>
+		<pubDate>Wed, 26 Jun 2019 14:38:03 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+				<category><![CDATA[JPA CRUD]]></category>
+
+		<guid isPermaLink="false">http://localhost/wordpress/?p=632</guid>
+		<description><![CDATA[This example presents the basic concept of using JPA CRUD in Spring. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.8 &#8211; Maven 3.3.9 You can convert...]]></description>
+				<content:encoded><![CDATA[<p>This example presents the basic concept of using JPA CRUD in Spring.</p>
+<p>The technologies used are :</p>
+<ul>
+ &#8211; Spring 4.3.18<br />
+ &#8211; H2 1.3<br />
+ &#8211; Lombok 1.18<br />
+ &#8211; JDK 1.8<br />
+ &#8211; Maven 3.3.9
+</ul>
+<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
+<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
+<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
+<pre class="brush: xml; title: pom.xml; notranslate">
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+	&lt;groupId&gt;javaspringexamples.springJPA&lt;/groupId&gt;
+	&lt;artifactId&gt;CRUD&lt;/artifactId&gt;
+	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+	&lt;packaging&gt;jar&lt;/packaging&gt;
+
+	&lt;properties&gt;
+		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+	&lt;/properties&gt;
+
+	&lt;dependencies&gt;
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-orm&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
+			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
+			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-core&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+			&lt;artifactId&gt;hibernate-entitymanager&lt;/artifactId&gt;
+			&lt;version&gt;4.3.1.Final&lt;/version&gt;
+		&lt;/dependency&gt;
+
+		&lt;dependency&gt;
+			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
+			&lt;artifactId&gt;h2&lt;/artifactId&gt;
+			&lt;version&gt;1.3.175&lt;/version&gt;
+		&lt;/dependency&gt;
+	&lt;/dependencies&gt;
+&lt;/project&gt;
+
+</pre>
+<pre class="brush: java; title: Car.java; notranslate">
+package javaspringexamples.springJPA.CRUD;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Car {
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String model;
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public Long getId() {
+		return id;
+	}
+}
+</pre>
+<pre class="brush: java; title: Main.java; notranslate">
+package javaspringexamples.springJPA.CRUD;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+public class Main {
+
+	public static void main(String[] args) {
+		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(&quot;test-jpa&quot;);
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction transaction = entityManager.getTransaction();
+
+		transaction.begin();
+		// Creating entities
+		Person person = new Person();
+		person.setFirstName(&quot;Jabane&quot;);
+		person.setLastName(&quot;KOLOBANE&quot;);
+		Car car1 = new Car();
+		car1.setModel(&quot;R4&quot;);
+		Car car2 = new Car();
+		car2.setModel(&quot;R6&quot;);
+		// Add cars into person's collection
+		person.getCars().add(car1);
+		person.getCars().add(car2);
+		// persisting entities
+		entityManager.persist(person);
+		System.out.println(person);
+		//detaching cars
+		long id = person.getId();
+		person.getCars().clear();
+		System.out.println(person);
+		// Delete person
+		entityManager.remove(person);
+		// find displays null
+		person = entityManager.find(Person.class, id);
+		System.out.println(&quot;Find : &quot; + person);
+		// getReference throws javax.persistence.EntityNotFoundException
+		person = entityManager.getReference(Person.class, id);
+		System.out.println(&quot;getReference: &quot; + person);
+
+		transaction.commit();
+		entityManager.close();
+	}
+}
+
+</pre>
+<pre class="brush: java; title: Person.java; notranslate">
+package javaspringexamples.springJPA.CRUD;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
+/**
+ * 
+ * @author mounir.sahrani@gmail.com
+ *
+ */
+@Entity
+public class Person {
+
+	@Id
+	@GeneratedValue
+	private Long id;
+
+	private String firstName;
+
+	private String lastName;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = &quot;person_id&quot;)
+	private Set&lt;Car&gt; cars = new HashSet&lt;Car&gt;();
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public Set&lt;Car&gt; getCars() {
+		return cars;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer str = new StringBuffer(firstName + &quot; &quot; + lastName + &quot; : &quot;);
+		for (Car c : cars)
+			str.append(&quot;'&quot; + c.getModel() + &quot;' &quot;);
+		return str.toString();
+	}
+}
+
+</pre>
+<pre class="brush: xml; title: persistence.xml; notranslate">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;persistence version=&quot;2.0&quot;
+    xmlns=&quot;http://java.sun.com/xml/ns/persistence&quot; 
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/persistence 
+    http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd&quot;&gt;
+    &lt;persistence-unit name=&quot;test-jpa&quot; transaction-type=&quot;RESOURCE_LOCAL&quot;&gt;
+        &lt;properties&gt;
+            &lt;property name=&quot;hibernate.connection.driver_class&quot; value=&quot;org.h2.Driver&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.url&quot; value=&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.username&quot; value=&quot;sa&quot; /&gt;
+            &lt;property name=&quot;hibernate.connection.password&quot; value=&quot;&quot; /&gt;
+            &lt;property name=&quot;hibernate.dialect&quot; value=&quot;org.hibernate.dialect.H2Dialect&quot; /&gt;
+            &lt;property name=&quot;hibernate.hbm2ddl.auto&quot; value=&quot;create&quot; /&gt;
+            &lt;!-- property name=&quot;hibernate.hbm2ddl.auto&quot; value=&quot;update&quot; /--&gt;
+        &lt;/properties&gt;
+    &lt;/persistence-unit&gt;
+&lt;/persistence&gt;
+</pre>
+<p><a href="https://github.com/javaspringexamples/springJPACRUD.git">Get the sources of the example from the following GitHub url</a></p>
+<p>Or <a href="https://github.com/javaspringexamples/springJPACRUD/archive/master.zip">Download a .zip file</a></p>
+]]></content:encoded>
+			</item>
+		<item>
 		<title>Example Spring 4 JDBC – Batch Operations</title>
 		<link>http://localhost/wordpress/2019/06/18/example-spring-4-jdbc-batch-operations/</link>
 		<pubDate>Tue, 18 Jun 2019 11:56:35 +0000</pubDate>
@@ -1618,1071 +2880,6 @@ CREATE TABLE IF NOT EXISTS USER (ID BIGINT IDENTITY PRIMARY KEY, NAME VARCHAR(60
 </pre>
 <p><a href="https://github.com/javaspringexamples/springJdbcPreparedStatements.git">Get the sources of the example from the following GitHub url</a></p>
 <p>Or <a href="https://github.com/javaspringexamples/springJdbcPreparedStatements/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 JDBC – NamedParameter</title>
-		<link>http://localhost/wordpress/2019/06/01/example-spring-4-jdbc-namedparameter/</link>
-		<pubDate>Sat, 01 Jun 2019 14:33:31 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[NamedParameter]]></category>
-		<category><![CDATA[Spring JDBC]]></category>
-
-		<guid isPermaLink="false">http://localhost/wordpress/?p=595</guid>
-		<description><![CDATA[This example presents the basic concept of using named parameter in Spring JDBC. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using named parameter in Spring JDBC.</p>
-<p>The technologies used are :</p>
-<ul>
- &#8211; Spring 4.3.18<br />
- &#8211; H2 1.3<br />
- &#8211; Lombok 1.18<br />
- &#8211; JDK 1.80<br />
- &#8211; Maven 3.3.9
-</ul>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
-<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
-<pre class="brush: xml; title: pom.xml; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-	&lt;groupId&gt;javaspringexamples.springJDBC&lt;/groupId&gt;
-	&lt;artifactId&gt;springJdbcNamedParameter&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-	&lt;properties&gt;
-		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
-		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
-			&lt;artifactId&gt;h2&lt;/artifactId&gt;
-			&lt;version&gt;1.3.175&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
-			&lt;artifactId&gt;lombok&lt;/artifactId&gt;
-			&lt;version&gt;1.18.6&lt;/version&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: Conf.java; notranslate">
-package javaspringexamples.springJDBC.namedParameter;
-
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.DatabasePopulator;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Configuration
-public class Conf {
-
-	@Value(&quot;classpath:schema.sql&quot;)
-	private Resource schemaScript;
-
-	@Value(&quot;classpath:data.sql&quot;)
-	private Resource dataScript;
-
-	@Bean
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
-		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
-		dataSource.setUsername(&quot;sa&quot;);
-		dataSource.setPassword(&quot;&quot;);
-		return dataSource;
-	}
-
-	@Bean
-	public DataSourceInitializer dataSourceInitializer(final DataSource dataSource) {
-		final DataSourceInitializer initializer = new DataSourceInitializer();
-		initializer.setDataSource(dataSource);
-		initializer.setDatabasePopulator(databasePopulator());
-		return initializer;
-	}
-
-	private DatabasePopulator databasePopulator() {
-		final ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-		populator.addScript(schemaScript);
-		populator.addScript(dataScript);
-		return populator;
-	}
-
-	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate();
-		jdbcTemplate.setDataSource(dataSource());
-		return jdbcTemplate;
-	}
-
-	@Bean
-	public UserDao userDao() {
-		UserDaoImpl userDao = new UserDaoImpl();
-		userDao.setJdbcTemplate(jdbcTemplate());
-		return userDao;
-	}
-}
-
-</pre>
-<pre class="brush: java; title: Main.java; notranslate">
-package javaspringexamples.springJDBC.namedParameter;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-	public static void main(String[] args) throws SQLException {
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Conf.class);
-
-		UserDao userDao = applicationContext.getBean(UserDao.class);
-
-		List&lt;User&gt; users = new ArrayList&lt;&gt;();
-		users.addAll(userDao.findByUserName(&quot;jsmith&quot;));
-		users.addAll(userDao.findLocked(false));
-		users.add(userDao.findById(65L));
-
-		for (User user : users)
-			System.out.println(user.toString());
-	}
-}
-</pre>
-<pre class="brush: java; title: User.java; notranslate">
-package javaspringexamples.springJDBC.namedParameter;
-
-import java.util.Date;
-
-import lombok.Data;
-import lombok.ToString;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Data
-public class User {
-	private long id;
-	private String name;
-	private String userName;
-	@ToString.Exclude
-	private Date accessTime;
-	private boolean locked;
-}
-</pre>
-<pre class="brush: java; title: UserDao.java; notranslate">
-package javaspringexamples.springJDBC.namedParameter;
-
-import java.util.List;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-	public User findById(long usertId);
-	public List&lt;User&gt; findByUserName(String userName);
-	public List&lt;User&gt; findLocked(boolean locked);
-}
-</pre>
-<pre class="brush: java; title: UserDaoImpl.java; notranslate">
-package javaspringexamples.springJDBC.namedParameter;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoImpl implements UserDao {
-
-	private JdbcTemplate jdbcTemplate;
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	private UserRowMapper userRowMapper = new UserRowMapper();
-
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
-	}
-
-	public User findById(long userId) {
-		return jdbcTemplate.queryForObject(&quot;SELECT id, name, user_name, access_time, locked FROM USER WHERE id = ?&quot;,
-				userRowMapper, userId);
-	}
-
-	public List&lt;User&gt; findByUserName(String userName) {
-		return namedParameterJdbcTemplate.query(
-				&quot;SELECT id, name, user_name, access_time, locked FROM USER WHERE user_name = :userName&quot;,
-				Collections.singletonMap(&quot;userName&quot;, userName), userRowMapper);
-	}
-
-	public List&lt;User&gt; findLocked(boolean locked) {
-		return namedParameterJdbcTemplate.query(
-				&quot;SELECT id, name, user_name, access_time, locked FROM USER WHERE locked = :locked&quot;,
-				Collections.singletonMap(&quot;locked&quot;, locked), userRowMapper);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: UserRowMapper.java; notranslate">
-package javaspringexamples.springJDBC.namedParameter;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.springframework.jdbc.core.RowMapper;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserRowMapper implements RowMapper&lt;User&gt; {
-
-	public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-		User user = new User();
-		user.setId(rs.getLong(&quot;id&quot;));
-		user.setName(rs.getString(&quot;name&quot;));
-		user.setUserName(rs.getString(&quot;user_name&quot;));
-		user.setAccessTime(rs.getTimestamp(&quot;access_time&quot;));
-		user.setLocked(rs.getBoolean(&quot;locked&quot;));
-		return user;
-	}
-
-}
-
-</pre>
-<pre class="brush: java; title: data.sql; notranslate">
-MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (999L, 'Mounir SAHRANI', 'msahrani', '2019-01-01',false);
-MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (256L, 'Laurent SOURDEAU', 'lsourdeau', '2019-06-01',false);
-MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (65L, 'John SMITH', 'jsmith', '2019-06-01',true);
-</pre>
-<pre class="brush: java; title: schema.sql; notranslate">
-CREATE TABLE IF NOT EXISTS USER (ID BIGINT IDENTITY PRIMARY KEY, NAME VARCHAR(60), USER_NAME VARCHAR(60), ACCESS_TIME TIMESTAMP, LOCKED BOOLEAN);
-</pre>
-<p><a href="https://github.com/javaspringexamples/springJdbcNamedParameter.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/springJdbcNamedParameter/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 JDBC – JdbcTemplate</title>
-		<link>http://localhost/wordpress/2019/06/01/example-spring-4-jdbc-jdbctemplate/</link>
-		<pubDate>Sat, 01 Jun 2019 14:30:28 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[JdbcTemplate]]></category>
-		<category><![CDATA[Spring JDBC]]></category>
-
-		<guid isPermaLink="false">http://localhost/wordpress/?p=593</guid>
-		<description><![CDATA[This example presents the basic concept of using jdbcTemplate in Spring Jdbc. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using jdbcTemplate in Spring Jdbc.</p>
-<p>The technologies used are :</p>
-<ul>
- &#8211; Spring 4.3.18<br />
- &#8211; H2 1.3<br />
- &#8211; Lombok 1.18<br />
- &#8211; JDK 1.80<br />
- &#8211; Maven 3.3.9
-</ul>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
-<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
-<pre class="brush: xml; title: pom.xml; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-	&lt;groupId&gt;javaspringexamples.springJDBC&lt;/groupId&gt;
-	&lt;artifactId&gt;springJdbcConfiguringJdbcTemplate&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-	&lt;properties&gt;
-		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
-		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
-			&lt;artifactId&gt;h2&lt;/artifactId&gt;
-			&lt;version&gt;1.3.175&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
-			&lt;artifactId&gt;lombok&lt;/artifactId&gt;
-			&lt;version&gt;1.18.6&lt;/version&gt;
-			&lt;scope&gt;provided&lt;/scope&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: Conf.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-import javax.sql.DataSource;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Configuration
-public class Conf {
-	@Bean
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
-		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
-		dataSource.setUsername(&quot;sa&quot;);
-		dataSource.setPassword(&quot;&quot;);
-		return dataSource;
-	}
-
-	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate();
-		jdbcTemplate.setDataSource(dataSource());
-		return jdbcTemplate;
-	}
-
-	@Bean
-	public UserDao userDao() {
-		UserDaoJdbcImpl userDao = new UserDaoJdbcImpl();
-		userDao.setJdbcTemplate(jdbcTemplate());
-		return userDao;
-	}
-
-}
-
-</pre>
-<pre class="brush: java; title: ExceptionDeleteFailed.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-import org.springframework.dao.DataAccessException;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class ExceptionDeleteFailed extends DataAccessException {
-	public ExceptionDeleteFailed(String msg) {
-		super(msg);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: ExceptionInsertFailed.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-import org.springframework.dao.DataAccessException;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class ExceptionInsertFailed extends DataAccessException {
-	public ExceptionInsertFailed(String msg) {
-		super(msg);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: ExceptionUpdateFailed.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-import org.springframework.dao.DataAccessException;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class ExceptionUpdateFailed extends DataAccessException {
-	public ExceptionUpdateFailed(String msg) {
-		super(msg);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: Main.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-import java.sql.SQLException;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-	public static void main(String[] args) throws SQLException {
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Conf.class);
-
-		UserDao userDao = applicationContext.getBean(UserDao.class);
-		User user = new User();
-		user.setName(&quot;Waaaaw&quot;);
-		user.setUserName(&quot;Wiiiiiw&quot;);
-		user.setLocked(false);
-		userDao.insert(user);
-
-		user = userDao.find(user.getId());
-		System.out.println(user.getName() + &quot;, &quot; + user.getUserName() + &quot;, &quot; + user.isLocked());
-
-		user.setLocked(true);
-		userDao.update(user);
-
-		user = userDao.find(user.getId());
-		System.out.println(user.getName() + &quot;, &quot; + user.getUserName() + &quot;, &quot; + user.isLocked());
-
-		userDao.delete(user.getId());
-		
-		user = userDao.find(user.getId());
-		System.out.println(user);
-	}
-}
-
-</pre>
-<pre class="brush: java; title: User.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-import java.util.Date;
-
-import lombok.Data;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Data
-public class User {
-	private long id;
-	private String name;
-	private String userName;
-	private Date accessTime;
-	private boolean locked;
-}
-
-</pre>
-<pre class="brush: java; title: UserDao.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public interface UserDao {
-	public void insert(User user);
-
-	public void update(User user);
-
-	public void delete(long userId);
-	
-	public User find(long userId);
-}
-</pre>
-<pre class="brush: java; title: UserDaoJdbcImpl.java; notranslate">
-package javaspringexamples.springJDBC.JdbcTemplate;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class UserDaoJdbcImpl implements UserDao {
-
-	private JdbcTemplate jdbcTemplate;
-
-	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-		this.jdbcTemplate = jdbcTemplate;
-	}
-
-	public void insert(User user) {
-		PreparedStatementCreatorFactory psCreatorFactory = new PreparedStatementCreatorFactory(
-				&quot;insert into user(name, user_name, locked) values(?,?,?)&quot;,
-				new int[] { Types.VARCHAR, Types.VARCHAR, Types.BOOLEAN });
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-		int count = jdbcTemplate.update(psCreatorFactory.newPreparedStatementCreator(
-				new Object[] { user.getName(), user.getUserName(), user.isLocked() }), keyHolder);
-		if (count != 1)
-			throw new ExceptionInsertFailed(&quot;Cannot insert user&quot;);
-		user.setId(keyHolder.getKey().longValue());
-	}
-
-	public void update(User user) {
-		int count = jdbcTemplate.update(&quot;update user  set (name, user_name, locked) = (?,?,?) where id = ?&quot;,
-				user.getName(), user.getUserName(), user.isLocked(), user.getId());
-		if (count != 1)
-			throw new ExceptionUpdateFailed(&quot;Cannot update user&quot;);
-	}
-
-	public void delete(long userId) {
-		int count = jdbcTemplate.update(&quot;delete user where id = ?&quot;, userId);
-		if (count != 1)
-			throw new ExceptionDeleteFailed(&quot;Cannot delete user&quot;);
-	}
-
-	public User find(long userId) {
-		try {
-			return jdbcTemplate.queryForObject(&quot;select id, name, user_name, locked from user where id = ?&quot;,
-					new RowMapper&lt;User&gt;() {
-						public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-							User user = new User();
-							user.setId(rs.getLong(&quot;id&quot;));
-							user.setName(rs.getString(&quot;name&quot;));
-							user.setUserName(rs.getString(&quot;user_name&quot;));
-							user.setLocked(rs.getBoolean(&quot;locked&quot;));
-							return user;
-						}
-					}, userId);
-
-		} catch (EmptyResultDataAccessException e) {
-			return null;
-		}
-	}
-}
-</pre>
-<p><a href="https://github.com/javaspringexamples/springJdbcConfiguringJdbcTemplate.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/springJdbcConfiguringJdbcTemplate/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 JDBC – Initializing Database</title>
-		<link>http://localhost/wordpress/2019/06/01/example-spring-4-jdbc-initializing-database/</link>
-		<pubDate>Sat, 01 Jun 2019 14:27:20 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Initializing Database]]></category>
-		<category><![CDATA[Spring JDBC]]></category>
-
-		<guid isPermaLink="false">http://localhost/wordpress/?p=591</guid>
-		<description><![CDATA[This example presents the basic concept of initializing database in Spring JDBC. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can convert...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of initializing database in Spring JDBC.</p>
-<p>The technologies used are :</p>
-<ul>
- &#8211; Spring 4.3.18<br />
- &#8211; H2 1.3<br />
- &#8211; Lombok 1.18<br />
- &#8211; JDK 1.80<br />
- &#8211; Maven 3.3.9
-</ul>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
-<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
-<pre class="brush: xml; title: pom.xml; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-	&lt;groupId&gt;javaspringexamples.springJDBC&lt;/groupId&gt;
-	&lt;artifactId&gt;springJdbcInitializingDb&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-	&lt;properties&gt;
-		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
-		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
-			&lt;artifactId&gt;h2&lt;/artifactId&gt;
-			&lt;version&gt;1.3.175&lt;/version&gt;
-		&lt;/dependency&gt;
-
-	&lt;/dependencies&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: Main.java; notranslate">
-package javaspringexamples.springJDBC.InitializingDb;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-	public static void main(String[] args) throws SQLException {
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:conf.xml&quot;);
-		DataSource dataSource = applicationContext.getBean(&quot;dataSource&quot;, DataSource.class);
-
-		Connection connection = dataSource.getConnection();
-		System.out.println(connection.isClosed());
-		connection.close();
-		System.out.println(connection.isClosed());
-	}
-}
-</pre>
-<pre class="brush: xml; title: conf.xml; notranslate">
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xmlns:jdbc=&quot;http://www.springframework.org/schema/jdbc&quot;
-	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans 
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/jdbc 
-    http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd&quot;&gt;
-
-	&lt;bean id=&quot;dataSource&quot;
-		class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;
-
-		&lt;property name=&quot;driverClassName&quot; value=&quot;org.h2.Driver&quot; /&gt;
-		&lt;property name=&quot;url&quot;
-			value=&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot; /&gt;
-		&lt;property name=&quot;username&quot; value=&quot;sa&quot; /&gt;
-		&lt;property name=&quot;password&quot; value=&quot;&quot; /&gt;
-	&lt;/bean&gt;
-
-	&lt;!-- &lt;jdbc:embedded-database id=&quot;dataSource&quot; type=&quot;H2&quot;/&gt; --&gt;
-
-	&lt;jdbc:initialize-database
-		data-source=&quot;dataSource&quot;&gt;
-		&lt;jdbc:script location=&quot;classpath:schema.sql&quot; /&gt;
-		&lt;jdbc:script location=&quot;classpath:data.sql&quot; /&gt;
-	&lt;/jdbc:initialize-database&gt;
-
-&lt;/beans&gt;
-
-</pre>
-<pre class="brush: java; title: data.sql; notranslate">
-MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (999, 'Mounir SAHRANI', 'msahrani', '2019-01-01',false);
-MERGE INTO USER (ID, NAME, USER_NAME, ACCESS_TIME, LOCKED) values (256, 'Laurent SOURDEAU', 'lsourdeau', '2019-06-01',false);
-</pre>
-<pre class="brush: java; title: schema.sql; notranslate">
-CREATE TABLE IF NOT EXISTS USER (ID BIGINT IDENTITY PRIMARY KEY, NAME VARCHAR(60), USER_NAME VARCHAR(60), ACCESS_TIME TIMESTAMP, LOCKED BOOLEAN);
-</pre>
-<p><a href="https://github.com/javaspringexamples/springJdbcInitializingDb.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/springJdbcInitializingDb/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 JDBC – Pooled Database</title>
-		<link>http://localhost/wordpress/2019/06/01/example-spring-4-jdbc-pooled-database/</link>
-		<pubDate>Sat, 01 Jun 2019 14:20:58 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Pooled Database]]></category>
-		<category><![CDATA[Spring JDBC]]></category>
-
-		<guid isPermaLink="false">http://localhost/wordpress/?p=586</guid>
-		<description><![CDATA[This example presents the basic concept of configuring pooled datasource in Spring JDBC. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of configuring pooled datasource in Spring JDBC.</p>
-<p>The technologies used are :</p>
-<ul>
- &#8211; Spring 4.3.18<br />
- &#8211; H2 1.3<br />
- &#8211; Lombok 1.18<br />
- &#8211; JDK 1.80<br />
- &#8211; Maven 3.3.9
-</ul>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
-<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
-<pre class="brush: xml; title: pom.xml; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-	&lt;groupId&gt;javaspringexamples.springJDBC&lt;/groupId&gt;
-	&lt;artifactId&gt;springJdbcConfiguringPooledDatasource&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-	&lt;properties&gt;
-		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
-		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
-			&lt;artifactId&gt;h2&lt;/artifactId&gt;
-			&lt;version&gt;1.3.175&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;commons-dbcp&lt;/groupId&gt;
-			&lt;artifactId&gt;commons-dbcp&lt;/artifactId&gt;
-			&lt;version&gt;1.4&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.mchange&lt;/groupId&gt;
-			&lt;artifactId&gt;c3p0&lt;/artifactId&gt;
-			&lt;version&gt;0.9.5.3&lt;/version&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: ConfigForBasicDataSource.java; notranslate">
-package javaspringexamples.springJDBC.pooledDatasource;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Configuration
-public class ConfigForBasicDataSource {
-
-	@Bean(destroyMethod = &quot;close&quot;)
-	public DataSource dataSource() {
-		BasicDataSource dataSource = new BasicDataSource();
-		dataSource.setDriverClassName(&quot;org.h2.Driver&quot;);
-		dataSource.setUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
-		dataSource.setUsername(&quot;sa&quot;);
-		dataSource.setPassword(&quot;&quot;);
-		return dataSource;
-	}
-}
-
-</pre>
-<pre class="brush: java; title: ConfigForComboPooledDataSource.java; notranslate">
-package javaspringexamples.springJDBC.pooledDatasource;
-
-import javax.sql.DataSource;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-@Configuration
-public class ConfigForComboPooledDataSource {
-
-	@Bean(destroyMethod = &quot;close&quot;)
-	public DataSource dataSource() throws Exception {
-		ComboPooledDataSource dataSource = new ComboPooledDataSource();
-		dataSource.setDriverClass(&quot;org.h2.Driver&quot;);
-		dataSource.setJdbcUrl(&quot;jdbc:h2:tcp://localhost/~/javaspringexamples&quot;);
-		dataSource.setUser(&quot;sa&quot;);
-		dataSource.setPassword(&quot;&quot;);
-		return dataSource;
-	}
-}
-
-</pre>
-<pre class="brush: java; title: Main.java; notranslate">
-package javaspringexamples.springJDBC.pooledDatasource;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-
-	public static void main(String[] args) throws SQLException {
-		// Instatiating for BasicDataSource
-		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(
-				ConfigForBasicDataSource.class);
-		DataSource dataSource = applicationContext.getBean(&quot;dataSource&quot;, DataSource.class);
-
-		Connection connection = dataSource.getConnection();
-		System.out.println(connection.isClosed());
-		connection.close();
-		System.out.println(connection.isClosed());
-
-		// Instatiating for ComboPooledDatasource
-		applicationContext = new AnnotationConfigApplicationContext(ConfigForComboPooledDataSource.class);
-		dataSource = applicationContext.getBean(&quot;dataSource&quot;, DataSource.class);
-
-		connection = dataSource.getConnection();
-		System.out.println(connection.isClosed());
-		connection.close();
-		System.out.println(connection.isClosed());
-	}
-
-}
-
-</pre>
-<p><a href="https://github.com/javaspringexamples/springJdbcConfiguringPooledDatasource.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/springJdbcConfiguringPooledDatasource/archive/master.zip">Download a .zip file</a></p>
-]]></content:encoded>
-			</item>
-		<item>
-		<title>Example Spring 4 JDBC – Embedded Database</title>
-		<link>http://localhost/wordpress/2019/06/01/example-spring-4-jdbc-embedded-database/</link>
-		<pubDate>Sat, 01 Jun 2019 14:15:36 +0000</pubDate>
-		<dc:creator><![CDATA[admin]]></dc:creator>
-				<category><![CDATA[Embedded Database]]></category>
-		<category><![CDATA[Spring JDBC]]></category>
-
-		<guid isPermaLink="false">http://localhost/wordpress/?p=583</guid>
-		<description><![CDATA[This example presents the basic concept of using embedded database in Spring JDBC. The technologies used are : &#8211; Spring 4.3.18 &#8211; H2 1.3 &#8211; Lombok 1.18 &#8211; JDK 1.80 &#8211; Maven 3.3.9 You can...]]></description>
-				<content:encoded><![CDATA[<p>This example presents the basic concept of using embedded database in Spring JDBC.</p>
-<p>The technologies used are :</p>
-<ul>
- &#8211; Spring 4.3.18<br />
- &#8211; H2 1.3<br />
- &#8211; Lombok 1.18<br />
- &#8211; JDK 1.80<br />
- &#8211; Maven 3.3.9
-</ul>
-<p>You can convert this example to an Eclipse IDE project by going to folder where is the pom.xml is, and use the command :</p>
-<pre class="brush: bash; title: ; notranslate">mvn eclipse:eclipse</pre>
-<p>Inspired from « Beginning Spring » Mert Caliskan, Kenan Sevindik, Rod Johnson (Foreword by), Jürgen Höller (Foreword by).</p>
-<pre class="brush: xml; title: pom.xml; notranslate">
-&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
-	&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-	&lt;groupId&gt;javaspringexamples.springJDBC&lt;/groupId&gt;
-	&lt;artifactId&gt;springJdbcEmbeddedDbSupport&lt;/artifactId&gt;
-	&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
-
-	&lt;properties&gt;
-		&lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
-		&lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
-	&lt;/properties&gt;
-
-	&lt;dependencies&gt;
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-jdbc&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;org.springframework&lt;/groupId&gt;
-			&lt;artifactId&gt;spring-context&lt;/artifactId&gt;
-			&lt;version&gt;4.3.18.RELEASE&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;com.h2database&lt;/groupId&gt;
-			&lt;artifactId&gt;h2&lt;/artifactId&gt;
-			&lt;version&gt;1.3.175&lt;/version&gt;
-		&lt;/dependency&gt;
-
-		&lt;dependency&gt;
-			&lt;groupId&gt;junit&lt;/groupId&gt;
-			&lt;artifactId&gt;junit&lt;/artifactId&gt;
-			&lt;version&gt;4.11&lt;/version&gt;
-			&lt;scope&gt;test&lt;/scope&gt;
-		&lt;/dependency&gt;
-	&lt;/dependencies&gt;
-&lt;/project&gt;
-</pre>
-<pre class="brush: java; title: Main.java; notranslate">
-package javaspringexamples.springJDBC.EmbeddedDbSupport;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-/**
- * 
- * @author mounir.sahrani@gmail.com
- *
- */
-public class Main {
-	public static void main(String[] args) throws SQLException {
-		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(&quot;classpath:conf.xml&quot;);
-		DataSource dataSource = applicationContext.getBean(&quot;dataSource&quot;, DataSource.class);
-
-		Connection connection = dataSource.getConnection();
-		System.out.println(connection.isClosed());
-		connection.close();
-		System.out.println(connection.isClosed());
-	}
-}
-</pre>
-<pre class="brush: xml; title: conf.xml; notranslate">
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
-	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-	xmlns:jdbc=&quot;http://www.springframework.org/schema/jdbc&quot;
-	xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/jdbc 
-    http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd&quot;&gt;
-
-	&lt;jdbc:embedded-database id=&quot;dataSource&quot;
-		type=&quot;H2&quot;&gt;
-		&lt;jdbc:script location=&quot;classpath:schema.sql&quot; /&gt;
-		&lt;jdbc:script location=&quot;classpath:data.sql&quot; /&gt;
-	&lt;/jdbc:embedded-database&gt;
-
-&lt;/beans&gt;
-</pre>
-<pre class="brush: java; title: data.sql; notranslate">
-insert into USER (NAME, USER_NAME, LOCKED) values ('Mounir SAHRANI','javaspringexamples',false);
-</pre>
-<pre class="brush: java; title: schema.sql; notranslate">
-CREATE TABLE USER (ID BIGINT IDENTITY PRIMARY KEY, NAME VARCHAR(50), USER_NAME VARCHAR(50), LOCKED BOOLEAN);
-</pre>
-<pre class="brush: java; title: EmbeddedDataSourceTest.java; notranslate">
-package javaspringexamples.springJDBC.EmbeddedDbSupport;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-
-/**
- *
- * @author mounir.sahrani@gmail.com
- *
- */
-public class EmbeddedDataSourceTest {
-	private DataSource dataSource;
-
-	@Before
-	public void setUp() {
-		dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript(&quot;classpath:schema.sql&quot;)
-				.addScript(&quot;classpath:data.sql&quot;).build();
-	}
-
-	@Test
-	public void testDataAccessLogic() throws SQLException {
-		Connection connection = dataSource.getConnection();
-		Assert.assertFalse(connection.isClosed());
-		connection.close();
-		Assert.assertTrue(connection.isClosed());
-	}
-
-	@After
-	public void tearDown() {
-		((EmbeddedDatabase) dataSource).shutdown();
-	}
-}
-</pre>
-<p><a href="https://github.com/javaspringexamples/springJdbcEmbeddedDbSupport.git">Get the sources of the example from the following GitHub url</a></p>
-<p>Or <a href="https://github.com/javaspringexamples/springJdbcEmbeddedDbSupport/archive/master.zip">Download a .zip file</a></p>
 ]]></content:encoded>
 			</item>
 	</channel>
